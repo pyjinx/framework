@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "pyjinx"
+version = "0.2.1"
+description = "PyJinx - Python MVC framework"
+authors = ["Krunal Dodiya <kunal.dodiya1@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+  { include = "Illuminate" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^1.0.1"
+pluralizer = "^1.2.0"
+colorama = "^0.4.6"
+pendulum = "^3.0.0"
+
+[tool.poetry.group.dev.dependencies]
+cython = "^3.0.11"
+twine = "^5.1.1"
+wheel = "^0.44.0"
+mypy = "^1.11.2"
+pytest = "^8.3.2"
+
+[tool.poetry.urls]
+homepage = "https://www.proalgotrader.com"
+repository = "https://github.com/pyjinx/framework"
+documentation = "https://pyjinx.gitbook.io/docs"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
