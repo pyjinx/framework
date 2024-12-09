@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any, Self, Type
 from pathlib import Path
 
 from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
@@ -156,6 +156,6 @@ class Application(Container):
         pass
 
     @abstractmethod
-    def set_running_in_console(self) -> "Application":
+    def set_running_in_console(self) -> Self:
         """handle command."""
         pass
