@@ -2,15 +2,16 @@ import re
 
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
-from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
 from colorama import Fore, Back, Style
 
+from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
 from Illuminate.Foundation.Console.Input.InputArgument import InputArgument
 from Illuminate.Foundation.Console.Input.InputOption import InputOption
 from Illuminate.Helpers.Util import Util
 
 if TYPE_CHECKING:
-    from Illuminate.Foundation.Console.Application import Application
+    from Illuminate.Foundation.Console.Application import Application as Commander
+    from Illuminate.Foundation.Application import Application
 
 
 class Command:
@@ -35,9 +36,9 @@ class Command:
 
         self.input_arguments = []
 
-        self.commander = None
+        self.commander: Commander = None
 
-        self.application = None
+        self.application: Application = None
 
     def get_default_options(self):
         return [
@@ -153,7 +154,7 @@ class Command:
 
         return options
 
-    def set_commander(self, commander: "Application"):
+    def set_commander(self, commander: "Commander"):
         self.commander = commander
         self.application = commander.application
 
