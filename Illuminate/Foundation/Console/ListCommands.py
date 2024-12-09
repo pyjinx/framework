@@ -1,5 +1,5 @@
 from Illuminate.Collections.helpers import collect
-from Illuminate.Contracts.Console.Kernel import Kernel as ConsoleKernelContract
+from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
 from Illuminate.Foundation.Console.Command import Command
 from colorama import Fore
 

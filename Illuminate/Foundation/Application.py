@@ -18,7 +18,7 @@ from Illuminate.Log.LogServiceProvider import LogServiceProvider
 from Illuminate.Routing.RoutingServiceProvider import RoutingServiceProvider
 
 from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
-from Illuminate.Contracts.Console.Kernel import Kernel as ConsoleKernelContract
+from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
 from Illuminate.Container.Container import Container
 from Illuminate.Contracts.Container.Container import Container as ContainerContract
 from Illuminate.Contracts.Foundation.Application import (
