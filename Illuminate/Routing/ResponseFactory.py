@@ -1,14 +1,12 @@
-from typing import TYPE_CHECKING, Any, Type
+from typing import Any
 
+from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Contracts.Support.JsonSerializable import JsonSerializable
 from Illuminate.Support.Facades.Event import Event
 
-if TYPE_CHECKING:
-    from Illuminate.Foundation.Application import Application
-
 
 class ResponseFactory:
-    def __init__(self, app: Type["Application"]) -> None:
+    def __init__(self, app: Application) -> None:
         self.__app = app
 
         self.__content = ""
