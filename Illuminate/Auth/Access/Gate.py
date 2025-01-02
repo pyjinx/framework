@@ -61,15 +61,15 @@ class Gate(GateContract):
     def raw(self, ability: str, arguments: List[Any] = []) -> bool:
         arguments = arguments if isinstance(arguments, list) else [arguments]
 
-        user = self.resolve_user()
-
-        if user:
-            arguments.insert(0, user)
-
         auth_callback = self.get_auth_callback(ability, arguments)
 
         if not auth_callback:
             return True
+
+        user = self.resolve_user()
+
+        if user:
+            arguments.insert(0, user)
 
         return Util.callback_with_dynamic_args(auth_callback, [user, *arguments])
 

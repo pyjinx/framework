@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyjinx"
-version = "0.2.3"
+version = "0.2.4"
 description = "PyJinx - Python MVC framework"
 authors = ["Krunal Dodiya <kunal.dodiya1@gmail.com>"]
 license = "MIT"
