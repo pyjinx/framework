@@ -68,14 +68,12 @@ class Route:
 
         return self
 
+    def get_name(self):
+        return self.action.get("as")
+
     def name(self, name: str):
         alias = self.action.get("as", "")
-
-        if alias:
-            self.action["as"] = f"{alias}{name}"
-        else:
-            self.action["as"] = name
-
+        self.action["as"] = f"{alias}{name}" if alias else name
         return self
 
     def run(self):
@@ -116,16 +114,17 @@ class Route:
             raise e
 
     def middleware(self, middleware=None):
-        curent_middleware = self.action.get("middleware", [])
+        current_middleware = self.action.get("middleware", [])
 
-        if not middleware:
-            return curent_middleware
+        if middleware is None:
+            return current_middleware
 
         if isinstance(middleware, str):
-            middleware = ",".split(middleware)
+            middleware = [middleware]
 
-        if middleware:
-            self.action["middleware"] = curent_middleware + middleware
+        if isinstance(middleware, list):
+            self.action["middleware"] = current_middleware + middleware
+            return self
 
         raise Exception("Invalid middleware")
 
