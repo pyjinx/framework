@@ -33,6 +33,10 @@ class DatabaseManager:
             expire_on_commit=False,
         )
         return engine
+    def table(self, table_name: str, connection_name: str | None = None):
+        from Illuminate.Database.QueryBuilder import QueryBuilder
+
+        return QueryBuilder(self, table_name, connection_name)
 
     def session(self, name: str | None = None) -> Session:
         name = name or self.config.get("database.default", "sqlite")
