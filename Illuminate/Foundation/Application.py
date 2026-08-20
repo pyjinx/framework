@@ -16,6 +16,7 @@ from Illuminate.Http.Request import Request
 from Illuminate.Routing.ResponseFactory import ResponseFactory
 from Illuminate.Log.LogServiceProvider import LogServiceProvider
 from Illuminate.Routing.RoutingServiceProvider import RoutingServiceProvider
+from Illuminate.Database.DatabaseServiceProvider import DatabaseServiceProvider
 
 from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
 from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
@@ -278,7 +279,7 @@ class Application(Container, ApplicationContract):
     def _register_base_providers(self):
         self.register(AuthServiceProvider)
         self.register(EventServiceProvider)
-        self.register(LogServiceProvider)
+        self.register(DatabaseServiceProvider)
         self.register(RoutingServiceProvider)
         self.register(ValidationServiceProvider)
         self.register(CommanderServiceProvider)
