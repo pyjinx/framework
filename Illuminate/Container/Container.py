@@ -283,13 +283,7 @@ class Container(ABC):
         self.__build_stack.append(abstract)
         try:
             args = getfullargspec(binding_resolver).args
-            dependencies = self.get_dependencies(binding_resolver)
-
-            if parameters:
-                if not all([arg in parameters for arg in args]):
-                    raise Exception("Invalid params passed, valid params are:", args)
-
-                dependencies = list(parameters.values())
+            dependencies = self.get_dependencies(binding_resolver, parameters)
 
             instance = Util.callback_with_dynamic_args(binding_resolver, dependencies)
 
@@ -303,14 +297,46 @@ class Container(ABC):
         finally:
             self.__build_stack.pop()
 
-    def get_dependencies(self, class_info) -> List[Any]:
+    def get_dependencies(
+        self,
+        class_info,
+        parameters: Dict[str, Any] | None = None,
+    ) -> List[Any]:
+        parameters = parameters or {}
         args_info = getfullargspec(class_info)
+        dependencies = []
+        defaults = dict(
+            zip(
+                args_info.args[-len(args_info.defaults):],
+                args_info.defaults,
+            )
+        ) if args_info.defaults else {}
 
-        return [
-            self.make(args_info.annotations[arg])
-            for arg in args_info.annotations.keys()
-            if arg != "return"
-        ]
+        for argument in args_info.args:
+            if argument == "self":
+                continue
+
+            if argument in parameters:
+                dependencies.append(parameters[argument])
+                continue
+
+            annotation = args_info.annotations.get(argument)
+            if annotation is None:
+                if argument in defaults:
+                    dependencies.append(defaults[argument])
+                    continue
+                raise BindingResolutionException(
+                    f"Unresolvable dependency [{argument}] for {class_info}"
+                )
+
+            try:
+                dependencies.append(self.make(annotation))
+            except (TypeError, BindingResolutionException) as error:
+                raise BindingResolutionException(
+                    f"Unresolvable dependency [{annotation}] for {class_info}"
+                ) from error
+
+        return dependencies
 
     def get_resolved_dependencies(self, abstract: str) -> Dict[str, Any]:
         if abstract not in self.__resolved:
