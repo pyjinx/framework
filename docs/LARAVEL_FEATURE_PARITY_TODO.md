@@ -169,3 +169,5 @@ The audit used `references/laravel/`, `references/laravel-demo/`, and the Larave
 - Mark this file as done only when behavior is proven by tests, not by declarations.
 - This codebase started as a hobby/PoC; implement from scratch where coverage is required, and enforce full behavior proof for any promoted area.
 - For any item moved to `[x]`, file an evidence test case before release in acceptance notes.
+- The 38 checklist headings are tracking groups, not an exhaustive feature count; each group must be expanded into every Laravel namespace, class, public method, contract, command, middleware, configuration key, lifecycle transition, and edge-case behavior before promotion.
+- A feature is not complete while any referenced Laravel API surface remains unmapped, unimplemented, untested, or behaviorally divergent.
