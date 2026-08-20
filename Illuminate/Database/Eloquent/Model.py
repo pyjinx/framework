@@ -9,13 +9,62 @@ class Model:
     primary_key = "id"
     timestamps = True
     fillable = []
-    hidden = []
     casts = {}
+    _event_listeners = {}
 
     def __init__(self, attributes=None, exists=False):
         self._attributes = dict(attributes or {})
         self._exists = exists
         self._original = dict(self._attributes)
+
+    @classmethod
+    def _listeners(cls):
+        if "_event_listeners" not in cls.__dict__:
+            cls._event_listeners = {}
+        return cls._event_listeners
+
+    @classmethod
+    def on(cls, event, callback):
+        cls._listeners().setdefault(event, []).append(callback)
+        return callback
+
+    @classmethod
+    def saving(cls, callback):
+        return cls.on("saving", callback)
+
+    @classmethod
+    def saved(cls, callback):
+        return cls.on("saved", callback)
+
+    @classmethod
+    def creating(cls, callback):
+        return cls.on("creating", callback)
+
+    @classmethod
+    def created(cls, callback):
+        return cls.on("created", callback)
+
+    @classmethod
+    def updating(cls, callback):
+        return cls.on("updating", callback)
+
+    @classmethod
+    def updated(cls, callback):
+        return cls.on("updated", callback)
+
+    @classmethod
+    def deleting(cls, callback):
+        return cls.on("deleting", callback)
+
+    @classmethod
+    def deleted(cls, callback):
+        return cls.on("deleted", callback)
+
+    def _fire_event(self, event, halt=True):
+        for callback in self.__class__._listeners().get(event, []):
+            if callback(self) is False and halt:
+                return False
+        return True
 
     @classmethod
     def query(cls):
@@ -60,6 +109,9 @@ class Model:
         return self
 
     def save(self):
+        if not self._fire_event("saving"):
+            return False
+
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         if self.timestamps:
             if not self._exists:
@@ -67,6 +119,8 @@ class Model:
             self._attributes["updated_at"] = now
 
         if self._exists:
+            if not self._fire_event("updating"):
+                return False
             identifier = self._attributes[self.primary_key]
             updates = {
                 key: value
@@ -74,13 +128,18 @@ class Model:
                 if key != self.primary_key
             }
             self._query_builder().where(self.primary_key, identifier).update(updates)
+            self._fire_event("updated", halt=False)
         else:
+            if not self._fire_event("creating"):
+                return False
             identifier = self._query_builder().insert(self._attributes)
             if identifier is not None:
                 self._attributes.setdefault(self.primary_key, identifier)
             self._exists = True
+            self._fire_event("created", halt=False)
 
         self._original = dict(self._attributes)
+        self._fire_event("saved", halt=False)
         return self
 
     def update(self, attributes):
@@ -89,9 +148,12 @@ class Model:
     def delete(self):
         if not self._exists:
             return False
+        if not self._fire_event("deleting"):
+            return False
         identifier = self._attributes[self.primary_key]
         deleted = self._query_builder().where(self.primary_key, identifier).delete()
         self._exists = False
+        self._fire_event("deleted", halt=False)
         return deleted > 0
 
     def to_dict(self):
