@@ -18,6 +18,9 @@ class BindingNotFound(Exception):
 class BindingResolutionException(Exception):
     pass
 
+class CircularDependencyException(BindingResolutionException):
+    pass
+
 
 class BuildingNewInstanceRequired(Exception):
     pass
@@ -340,9 +343,22 @@ class Container(ABC):
         except BindingResolutionException as e:
             raise e
 
+    @staticmethod
+    def _display_abstract(abstract):
+        return getattr(abstract, "__name__", str(abstract))
+
     def __resolve(
         self, abstract: str, binding_resolver: Any, parameters: Dict[str, Any] = {}
     ) -> Any:
+        if abstract in self.__build_stack:
+            chain = " -> ".join(
+                [self._display_abstract(item) for item in self.__build_stack]
+                + [self._display_abstract(abstract)]
+            )
+            raise CircularDependencyException(
+                f"Circular dependency detected: {chain}"
+            )
+
         self.__build_stack.append(abstract)
         try:
             args = getfullargspec(binding_resolver).args
