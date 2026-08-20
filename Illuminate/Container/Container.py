@@ -30,6 +30,8 @@ class Container(ABC):
         self.__resolved: Dict[str, bool] = {}
         self.__aliases: Dict[str, str] = {}
         self.__abstract_aliases: Dict[str, list] = {}
+        self.__contextual_bindings: Dict[Any, Dict[Any, Any]] = {}
+        self.__build_stack: list = []
         self._global_before_resolving_callbacks: list = []
         self._before_resolving_callbacks: dict = {}
         self._global_resolving_callbacks: list = []
@@ -42,6 +44,18 @@ class Container(ABC):
 
     def singleton(self, key: str, binding_resolver: Callable) -> None:
         self.__bind(key, binding_resolver, True)
+
+    def when(self, concrete):
+        from Illuminate.Container.ContextualBindingBuilder import (
+            ContextualBindingBuilder,
+        )
+
+        return ContextualBindingBuilder(self, concrete)
+
+    def add_contextual_binding(self, concrete, abstract, implementation):
+        concrete = self.get_alias(concrete)
+        abstract = self.get_alias(abstract)
+        self.__contextual_bindings.setdefault(concrete, {})[abstract] = implementation
 
     def make(self, key: str, parameters: Dict[str, Any] = {}) -> Any:
         assert isinstance(parameters, dict), "Parameters must be key, value"
@@ -234,8 +248,13 @@ class Container(ABC):
     def _find_in_contextual_bindings(
         self, abstract: str, parameters: List[Any] = []
     ) -> Optional[Any]:
-        binding = self.__bindings.get(abstract)
+        if self.__build_stack:
+            concrete = self.__build_stack[-1]
+            implementation = self.__contextual_bindings.get(concrete, {}).get(abstract)
+            if implementation is not None:
+                return self.__resolve(abstract, implementation, parameters)
 
+        binding = self.__bindings.get(abstract)
         if not binding:
             return None
 
@@ -261,26 +280,28 @@ class Container(ABC):
     def __resolve(
         self, abstract: str, binding_resolver: Any, parameters: Dict[str, Any] = {}
     ) -> Any:
-        args = getfullargspec(binding_resolver).args
+        self.__build_stack.append(abstract)
+        try:
+            args = getfullargspec(binding_resolver).args
+            dependencies = self.get_dependencies(binding_resolver)
 
-        dependencies = self.get_dependencies(binding_resolver)
+            if parameters:
+                if not all([arg in parameters for arg in args]):
+                    raise Exception("Invalid params passed, valid params are:", args)
 
-        if parameters:
-            if not all([arg in parameters for arg in args]):
-                raise Exception("Invalid params passed, valid params are:", args)
+                dependencies = list(parameters.values())
 
-            dependencies = list(parameters.values())
+            instance = Util.callback_with_dynamic_args(binding_resolver, dependencies)
 
-        instance = Util.callback_with_dynamic_args(binding_resolver, dependencies)
+            if instance:
+                self.__resolved[abstract] = True
+                return instance
 
-        if instance:
-            self.__resolved[abstract] = True
-
-            return instance
-        else:
             raise BindingResolutionException(
                 f"Binding Resolution Exception for key {abstract} and class {binding_resolver}"
             )
+        finally:
+            self.__build_stack.pop()
 
     def get_dependencies(self, class_info) -> List[Any]:
         args_info = getfullargspec(class_info)
