@@ -53,7 +53,7 @@ class ListCommands(Command):
             for key, item in group_commands:
                 if not item.hidden:
                     description_text = Fore.WHITE + item.description
-                    command_padding = padding * 2 if group_key else padding
+                    command_padding = padding
 
                     self.success(
                         " " * command_padding
