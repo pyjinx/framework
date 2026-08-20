@@ -16,8 +16,7 @@ class RouteCollection:
         for method in route.methods:
             method_wise_routes = self.routes.setdefault(method, {})
             method_wise_routes[route.uri] = route
-
-        self.all_routes[route.uri] = route
+        self.all_routes[(tuple(route.methods), route.uri)] = route
     def match(self, request: Request):
         method_routes = [
             route
@@ -27,14 +26,20 @@ class RouteCollection:
         if route:
             return route.bind(request)
 
-        path_route = self._match_against_routes(
-            request,
-            list(self.all_routes.values()),
-        )
-        if path_route:
+        path_routes = [
+            route
+            for route in self.all_routes.values()
+            if self.__run_match(request, route)
+        ]
+        if path_routes:
+            allowed_methods = [
+                method
+                for route in path_routes
+                for method in route.methods
+            ]
             raise MethodNotAllowedException(
                 request.get_url(),
-                path_route.methods,
+                allowed_methods,
             )
 
         raise RouteNotFoundException(
@@ -65,12 +70,13 @@ class RouteCollection:
 
         route_uri = route.uri.strip("/")
 
-        params = re.findall(r":(\w+)", route.uri)
+        matches = re.findall(r":(\w+)|\{(\w+)\}", route.uri)
+        params = [colon_name or brace_name for colon_name, brace_name in matches]
 
         if not params:
             return route if route_uri == request_path else None
 
-        pattern = re.sub(r":(\w+)", r"([^/]+)", route_uri)
+        pattern = re.sub(r":(\w+)|\{(\w+)\}", r"([^/]+)", route_uri)
 
         pattern = f"^{pattern}$"
 

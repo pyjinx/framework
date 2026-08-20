@@ -102,6 +102,43 @@ class Router:
 
     def option(self, uri, action):
         return self.add_route(["OPTION"], uri, action)
+    def resource(self, name, controller, options=None):
+        options = options or {}
+        actions = [
+            ("index", "GET", f"/{name}"),
+            ("create", "GET", f"/{name}/create"),
+            ("store", "POST", f"/{name}"),
+            ("show", "GET", f"/{name}/{{{self._singular(name)}}}"),
+            ("edit", "GET", f"/{name}/{{{self._singular(name)}}}/edit"),
+            ("update", "PUT|PATCH", f"/{name}/{{{self._singular(name)}}}"),
+            ("destroy", "DELETE", f"/{name}/{{{self._singular(name)}}}"),
+        ]
+        selected = options.get("only")
+        excluded = set(options.get("except", []))
+
+        for action, methods, uri in actions:
+            if selected is not None and action not in selected:
+                continue
+            if action in excluded:
+                continue
+            method_list = methods.split("|")
+            route = self.add_route(method_list, uri, [controller, action])
+            route.name(f"{name}.{action}")
+        return self
+
+    def api_resource(self, name, controller, options=None):
+        options = dict(options or {})
+        options["only"] = ["index", "show", "store", "update", "destroy"]
+        return self.resource(name, controller, options)
+
+    @staticmethod
+    def _singular(name):
+        value = name.rstrip("/").split("/")[-1]
+        if value.endswith("ies"):
+            return f"{value[:-3]}y"
+        if value.endswith("s") and not value.endswith("ss"):
+            return value[:-1]
+        return value
 
     def add_route(self, methods, uri, action):
         route = self._create_route(methods, uri, action)
