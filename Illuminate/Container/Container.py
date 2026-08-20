@@ -302,6 +302,18 @@ class Container(ABC):
 
     def has(self, abstract: str) -> bool:
         return self.bound(abstract)
+    def resolved(self, abstract: str) -> bool:
+        abstract = self.get_alias(abstract)
+        return abstract in self.__resolved or abstract in self.__instances
+
+    def is_shared(self, abstract: str) -> bool:
+        abstract = self.get_alias(abstract)
+
+        if abstract in self.__instances:
+            return True
+
+        binding = self.__bindings.get(abstract)
+        return bool(binding and binding["shared"])
 
     def forget_instance(self, abstract: str) -> None:
         abstract = self.get_alias(abstract)
