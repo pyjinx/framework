@@ -115,6 +115,9 @@ Source reference:
 28. [ ] **JSON schema / typed DTO schema** (`Illuminate\JsonSchema`)
     - Not implemented.
 
+29. [ ] **Testing stack** (`Illuminate\Testing`, `Foundation\Testing`)
+    - No dedicated test helpers, HTTP/API testing DSL, or fake utilities.
+
 30. [~] **Console command surface (`pyjinx` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
     - Framework currently includes command bootstrap, grouped list/help output, `serve`, and `make:controller` commands.
     - Missing: full `artisan`-style command suite (`make:*`, `migrate*`, queue commands, cache/config commands, tinker/about/up/down).
