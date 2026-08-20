@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from Illuminate.Support.Facades.DB import DB
 
@@ -59,7 +59,7 @@ class Model:
         return self
 
     def save(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         if self.timestamps:
             if not self._exists:
                 self._attributes.setdefault("created_at", now)
