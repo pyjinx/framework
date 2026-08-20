@@ -159,6 +159,90 @@ No feature is currently verified as 100% Laravel 13 parity.
 
 The audit used `references/laravel/`, `references/laravel-demo/`, and the Laravel framework source as authoritative references. `references/python-laravel/` remains historical context only and is not an implementation authority.
 
+## Detailed remaining implementation queue
+
+### Resume point
+
+Next implementation area: finish the Database / ORM foundation and continue the Eloquent port. The DB manager, SQLAlchemy/Alembic boundary, migrations, raw query builder, DB facade, initial User model, casts, and model events exist only as early slices; they are not full Laravel parity.
+
+### Database and Eloquent
+
+- [ ] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
+- [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
+- [ ] Complete database manager/resolver parity: connection switching, transactions, nested transactions, retries, query listeners, and normalized exceptions.
+- [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
+- [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.
+- [ ] Complete migration parity: Laravel-shaped files and paths, batches, status, rollback step/batch, reset, refresh, fresh, pretend, paths, seed integration, and failure recovery.
+- [ ] Complete Eloquent model metadata: table, connection, keys, UUID/ULID, incrementing, timestamps, date formats, guarded/fillable, hidden/visible, appends, and serialization.
+- [ ] Complete Eloquent attribute behavior: dirty tracking, original values, attribute accessors/mutators, casts, custom casts, encrypted casts, hashed casts, JSON casts, date casts, and mass-assignment exceptions.
+- [ ] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
+- [ ] Complete Eloquent model events: boot/booted, retrieved, saving/saved, creating/created, updating/updated, deleting/deleted, restoring/restored, observers, dispatch suppression, and event ordering.
+- [ ] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
+- [ ] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
+- [ ] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
+
+### Authentication, sessions, and security
+
+- [ ] Inventory Laravel Auth, Session, Cookie, Encryption, Hashing, Passwords, and Sanctum APIs class by class.
+- [ ] Implement session stores, drivers, session middleware, lifecycle cleanup, regeneration, invalidation, and flash data.
+- [ ] Implement cookie creation, signing/encryption, SameSite/Secure/HttpOnly behavior, queues, and response integration.
+- [ ] Implement CSRF token generation, validation middleware, rotation, exemptions, and error behavior.
+- [ ] Implement web session guard, user providers, login/logout, remember-me, user resolution, and guest/auth middleware.
+- [ ] Implement Sanctum-style SPA cookie authentication and bearer personal access tokens; do not invent JWT as the Laravel default.
+- [ ] Implement password hashing, reset brokers, token expiry, throttling, notifications, and authentication failure semantics.
+
+### Routing and HTTP
+
+- [ ] Complete implicit route model binding after ORM/provider behavior is available.
+- [ ] Complete nested resource and singleton resource conventions, parameter naming, scoped bindings, and missing-model behavior.
+- [ ] Complete route URL generation: signed URLs, temporary signed URLs, asset URLs, domains, schemes, defaults, encoded parameters, and missing parameters.
+- [ ] Complete route caching: cache invalidation, deterministic artifacts, stale-cache behavior, closure restrictions, and cache command parity.
+- [ ] Complete HTTP request/response parity: headers, cookies, files, sessions, body parsing, content negotiation, status codes, streaming, redirects, and response sending.
+- [ ] Complete ASGI and WSGI adapters with one shared request/response contract and explicit sync/async lifecycle rules.
+- [ ] Complete middleware aliases, groups, priority, exclusions, parameterized middleware, short-circuit behavior, and exception handling.
+- [ ] Complete validation rules, messages, custom attributes, form requests, authorization hooks, preparation, and validation response parity.
+
+### Configuration, foundation, and support
+
+- [ ] Complete application builder parity: routing callbacks, middleware callbacks, exception callbacks, command loading, provider loading, and runtime separation.
+- [ ] Complete environment/config loading, caching, clearing, merge behavior, typed values, missing keys, and config command behavior.
+- [ ] Complete service provider registration/boot/deferred provider/rebinding behavior and package discovery boundaries.
+- [ ] Complete events/listeners/subscribers, wildcard listeners, queued behavior boundaries, and event dispatch error semantics.
+- [ ] Complete container attributes, method bindings, scoped lifecycle integration, extenders, tags, contextual edge cases, and all resolution errors.
+- [ ] Complete support utilities, collections, fluent helpers, facades, macros, string/array helpers, and PHP-to-Python behavior mappings.
+- [ ] Complete logging channels, stacks, handlers, context, processors, formatting, levels, exception logging, and redaction.
+- [ ] Complete view loading, namespaces, composers/creators, shared data, escaping, environment behavior, and response integration.
+
+### Console and operational features
+
+- [ ] Inventory every Laravel Artisan command and option from Laravel 13.
+- [ ] Complete `make:*` commands and generator stubs, overwrite policy, namespaces, options, output, and error behavior.
+- [ ] Complete migration, database, cache, config, route, view, event, queue, auth, and storage command groups.
+- [ ] Complete command input/output semantics, ANSI styles, help, quiet/silent modes, verbosity, interaction, exit codes, and command lifecycle.
+- [ ] Complete scheduling, process execution, task mutexes, interrupts, retries, and worker lifecycle.
+
+### Remaining Laravel services
+
+- [ ] Implement cache stores, repositories, locks, tagging, rate limiting, serialization, and cache commands.
+- [ ] Implement queues, connectors, jobs, workers, retries, failed jobs, middleware, batches, and queue commands.
+- [ ] Implement mail, notifications, channels, templates, transports, fakes, and delivery failure behavior.
+- [ ] Implement broadcasting, broadcasters, channel authorization, events, and queue integration.
+- [ ] Implement filesystem disks, adapters, visibility, temporary URLs, streams, and storage commands.
+- [ ] Implement Redis connections, commands, pipelines, locks, pub/sub, and configuration.
+- [ ] Implement translation/localization loaders, pluralization, fallback locales, JSON translations, and missing-key behavior.
+- [ ] Implement pagination, API resources, JSON:API resources, links, metadata, and serialization.
+- [ ] Implement HTTP client requests, pending requests, retries, middleware, pools, fakes, responses, and exceptions.
+- [ ] Implement image, concurrency, process, cloud/admin/testing extension, and remaining foundation namespaces.
+
+### Contracts and acceptance
+
+- [ ] Expand every `Illuminate.Contracts.*` namespace from the Laravel 13 API index.
+- [ ] Add contract tests for every promoted public method and observable error.
+- [ ] Add integration tests for every lifecycle boundary and cross-component interaction.
+- [ ] Add compatibility tests for each supported database driver and declared dependency version.
+- [ ] Record every intentional PHP-to-Python deviation with rationale, owner, and removal/review condition.
+- [ ] Do not mark any checklist item complete until its full mapped surface has evidence.
+
 ---
 
 ## Action policy
