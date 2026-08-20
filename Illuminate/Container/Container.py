@@ -32,6 +32,9 @@ class Container(ABC):
         self.__abstract_aliases: Dict[str, list] = {}
         self.__contextual_bindings: Dict[Any, Dict[Any, Any]] = {}
         self.__build_stack: list = []
+        self.__extenders: Dict[Any, list] = {}
+        self.__tags: Dict[Any, list] = {}
+        self.__rebound_callbacks: Dict[Any, list] = {}
         self._global_before_resolving_callbacks: list = []
         self._before_resolving_callbacks: dict = {}
         self._global_resolving_callbacks: list = []
@@ -198,7 +201,13 @@ class Container(ABC):
 
     def instance(self, abstract: str, instance: Any) -> Any:
         abstract = self.get_alias(abstract)
-        return self.__make_instance(abstract, instance)
+        was_bound = self.bound(abstract)
+        result = self.__make_instance(abstract, instance)
+
+        if was_bound:
+            self._rebound(abstract)
+
+        return result
 
     def alias(self, abstract: str, alias: str) -> None:
         if abstract == alias:
@@ -232,6 +241,47 @@ class Container(ABC):
     def get_resolved(self) -> Dict[str, bool]:
         return self.__resolved
 
+    def extend(self, abstract, extender):
+        abstract = self.get_alias(abstract)
+
+        if abstract in self.__instances:
+            self.__instances[abstract] = extender(
+                self.__instances[abstract],
+                self,
+            )
+            self._rebound(abstract)
+            return
+
+        self.__extenders.setdefault(abstract, []).append(extender)
+
+        if self.resolved(abstract):
+            self._rebound(abstract)
+
+    def tag(self, abstracts, *tags):
+        for tag in tags:
+            self.__tags.setdefault(tag, []).extend(
+                abstract for abstract in (abstracts if isinstance(abstracts, list) else [abstracts])
+            )
+
+    def tagged(self, tag):
+        return [self.make(abstract) for abstract in self.__tags.get(tag, [])]
+
+    def rebinding(self, abstract, callback):
+        abstract = self.get_alias(abstract)
+        self.__rebound_callbacks.setdefault(abstract, []).append(callback)
+
+        if self.bound(abstract):
+            return self.make(abstract)
+
+    def _rebound(self, abstract):
+        callbacks = self.__rebound_callbacks.get(abstract, [])
+        if not callbacks:
+            return
+
+        instance = self.make(abstract)
+        for callback in callbacks:
+            callback(self, instance)
+
     def __bind(self, abstract: str, binding_resolver: Callable, shared: bool) -> None:
         abstract = self.get_alias(abstract)
 
@@ -240,6 +290,9 @@ class Container(ABC):
             "binding_resolver": binding_resolver,
             "shared": shared,
         }
+
+        if self.resolved(abstract):
+            self._rebound(abstract)
 
     def __make_instance(self, abstract: str, instance: Any) -> Any:
         self.__instances[abstract] = instance
@@ -286,6 +339,8 @@ class Container(ABC):
             dependencies = self.get_dependencies(binding_resolver, parameters)
 
             instance = Util.callback_with_dynamic_args(binding_resolver, dependencies)
+            for extender in self.__extenders.get(abstract, []):
+                instance = extender(instance, self)
 
             if instance:
                 self.__resolved[abstract] = True
