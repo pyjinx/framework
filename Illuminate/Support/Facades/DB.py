@@ -18,5 +18,4 @@ class DB(metaclass=Facade):
             cls,
             table_name: str,
             connection_name: str | None = None,
-        ) -> "QueryBuilder":
-            ...
+        ) -> "QueryBuilder": ...

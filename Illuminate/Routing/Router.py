@@ -345,6 +345,18 @@ class Router:
         except Exception as e:
             raise e
 
+    def name(self, name: str) -> Route:
+        if not self.route_collection.all_routes:
+            raise Exception("No route is available for naming.")
+        last_route = list(self.route_collection.all_routes.values())[-1]
+        return last_route.name(name)
+
+    def middleware(self, middleware=None) -> Route:
+        if not self.route_collection.all_routes:
+            raise Exception("No route is available for middleware.")
+        last_route = list(self.route_collection.all_routes.values())[-1]
+        return last_route.middleware(middleware)
+
     def __getattr__(cls, attribute, *args, **kwargs):
         if not cls.route_collection.all_routes:
             return
