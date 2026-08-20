@@ -1,6 +1,7 @@
 import re
 
 from typing import List, Optional
+from Illuminate.Exceptions.MethodNotAllowedException import MethodNotAllowedException
 from Illuminate.Exceptions.RouteNotFoundException import RouteNotFoundException
 from Illuminate.Routing.Route import Route
 from Illuminate.Contracts.Http.Request import Request
@@ -17,13 +18,28 @@ class RouteCollection:
             method_wise_routes[route.uri] = route
 
         self.all_routes[route.uri] = route
-
     def match(self, request: Request):
-        routes = [route for route in self.routes.get(request.get_method(), {}).values()]
+        method_routes = [
+            route
+            for route in self.routes.get(request.get_method(), {}).values()
+        ]
+        route = self._match_against_routes(request, method_routes)
+        if route:
+            return route.bind(request)
 
-        route = self._match_against_routes(request, routes)
+        path_route = self._match_against_routes(
+            request,
+            list(self.all_routes.values()),
+        )
+        if path_route:
+            raise MethodNotAllowedException(
+                request.get_url(),
+                path_route.methods,
+            )
 
-        return self._handle_matched_route(request, route)
+        raise RouteNotFoundException(
+            f"The route {request.get_url()} could not be found."
+        )
 
     def _match_against_routes(self, request: Request, routes: List[Route]):
         matched_routes = []
