@@ -35,6 +35,7 @@ class Container(ABC):
         self.__extenders: Dict[Any, list] = {}
         self.__tags: Dict[Any, list] = {}
         self.__rebound_callbacks: Dict[Any, list] = {}
+        self.__scoped_instances: list = []
         self._global_before_resolving_callbacks: list = []
         self._before_resolving_callbacks: dict = {}
         self._global_resolving_callbacks: list = []
@@ -47,6 +48,15 @@ class Container(ABC):
 
     def singleton(self, key: str, binding_resolver: Callable) -> None:
         self.__bind(key, binding_resolver, True)
+    def scoped(self, key: str, binding_resolver: Callable) -> None:
+        canonical = self.get_alias(key)
+        if canonical not in self.__scoped_instances:
+            self.__scoped_instances.append(canonical)
+        self.singleton(canonical, binding_resolver)
+
+    def scoped_if(self, key: str, binding_resolver: Callable) -> None:
+        if not self.bound(key):
+            self.scoped(key, binding_resolver)
 
     def when(self, concrete):
         from Illuminate.Container.ContextualBindingBuilder import (
@@ -419,6 +429,10 @@ class Container(ABC):
 
         binding = self.__bindings.get(abstract)
         return bool(binding and binding["shared"])
+
+    def forget_scoped_instances(self) -> None:
+        for abstract in self.__scoped_instances:
+            self.__instances.pop(abstract, None)
 
     def forget_instance(self, abstract: str) -> None:
         abstract = self.get_alias(abstract)
