@@ -332,6 +332,9 @@ class Container(ABC):
             try:
                 dependencies.append(self.make(annotation))
             except (TypeError, BindingResolutionException) as error:
+                if argument in defaults:
+                    dependencies.append(defaults[argument])
+                    continue
                 raise BindingResolutionException(
                     f"Unresolvable dependency [{annotation}] for {class_info}"
                 ) from error
