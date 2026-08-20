@@ -173,3 +173,5 @@ The audit used `references/laravel/`, `references/laravel-demo/`, and the Larave
 - Differences from Laravel are allowed only for unavoidable PHP-to-Python runtime or language constraints; each difference requires a written rationale and focused evidence.
 - When Laravel delegates a subsystem to Symfony or another authoritative dependency, PyJinx must prefer one equivalent Python source of truth rather than maintain competing implementations.
 - Any adapter must be thin, explicit, and limited to the PHP-to-Python boundary; dependency behavior and framework behavior must not silently diverge.
+- Dependency selection must assess feature coverage, extensibility, maintenance and release health, compatibility, performance, and replacement cost before adoption.
+- An incomplete or stagnant dependency must not block parity progress; when no suitable maintained equivalent exists, PyJinx must own the subsystem behind an explicit replaceable boundary with contract tests and a documented exit path.
