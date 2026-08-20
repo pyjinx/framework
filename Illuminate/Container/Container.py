@@ -412,6 +412,8 @@ class Container(ABC):
 
             try:
                 dependencies.append(self.make(annotation))
+            except CircularDependencyException:
+                raise
             except (TypeError, BindingResolutionException) as error:
                 if argument in defaults:
                     dependencies.append(defaults[argument])
