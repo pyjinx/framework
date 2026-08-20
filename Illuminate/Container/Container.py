@@ -362,8 +362,18 @@ class Container(ABC):
 
     def _invoke_binding(self, binding_resolver, parameters):
         if inspect.isclass(binding_resolver):
+            if inspect.isabstract(binding_resolver):
+                raise BindingResolutionException(
+                    f"Target [{self._display_abstract(binding_resolver)}] is not instantiable."
+                )
+
             dependencies = self.get_dependencies(binding_resolver, parameters)
             return Util.callback_with_dynamic_args(binding_resolver, dependencies)
+
+        if not callable(binding_resolver):
+            raise BindingResolutionException(
+                f"Target [{self._display_abstract(binding_resolver)}] does not exist."
+            )
 
         args = getfullargspec(binding_resolver).args
         if not args:
