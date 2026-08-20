@@ -5,12 +5,15 @@ Source reference:
 
 ## Reference and snapshot metadata
 
-- **Last reviewed:** 2026-08-19
-- **Feature checklist:** 11/38 implemented, 4/38 partial, 23/38 not started
+- **Last reviewed:** 2026-08-20
+- **Feature checklist:** 11/38 implementation-present, 4/38 partial, 23/38 not started
+- **Exact parity audit:** 0/38 verified exact; 15/38 partial; 23/38 not started
+- **Audit method:** compare the local Laravel 13 reference projects and framework source, inspect the Laravel 13.x API namespace index, and run focused PyJinx behavior checks where a runtime exists.
+- **Audit conclusion:** every implementation-present area remains provisional; no area currently has evidence for 100% Laravel 13 parity.
 - **Quality-risk categories:** 3 (performance, code smell, memory leak)
-  - Performance issues: 0 identified (pending baseline audit)
-  - Code smells: 0 identified (pending baseline audit)
-  - Memory leak risks: 0 identified (pending baseline audit)
+-  - Performance issues: 0 identified (pending baseline audit)
+-  - Code smells: 0 identified (pending baseline audit)
+-  - Memory leak risks: 0 identified (pending baseline audit)
 - **Source of truth:** This file is the tracked feature coverage backlog used by roadmap and planning updates.
 - **Provisional status:** This backlog reflects a starting PoC baseline. Marking an area `[x]` or `[~]` is not a release completion signal; it only indicates current implementation presence that must be revalidated.
 
@@ -112,11 +115,8 @@ Source reference:
 28. [ ] **JSON schema / typed DTO schema** (`Illuminate\JsonSchema`)
     - Not implemented.
 
-29. [ ] **Testing stack** (`Illuminate\Testing`, `Foundation\Testing`)
-    - No dedicated test helpers, HTTP/API testing DSL, or fake utilities.
-
-30. [ ] **Console command surface (`pyjinx` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
-    - Framework currently includes command bootstrap + `list`/`help` command infrastructure.
+30. [~] **Console command surface (`pyjinx` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
+    - Framework currently includes command bootstrap, grouped list/help output, `serve`, and `make:controller` commands.
     - Missing: full `artisan`-style command suite (`make:*`, `migrate*`, queue commands, cache/config commands, tinker/about/up/down).
 
 31. [ ] **Scheduling / process orchestration** (`Illuminate\Console\Scheduling`, `Illuminate\Process`)
