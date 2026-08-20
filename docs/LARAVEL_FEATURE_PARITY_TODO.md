@@ -115,7 +115,7 @@ Source reference:
 29. [ ] **Testing stack** (`Illuminate\Testing`, `Foundation\Testing`)
     - No dedicated test helpers, HTTP/API testing DSL, or fake utilities.
 
-30. [ ] **Console command surface (`pilot` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
+30. [ ] **Console command surface (`pyjinx` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
     - Framework currently includes command bootstrap + `list`/`help` command infrastructure.
     - Missing: full `artisan`-style command suite (`make:*`, `migrate*`, queue commands, cache/config commands, tinker/about/up/down).
 

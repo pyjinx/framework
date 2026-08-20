@@ -71,7 +71,7 @@ def wsgi_app(environ, start_response):
 
 ## 4) CLI entrypoint
 
-The intended CLI command is `pilot` (or `python -m pyjinx` fallback). See [CLI docs](./cli.md).
+The intended CLI command is `pyjinx` (or `python -m pyjinx` fallback). See [CLI docs](./cli.md).
 
 ## 5) Starter workflow for first success path
 

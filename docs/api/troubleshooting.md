@@ -30,7 +30,7 @@ Checklist:
 ## CLI command failures
 
 - Run with `--help` first to verify command discovery.
-- Use `pilot about` for runtime summary.
+- Use `pyjinx about` for runtime summary.
 - For `make:*` commands, inspect overwrite/dry-run semantics before writing files.
 
 ## Container binding errors

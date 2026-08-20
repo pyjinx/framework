@@ -1,65 +1,65 @@
-# CLI API (`pilot`)
+# CLI API (`pyjinx`)
 
 PyJinx CLI uses a single command surface with Laravel-style grouped commands.
 
 ## Global behavior
 
-- Command root: `pilot`
-- Help: `pilot --help`
-- Version: `pilot --version`
-- Quiet mode: `pilot --quiet`
+- Command root: `pyjinx`
+- Help: `pyjinx --help`
+- Version: `pyjinx --version`
+- Quiet mode: `pyjinx --quiet`
 
 ## Command groups and examples
 
 ### App lifecycle
 
 ```bash
-pilot serve             # run application server (ASGI-first target)
-pilot up
-pilot down
-pilot tinker
-pilot about
+pyjinx serve             # run application server (ASGI-first target)
+pyjinx up
+pyjinx down
+pyjinx tinker
+pyjinx about
 ```
 
 ### Scaffolding
 
 ```bash
-pilot make:model User
-pilot make:controller AuthController
-pilot make:middleware VerifyCsrf
-pilot make:command PurgeCache
-pilot make:migration create_users_table
-pilot make:request CreateUserRequest
-pilot make:factory UserFactory
+pyjinx make:model User
+pyjinx make:controller AuthController
+pyjinx make:middleware VerifyCsrf
+pyjinx make:command PurgeCache
+pyjinx make:migration create_users_table
+pyjinx make:request CreateUserRequest
+pyjinx make:factory UserFactory
 ```
 
 ### Routing
 
 ```bash
-pilot route:list
+pyjinx route:list
 ```
 
 ### Project initialization
 
 ```bash
-pilot new my-project
+pyjinx new my-project
 ```
 
 ### Database commands
 
 ```bash
-pilot migrate
-pilot migrate:status
-pilot migrate:rollback
-pilot db:seed
+pyjinx migrate
+pyjinx migrate:status
+pyjinx migrate:rollback
+pyjinx db:seed
 ```
 
 ### Queue commands
 
 ```bash
-pilot queue:work
-pilot queue:retry
-pilot queue:failed
+pyjinx queue:work
+pyjinx queue:retry
+pyjinx queue:failed
 ```
 
 ## Console kernel behavior

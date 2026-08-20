@@ -36,7 +36,7 @@ The PRD formalizes the target state and controls scope so the framework becomes 
    - WSGI support must remain available as compatibility adapter only, not the core path.
 
 3. **CLI parity** (Laravel-like `artisan` style)
-   - A `pilot` command entrypoint with Laravel-like grouped commands for local dev, scaffolding, database operations, queue/admin tasks.
+   - A `pyjinx` command entrypoint with Laravel-like grouped commands for local dev, scaffolding, database operations, queue/admin tasks.
 
 4. **Split architecture**
    - `pyjinx/framework`: reusable framework package.
@@ -161,20 +161,20 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 ### 5.8 CLI and scaffolding parity (Laravel-style)
 
 - **FR-19 CLI entrypoint**
-  - Global command is `pilot` (and local `python -m pyjinx` fallback).
+  - Global command is `pyjinx` (and local `python -m pyjinx` fallback).
   - Root command groups follow `make:*`, `queue:*`, `migrate:*`, `config:*`, `route:*` conventions.
 
 - **FR-20 Required command surface for v1.0**
 
   | Category | Laravel analog | PyJinx minimum command | Contract |
   |---|---|---|---|
-  | App lifecycle | `serve`, `up`, `down` | `pilot serve`, `pilot up`, `pilot down` | Start/stop dev runtime and optional maintenance mode |
-  | Scaffold | `make:model`, `make:controller`, `make:migration`, `make:middleware`, `make:command` | `pilot make:model`, `pilot make:controller`, `pilot make:migration`, `pilot make:middleware`, `pilot make:command` | Files generated from deterministic stubs + overwrite policy |
-  | Routing | `route:list` | `pilot route:list` | Deterministic route discovery output |
-  | Database | `migrate`, `migrate:status`, `migrate:rollback`, `db:seed` | `pilot migrate`, `pilot migrate:status`, `pilot migrate:rollback`, `pilot db:seed` | Alembic-backed execution + exit status contracts |
-  | Queue | `queue:work`, `queue:retry`, `queue:failed` | `pilot queue:work`, `pilot queue:retry`, `pilot queue:failed` | Queue contract execution and monitoring hooks |
-  | Cache/config | `config:cache`, `config:clear`, `cache:clear` | `pilot config:cache`, `pilot config:clear`, `pilot cache:clear` | Idempotent file cache with safe invalidation |
-  | Diagnostics | `tinker`, `route:list`, `about` | `pilot tinker`, `pilot about` | Safe shell/repl and summary commands |
+  | App lifecycle | `serve`, `up`, `down` | `pyjinx serve`, `pyjinx up`, `pyjinx down` | Start/stop dev runtime and optional maintenance mode |
+  | Scaffold | `make:model`, `make:controller`, `make:migration`, `make:middleware`, `make:command` | `pyjinx make:model`, `pyjinx make:controller`, `pyjinx make:migration`, `pyjinx make:middleware`, `pyjinx make:command` | Files generated from deterministic stubs + overwrite policy |
+  | Routing | `route:list` | `pyjinx route:list` | Deterministic route discovery output |
+  | Database | `migrate`, `migrate:status`, `migrate:rollback`, `db:seed` | `pyjinx migrate`, `pyjinx migrate:status`, `pyjinx migrate:rollback`, `pyjinx db:seed` | Alembic-backed execution + exit status contracts |
+  | Queue | `queue:work`, `queue:retry`, `queue:failed` | `pyjinx queue:work`, `pyjinx queue:retry`, `pyjinx queue:failed` | Queue contract execution and monitoring hooks |
+  | Cache/config | `config:cache`, `config:clear`, `cache:clear` | `pyjinx config:cache`, `pyjinx config:clear`, `pyjinx cache:clear` | Idempotent file cache with safe invalidation |
+  | Diagnostics | `tinker`, `route:list`, `about` | `pyjinx tinker`, `pyjinx about` | Safe shell/repl and summary commands |
 
 - **FR-21 CLI behavior requirements**
   - `--help`, `--quiet`, `--version` supported consistently.
@@ -255,7 +255,7 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 ## 9) Acceptance gates (v1.0 candidate)
 
-1. Run `pilot new` then scaffold app bootstraps.
+1. Run `pyjinx new` then scaffold app bootstraps.
 2. Define and serve at least one route via ASGI.
 3. Validate payload with rule DSL from request class.
 4. Run migration create + migrate + rollback on starter db.

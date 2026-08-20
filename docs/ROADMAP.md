@@ -17,7 +17,7 @@ Version bands are placeholders and should be adjusted against release policy.
 
 - **M0** — Current baseline: core framework primitives exist but incomplete for production.
 - **M1** — Framework core stabilized (ASGI-first, typed lifecycle contracts, robust routing/middleware).
-- **M2** — CLI parity baseline (`pilot` command, generators, `serve`, `migrate`, `make:*`, `route:list`).
+- **M2** — CLI parity baseline (`pyjinx` command, generators, `serve`, `migrate`, `make:*`, `route:list`).
 - **M3** — Starter scaffold (`pyjinx/pyjinx`) delivered with one vertical slice.
 - **M4** — Queue + observability ecosystem and optional facade tightening.
 - **M5** — Hardened public release with migration docs and release train gates.
@@ -97,14 +97,14 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Scope
 
 - Add executable entrypoint:
-  - `pilot` (global or local project command).
+  - `pyjinx` (global or local project command).
   - stable `--help`, `--version`, global options.
 - Command groups:
-  - `pilot new`, `pilot serve`, `pilot tinker`, `pilot about`.
-  - `pilot make:model|controller|middleware|command|migration|request|factory`.
-  - `pilot route:list`.
-  - `pilot migrate|migrate:status|migrate:rollback|db:seed`.
-  - `pilot queue:work|queue:retry|queue:failed`.
+  - `pyjinx new`, `pyjinx serve`, `pyjinx tinker`, `pyjinx about`.
+  - `pyjinx make:model|controller|middleware|command|migration|request|factory`.
+  - `pyjinx route:list`.
+  - `pyjinx migrate|migrate:status|migrate:rollback|db:seed`.
+  - `pyjinx queue:work|queue:retry|queue:failed`.
 - Stubs and generation:
   - deterministic stubs, overwrite policy, dry-run mode, and namespace/path inference.
 - Command test harness with snapshot/integration tests.
@@ -117,10 +117,10 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ### Acceptance
 
-- `pilot --help` enumerates available commands and groups.
-- `pilot serve` launches ASGI app with clear startup/stop behavior.
-- `pilot make:controller` writes deterministic skeleton.
-- `pilot route:list` reports route table from loaded bootstrap routes.
+- `pyjinx --help` enumerates available commands and groups.
+- `pyjinx serve` launches ASGI app with clear startup/stop behavior.
+- `pyjinx make:controller` writes deterministic skeleton.
+- `pyjinx route:list` reports route table from loaded bootstrap routes.
 
 ---
 
@@ -134,7 +134,7 @@ Version bands are placeholders and should be adjusted against release policy.
   - `app/`, `routes/`, `config/`, `resources/views/`, `database/migrations/`, `tests/`, `.env.example`.
 - Add `pyproject.toml` dependency on framework package semver-compatible.
 - Include first-class boot entrypoints:
-  - `pilot serve` delegating to ASGI app.
+  - `pyjinx serve` delegating to ASGI app.
 - Add baseline modules:
   - sample controller,
   - sample route definitions,
@@ -153,7 +153,7 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Acceptance
 
 - New app can be created from framework command and boot without manual edits.
-- `pilot new` + `pilot serve` and one protected route test pass.
+- `pyjinx new` + `pyjinx serve` and one protected route test pass.
 
 ---
 

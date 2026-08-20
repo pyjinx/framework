@@ -1,10 +1,10 @@
-# PyJinx CLI Reference (`pilot`)
+# PyJinx CLI Reference (`pyjinx`)
 
 This document is the concrete user-facing documentation for the CLI parity surface required by the framework roadmap and PRD.
 
 ## CLI entrypoint
 
-- Primary command: `pilot`
+- Primary command: `pyjinx`
 - Optional local fallback: `python -m pyjinx`
 - Global options:
   - `--help` / `-h` Show command help
@@ -17,52 +17,52 @@ This document is the concrete user-facing documentation for the CLI parity surfa
 
 | Command | Purpose | Exit code | Notes |
 |---|---|---:|---|
-| `pilot serve` | Start the app process | `0` on successful boot; non-zero on bootstrap/startup error | ASGI-first runtime entry |
-| `pilot up` | Mark app online | `0` | Maintenance mode control |
-| `pilot down` | Mark app maintenance/disabled | `0` | Maintenance response behavior defined in router/config |
-| `pilot tinker` | Interactive shell-like helper | `0` | Safe read-only helpers by default |
-| `pilot about` | Show environment/runtime summary | `0` | Useful for diagnostics |
+| `pyjinx serve` | Start the app process | `0` on successful boot; non-zero on bootstrap/startup error | ASGI-first runtime entry |
+| `pyjinx up` | Mark app online | `0` | Maintenance mode control |
+| `pyjinx down` | Mark app maintenance/disabled | `0` | Maintenance response behavior defined in router/config |
+| `pyjinx tinker` | Interactive shell-like helper | `0` | Safe read-only helpers by default |
+| `pyjinx about` | Show environment/runtime summary | `0` | Useful for diagnostics |
 
 ### Scaffolding (`make:*`)
 
 | Command | Purpose |
 |---|---|
-| `pilot make:model <Name>` | Generate model scaffold |
-| `pilot make:controller <Name>` | Generate controller scaffold |
-| `pilot make:middleware <Name>` | Generate middleware class |
-| `pilot make:command <Name>` | Generate custom command |
-| `pilot make:migration <name>` | Generate migration stub |
-| `pilot make:request <Name>` | Generate request validation class |
-| `pilot make:factory <Name>` | Generate factory stub |
+| `pyjinx make:model <Name>` | Generate model scaffold |
+| `pyjinx make:controller <Name>` | Generate controller scaffold |
+| `pyjinx make:middleware <Name>` | Generate middleware class |
+| `pyjinx make:command <Name>` | Generate custom command |
+| `pyjinx make:migration <name>` | Generate migration stub |
+| `pyjinx make:request <Name>` | Generate request validation class |
+| `pyjinx make:factory <Name>` | Generate factory stub |
 
 ### Routing and routes inspection
 
 | Command | Purpose |
 |---|---|
-| `pilot route:list` | Print registered routes |
+| `pyjinx route:list` | Print registered routes |
 
 ### Project bootstrap
 
 | Command | Purpose |
 |---|---|
-| `pilot new <project>` | Create a new starter application skeleton |
+| `pyjinx new <project>` | Create a new starter application skeleton |
 
 ### Database / migration
 
 | Command | Purpose |
 |---|---|
-| `pilot migrate` | Run pending migrations |
-| `pilot migrate:status` | Show migration state |
-| `pilot migrate:rollback` | Roll back last migration batch |
-| `pilot db:seed` | Run seed data commands |
+| `pyjinx migrate` | Run pending migrations |
+| `pyjinx migrate:status` | Show migration state |
+| `pyjinx migrate:rollback` | Roll back last migration batch |
+| `pyjinx db:seed` | Run seed data commands |
 
 ### Queue and worker (future adjacent package support)
 
 | Command | Purpose |
 |---|---|
-| `pilot queue:work` | Process queue jobs |
-| `pilot queue:retry` | Retry failed jobs |
-| `pilot queue:failed` | Inspect failed jobs |
+| `pyjinx queue:work` | Process queue jobs |
+| `pyjinx queue:retry` | Retry failed jobs |
+| `pyjinx queue:failed` | Inspect failed jobs |
 
 ## Generator behavior contract
 

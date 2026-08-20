@@ -128,7 +128,7 @@ Use short, shippable milestones:
 4. Preserve existing minimal list/help semantics while migrating internals.
 
 **Acceptance:**
-- Running `pilot --help` prints consistent root help with command groups.
+- Running `pyjinx --help` prints consistent root help with command groups.
 - `list`/`help` behavior remains backward-compatible.
 
 ### 2.2 Command set for v1.0
@@ -144,20 +144,20 @@ Use short, shippable milestones:
 
 **Tasks:**
 1. Implement command parser and routing for:
-   - `pilot new`
-   - `pilot serve`
-   - `pilot make:model`
-   - `pilot make:controller`
-   - `pilot make:middleware`
-   - `pilot make:command`
-   - `pilot route:list`
-   - `pilot migrate`
-   - `pilot migrate:status`
-   - `pilot migrate:rollback`
-   - `pilot db:seed`
-   - `pilot queue:work`
-   - `pilot queue:retry`
-   - `pilot queue:failed`
+   - `pyjinx new`
+   - `pyjinx serve`
+   - `pyjinx make:model`
+   - `pyjinx make:controller`
+   - `pyjinx make:middleware`
+   - `pyjinx make:command`
+   - `pyjinx route:list`
+   - `pyjinx migrate`
+   - `pyjinx migrate:status`
+   - `pyjinx migrate:rollback`
+   - `pyjinx db:seed`
+   - `pyjinx queue:work`
+   - `pyjinx queue:retry`
+   - `pyjinx queue:failed`
 2. Add stub loading + overwrite/collision guard.
 3. Provide command metadata for help text and grouped listing.
 4. Add command integration tests (smoke + golden for help output).
@@ -199,7 +199,7 @@ Use short, shippable milestones:
 5. Add test suite scaffold with at least one functional flow.
 
 **Acceptance:**
-- `pilot new` produces a runnable skeleton that boots and serves a smoke route.
+- `pyjinx new` produces a runnable skeleton that boots and serves a smoke route.
 
 ### 3.2 Vertical slice contract in starter
 
@@ -292,12 +292,12 @@ Use short, shippable milestones:
 
 ### Functional
 - Serve one request -> middleware -> controller -> JSON response.
-- `pilot` command operations.
+- `pyjinx` command operations.
 - Bootstrap and startup lifecycle in both HTTP and CLI entry paths.
 
 ### Smoke checks for each release candidate
 - Fresh project scaffold.
-- `pilot serve` + route/list.
+- `pyjinx serve` + route/list.
 - CLI command list/help.
 - Simple migration + rollback.
 
@@ -327,7 +327,7 @@ Use short, shippable milestones:
 
 - v1.0 feature-complete against PRD sections 5.1–5.9.
 - Starter vertical slice passing functional test.
-- `pilot` command commandset available and documented.
+- `pyjinx` command commandset available and documented.
 - ASGI request lifecycle is default path.
 - Release artifacts and changelog published.
 
@@ -356,7 +356,7 @@ Use short, shippable milestones:
 ## Immediate next tasks (next 2 weeks)
 1. Finalize PRD/ROADMAP alignment with one explicit namespace decision (`pyjinx` vs `Illuminate` compatibility shim).
 2. Add minimal ASGI adapter wiring and bootstrap state contract.
-3. Add `pilot` command core and command registry.
+3. Add `pyjinx` command core and command registry.
 4. Draft first generator templates for `make:model` and `make:controller`.
 5. Add baseline functional test for route->controller->validated response.
 
