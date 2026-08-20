@@ -143,6 +143,19 @@ Source reference:
 38. [ ] **Contract namespaces beyond current baseline** (`Illuminate\Contracts\*`)
     - Only partial contracts exist for Foundation, Container, Http, Support.
 
+## Revalidation result — 2026-08-20
+
+No feature is currently verified as 100% Laravel 13 parity.
+
+| Items | Revalidation result | Evidence |
+|---|---|---|
+| 1–14 | Partial implementation; not exact parity | Python source namespaces exist, but lifecycle, error, middleware, adapter, provider, validation, and auth behavior differ materially from the Laravel framework reference. |
+| 15–29 | Not started or no equivalent subsystem | The corresponding Laravel namespaces are absent from `Illuminate/`; focused namespace inventory confirmed no Database, Queue, Cache, Session, Cookie, Mail, Notifications, Broadcasting, Filesystem, Redis, Hashing, Encryption, Translation, Pagination, JsonSchema, or Testing implementation. |
+| 30 | Partial implementation; not exact parity | `pyjinx`, `serve`, grouped command listing, and `make:controller` exist; the broader Artisan command surface is absent. |
+| 31–38 | Not started or incomplete contract surface | Scheduling, process, HTTP client, image, JSON API resources, concurrency, extension hooks, password hardening, and most Laravel contracts are absent or incomplete. |
+
+The audit used `references/laravel/`, `references/laravel-demo/`, and the Laravel framework source as authoritative references. `references/python-laravel/` remains historical context only and is not an implementation authority.
+
 ---
 
 ## Action policy
