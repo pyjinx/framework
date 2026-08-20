@@ -171,3 +171,5 @@ The audit used `references/laravel/`, `references/laravel-demo/`, and the Larave
 - For any item moved to `[x]`, file an evidence test case before release in acceptance notes.
 - Parity review must compare file/folder layout, lifecycle and dependency architecture, system design, behavior and error semantics, command organization, and implementation logic—not only exported names.
 - Differences from Laravel are allowed only for unavoidable PHP-to-Python runtime or language constraints; each difference requires a written rationale and focused evidence.
+- When Laravel delegates a subsystem to Symfony or another authoritative dependency, PyJinx must prefer one equivalent Python source of truth rather than maintain competing implementations.
+- Any adapter must be thin, explicit, and limited to the PHP-to-Python boundary; dependency behavior and framework behavior must not silently diverge.
