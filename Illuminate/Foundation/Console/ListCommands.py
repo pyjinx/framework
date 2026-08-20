@@ -1,7 +1,7 @@
 from Illuminate.Collections.helpers import collect
 from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
 from Illuminate.Foundation.Console.Command import Command
-from colorama import Fore
+from colorama import Fore, Style
 
 
 class ListCommands(Command):
@@ -48,17 +48,17 @@ class ListCommands(Command):
 
         for group_key, group_commands in commands:
             if group_key:
-                self.info(group_key)
+                print(f"{Fore.YELLOW}{group_key}{Style.RESET_ALL}")
 
             for key, item in group_commands:
                 if not item.hidden:
-                    description_text = Fore.WHITE + item.description
-                    command_padding = padding
-
-                    self.success(
-                        " " * command_padding
+                    command_text = (
+                        " " * padding
                         + item.name.ljust(description_start + padding)
-                        + description_text
+                    )
+                    print(
+                        f"{Fore.GREEN}{command_text}{Style.RESET_ALL}"
+                        f"{Fore.WHITE}{item.description}{Style.RESET_ALL}"
                     )
 
         self.new_line()
