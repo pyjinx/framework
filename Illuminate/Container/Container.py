@@ -175,13 +175,12 @@ class Container(ABC):
         if not self.bound(key):
             self.__bind(key, binding_resolver, False)
 
-    def bound(self, abstract: str) -> Optional[Any]:
-        abstract = self.get_alias(abstract)
-
-        binding = self.__bindings.get(abstract)
-        instance = self.__instances.get(abstract)
-
-        return instance if binding and instance else None
+    def bound(self, abstract: str) -> bool:
+        return (
+            abstract in self.__bindings
+            or abstract in self.__instances
+            or abstract in self.__aliases
+        )
 
     def instance(self, abstract: str, instance: Any) -> Any:
         abstract = self.get_alias(abstract)
@@ -302,9 +301,7 @@ class Container(ABC):
         self.__resolved.clear()
 
     def has(self, abstract: str) -> bool:
-        abstract = self.get_alias(abstract)
-
-        return abstract in self.__bindings
+        return self.bound(abstract)
 
     def forget_instance(self, abstract: str) -> None:
         abstract = self.get_alias(abstract)
