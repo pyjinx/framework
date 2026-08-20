@@ -104,24 +104,23 @@ class Application(Container, ApplicationContract):
     def has_been_bootstrapped(self):
         return self.__has_been_bootstrapped
 
-    def before_bootstraping(self, bootstrapper, callback):
-        self.make("events").listen(f"bootstraping: {bootstrapper}", callback)
+    def before_bootstrapping(self, bootstrapper, callback):
+        self.make("events").listen(f"bootstrapping: {bootstrapper}", callback)
 
-    def after_bootstraping(self, bootstrapper, callback):
+    def after_bootstrapping(self, bootstrapper, callback):
         self.make("events").listen(f"bootstrapped: {bootstrapper}", callback)
 
     def bootstrap_with(self, bootstrappers):
         try:
+            self.__has_been_bootstrapped = True
             events = self.make("events")
 
             for bootstrapper in bootstrappers:
-                events.dispatch(f"bootstraping: {bootstrapper}", [self])
+                events.dispatch(f"bootstrapping: {bootstrapper}", [self])
 
                 self.make(bootstrapper).bootstrap(self)
 
                 events.dispatch(f"bootstrapped: {bootstrapper}", [self])
-
-            self.__has_been_bootstrapped = True
         except Exception as e:
             raise e
 
@@ -300,9 +299,8 @@ class Application(Container, ApplicationContract):
             for service_provider in self.service_providers:
                 self.boot_provider(service_provider)
 
-            self.fire_app_callbacks(self.__booted_callbacks)
-
             self.__booted = True
+            self.fire_app_callbacks(self.__booted_callbacks)
         except Exception as e:
             raise e
 

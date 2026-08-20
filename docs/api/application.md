@@ -67,7 +67,7 @@ Use this when your services need dependency-injected construction.
 
 ## 6) Hooks and extension points
 
-- `bootstraping` / `bootstrapped` app events are dispatched during kernel init.
+- `bootstrapping` / `bootstrapped` app events are dispatched during kernel init.
 - Commander bootstrappers can subscribe via console dispatcher/listeners.
 - Existing support for command/listener registration is in `ServiceProvider` and dispatcher contracts.
 

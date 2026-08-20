@@ -36,12 +36,12 @@ class Application(Container):
         pass
 
     @abstractmethod
-    def before_bootstraping(self, bootstrapper: str, callback: Any):
+    def before_bootstrapping(self, bootstrapper: str, callback: Any):
         """Registers a callback before bootstrapping."""
         pass
 
     @abstractmethod
-    def after_bootstraping(self, bootstrapper: str, callback: Any):
+    def after_bootstrapping(self, bootstrapper: str, callback: Any):
         """Registers a callback after bootstrapping."""
         pass
 
