@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Select, Table, select
+from sqlalchemy import MetaData, Select, Table, delete, insert, select, update
 
 
 class QueryBuilder:
@@ -30,6 +30,32 @@ class QueryBuilder:
         self._offset = value
         return self
 
+    def insert(self, values: dict):
+        table = self._table()
+        with self.manager.connection(self.connection_name).begin() as connection:
+            result = connection.execute(insert(table).values(**values))
+            return result.inserted_primary_key[0] if result.inserted_primary_key else None
+
+    def update(self, values: dict) -> int:
+        table = self._table()
+        statement = update(table).values(**values)
+        for column, operator, value in self._conditions:
+            statement = statement.where(
+                self._comparison(getattr(table.c, column), operator, value)
+            )
+        with self.manager.connection(self.connection_name).begin() as connection:
+            return connection.execute(statement).rowcount
+
+    def delete(self) -> int:
+        table = self._table()
+        statement = delete(table)
+        for column, operator, value in self._conditions:
+            statement = statement.where(
+                self._comparison(getattr(table.c, column), operator, value)
+            )
+        with self.manager.connection(self.connection_name).begin() as connection:
+            return connection.execute(statement).rowcount
+
     def get(self):
         statement = self._statement()
         with self.manager.connection(self.connection_name).connect() as connection:
@@ -39,6 +65,14 @@ class QueryBuilder:
     def first(self):
         rows = self.limit(1).get()
         return rows[0] if rows else None
+
+    def _table(self):
+        return Table(
+            self.table_name,
+            MetaData(),
+            autoload_with=self.manager.connection(self.connection_name),
+        )
+
 
     def _statement(self) -> Select:
         engine = self.manager.connection(self.connection_name)
