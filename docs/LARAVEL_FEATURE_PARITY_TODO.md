@@ -30,11 +30,12 @@ Source reference:
    - Gaps: full Laravel application bootstrap policy, maintenance mode, exception rendering parity, and service registration lifecycle guarantees still incomplete.
 
 2. [x] **Container / service resolver** (`Illuminate\Container`)
-   - Binding API, singleton, alias, contextual resolution callbacks, and constructor injection scaffolding are present.
+   - Binding API, singleton/scoped bindings, aliases, contextual resolution, constructor injection, extenders, tags, rebinding, parameter overrides, and structured resolution errors are present.
+   - Gaps: full Laravel closure/contextual edge parity, attribute bindings, method bindings, and complete resolution semantics.
 
 3. [~] **Routing** (`Illuminate\Routing`)
-   - `Router`, route groups, route names/middleware chaining, URL generation, route compilation and dispatch, route collection.
-   - Gaps: route caching, advanced resource controller conventions, implicit model binding semantics, and full verb coverage edge cases.
+   - `Router`, route groups, route names/middleware chaining, URL generation, resource/API resource routes, route caching, and route collection/dispatch.
+   - Gaps: implicit model binding, advanced nested resource conventions, and full route verb edge cases.
 
 4. [x] **HTTP layer** (`Illuminate\Http`)
    - Request wrapper, ASGI/WSGI adapters, pipeline entry path, request bags.
@@ -117,10 +118,9 @@ Source reference:
 
 29. [ ] **Testing stack** (`Illuminate\Testing`, `Foundation\Testing`)
     - No dedicated test helpers, HTTP/API testing DSL, or fake utilities.
-
 30. [~] **Console command surface (`pyjinx` parity)** (`Illuminate\Console` + `Foundation\Console` command modules)
-    - Framework currently includes command bootstrap, grouped list/help output, `serve`, and `make:controller` commands.
-    - Missing: full `artisan`-style command suite (`make:*`, `migrate*`, queue commands, cache/config commands, tinker/about/up/down).
+    - Framework includes command bootstrap, grouped list/help output, `serve`, `make:controller`, `route:list`, `route:cache`, and `route:clear`.
+    - Missing: broader Artisan command suite (`make:*`, `migrate*`, queue commands, cache/config commands, tinker/about/up/down).
 
 31. [ ] **Scheduling / process orchestration** (`Illuminate\Console\Scheduling`, `Illuminate\Process`)
     - Not implemented.
