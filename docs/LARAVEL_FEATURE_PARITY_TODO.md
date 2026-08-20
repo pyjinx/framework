@@ -243,6 +243,15 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - [ ] Record every intentional PHP-to-Python deviation with rationale, owner, and removal/review condition.
 - [ ] Do not mark any checklist item complete until its full mapped surface has evidence.
 
+### Deferred exhaustive test-suite port
+
+- [ ] Port the complete `laravel/framework/tests/` suite into Python equivalents.
+- [ ] Preserve every Laravel test scenario, boundary, failure, lifecycle, and integration assertion.
+- [ ] Map PHPUnit/Pest helpers to PyJinx testing helpers without weakening assertions.
+- [ ] Run the ported suite per component and against the full framework integration.
+- [ ] Track intentional PHP-runtime differences separately from implementation failures.
+- [ ] Do not treat this deferred suite port as current coverage until it is implemented and passing.
+
 ---
 
 ## Action policy
