@@ -222,10 +222,21 @@ class Container(ABC):
 
         return result
 
+    def _remove_abstract_alias(self, searched):
+        if searched not in self.__aliases:
+            return
+
+        for abstract, aliases in self.__abstract_aliases.items():
+            self.__abstract_aliases[abstract] = [
+                alias for alias in aliases if alias != searched
+            ]
+        del self.__aliases[searched]
+
     def alias(self, abstract: str, alias: str) -> None:
         if abstract == alias:
             raise Exception(f"{abstract} cannot alias itself")
 
+        self._remove_abstract_alias(alias)
         self.__aliases[alias] = abstract
         self.__abstract_aliases.setdefault(abstract, []).append(alias)
 
@@ -235,6 +246,8 @@ class Container(ABC):
             if abstract in self.__aliases
             else abstract
         )
+    def is_alias(self, name) -> bool:
+        return name in self.__aliases
 
     def get_aliases(self) -> Dict[str, str]:
         return self.__aliases
