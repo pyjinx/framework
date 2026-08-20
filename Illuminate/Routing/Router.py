@@ -105,11 +105,11 @@ class Router:
     def resource(self, name, controller, options=None):
         options = options or {}
         actions = [
-            ("index", "GET", f"/{name}"),
-            ("create", "GET", f"/{name}/create"),
+            ("index", "GET|HEAD", f"/{name}"),
+            ("create", "GET|HEAD", f"/{name}/create"),
             ("store", "POST", f"/{name}"),
-            ("show", "GET", f"/{name}/{{{self._singular(name)}}}"),
-            ("edit", "GET", f"/{name}/{{{self._singular(name)}}}/edit"),
+            ("show", "GET|HEAD", f"/{name}/{{{self._singular(name)}}}"),
+            ("edit", "GET|HEAD", f"/{name}/{{{self._singular(name)}}}/edit"),
             ("update", "PUT|PATCH", f"/{name}/{{{self._singular(name)}}}"),
             ("destroy", "DELETE", f"/{name}/{{{self._singular(name)}}}"),
         ]
