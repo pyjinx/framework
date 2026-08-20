@@ -347,6 +347,18 @@ class Container(ABC):
     def _display_abstract(abstract):
         return getattr(abstract, "__name__", str(abstract))
 
+    def _invoke_binding(self, binding_resolver, parameters):
+        if inspect.isclass(binding_resolver):
+            dependencies = self.get_dependencies(binding_resolver, parameters)
+            return Util.callback_with_dynamic_args(binding_resolver, dependencies)
+
+        args = getfullargspec(binding_resolver).args
+        if not args:
+            return binding_resolver()
+        if len(args) == 1:
+            return binding_resolver(self)
+        return binding_resolver(self, parameters)
+
     def __resolve(
         self, abstract: str, binding_resolver: Any, parameters: Dict[str, Any] = {}
     ) -> Any:
@@ -361,10 +373,7 @@ class Container(ABC):
 
         self.__build_stack.append(abstract)
         try:
-            args = getfullargspec(binding_resolver).args
-            dependencies = self.get_dependencies(binding_resolver, parameters)
-
-            instance = Util.callback_with_dynamic_args(binding_resolver, dependencies)
+            instance = self._invoke_binding(binding_resolver, parameters)
             for extender in self.__extenders.get(abstract, []):
                 instance = extender(instance, self)
 
