@@ -15,7 +15,7 @@ class ListCommands(Command):
 
         padding = 4
 
-        self.info(f"Flight Framework {self.commander.version}")
+        self.info(f"PyJinx Framework {self.commander.version}")
 
         self.new_line()
 
@@ -48,14 +48,15 @@ class ListCommands(Command):
 
         for group_key, group_commands in commands:
             if group_key:
-                self.info(group_key.rjust(padding + 4))
+                self.info(group_key)
 
             for key, item in group_commands:
                 if not item.hidden:
                     description_text = Fore.WHITE + item.description
+                    command_padding = padding * 2 if group_key else padding
 
                     self.success(
-                        " " * padding
+                        " " * command_padding
                         + item.name.ljust(description_start + padding)
                         + description_text
                     )
