@@ -85,6 +85,11 @@ class Blueprint:
             self.columns[-1].server_default = sa.DefaultClause(text_val)
         return self
 
+    def primary(self):
+        """Set the last added column as the primary key."""
+        if self.columns:
+            self.columns[-1].primary_key = True
+        return self
     def unique(self, index_name=None):
         """Add a unique constraint for the last added column."""
         if self.columns:
