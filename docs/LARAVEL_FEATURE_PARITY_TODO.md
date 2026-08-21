@@ -157,7 +157,7 @@ No feature is currently verified as 100% Laravel 13 parity.
 | 30 | Partial implementation; not exact parity | `pyjinx`, `serve`, grouped command listing, and `make:controller` exist; the broader Artisan command surface is absent. |
 | 31–38 | Not started or incomplete contract surface | Scheduling, process, HTTP client, image, JSON API resources, concurrency, extension hooks, password hardening, and most Laravel contracts are absent or incomplete. |
 
-The audit used `references/laravel/`, `references/laravel-demo/`, and the Laravel framework source as authoritative references. `references/python-laravel/` remains historical context only and is not an implementation authority.
+The audit used `references/laravel/` (application) and `references/framework/` (Laravel framework) as authoritative references.
 
 ## Detailed remaining implementation queue
 
