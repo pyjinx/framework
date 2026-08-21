@@ -18,6 +18,7 @@ class Model:
         self._attributes = dict(attributes or {})
         self._exists = exists
         self._original = dict(self._attributes)
+        self._relations = {}
 
     @classmethod
     def _listeners(cls):
@@ -99,6 +100,36 @@ class Model:
             raise LookupError(f"{cls.__name__} [{identifier}] was not found.")
         return instance
 
+
+    def has_many(self, related_class, foreign_key=None, local_key=None):
+        from Illuminate.Database.Eloquent.Relations.HasOneOrMany import HasMany
+        
+        foreign_key = foreign_key or f"{self.__class__.__name__.lower()}_id"
+        local_key = local_key or self.primary_key
+        query = related_class.query()
+        return HasMany(query, self, foreign_key, local_key)
+
+    def has_one(self, related_class, foreign_key=None, local_key=None):
+        from Illuminate.Database.Eloquent.Relations.HasOneOrMany import HasOne
+        
+        foreign_key = foreign_key or f"{self.__class__.__name__.lower()}_id"
+        local_key = local_key or self.primary_key
+        query = related_class.query()
+        return HasOne(query, self, foreign_key, local_key)
+
+    def belongs_to(self, related_class, foreign_key=None, owner_key=None, relation_name=None):
+        from Illuminate.Database.Eloquent.Relations.BelongsTo import BelongsTo
+        import inspect
+        
+        if not relation_name:
+            # Inspect stack to find the name of the calling method
+            frame = inspect.currentframe().f_back
+            relation_name = frame.f_code.co_name
+            
+        foreign_key = foreign_key or f"{relation_name}_id"
+        owner_key = owner_key or related_class.primary_key
+        query = related_class.query()
+        return BelongsTo(query, self, foreign_key, owner_key, relation_name)
     @classmethod
     def create(cls, attributes):
         return cls().fill(attributes).save()
@@ -217,12 +248,42 @@ class Model:
             return json.loads(value)
         return value
 
-    def __getattr__(self, name):
-        try:
-            return self._cast_value(name, self._attributes[name])
-        except KeyError as error:
-            raise AttributeError(name) from error
+    def load(self, *relations):
+        """Eager load relations for the model (simplified)."""
+        for relation in relations:
+            self.get_relation_value(relation)
+        return self
 
+    def get_relation_value(self, key):
+        if key in self._relations:
+            return self._relations[key]
+
+        # If the key corresponds to a method on the model, it's a relationship.
+        method = getattr(self.__class__, key, None)
+        if callable(method):
+            relation = method(self)
+            from Illuminate.Database.Eloquent.Relations.Relation import Relation
+            if isinstance(relation, Relation):
+                results = relation.get_results()
+                self._relations[key] = results
+                return results
+
+        return None
+
+    def __getattr__(self, name):
+        if name in self._attributes:
+            return self._cast_value(name, self._attributes[name])
+        
+        # Removed get_relation_value check here since methods shadow relations in Python
+            
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, name, value):
+        # Internal attributes start with _ or are class-level defined properties
+        if name.startswith("_") or name in ("table", "primary_key", "timestamps", "fillable", "guarded", "hidden", "casts"):
+            super().__setattr__(name, value)
+        else:
+            self._attributes[name] = value
     def is_dirty(self, *attributes):
         if not attributes:
             return self._attributes != self._original
