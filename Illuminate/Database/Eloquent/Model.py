@@ -9,6 +9,8 @@ class Model:
     primary_key = "id"
     timestamps = True
     fillable = []
+    guarded = ["*"]
+    hidden = []
     casts = {}
     _event_listeners = {}
 
@@ -81,6 +83,14 @@ class Model:
     @classmethod
     def find(cls, identifier):
         return cls.query().where(cls.primary_key, identifier).first()
+
+    @classmethod
+    def all(cls):
+        return cls.query().get()
+
+    @classmethod
+    def where(cls, column, operator="=", value=None):
+        return cls.query().where(column, operator, value)
 
     @classmethod
     def find_or_fail(cls, identifier):
@@ -156,6 +166,27 @@ class Model:
         self._fire_event("deleted", halt=False)
         return deleted > 0
 
+    def increment(self, column, amount=1, extra=None):
+        if not self._exists:
+            return False
+        identifier = self._attributes[self.primary_key]
+        self._query_builder().where(self.primary_key, identifier).increment(
+            column, amount, extra
+        )
+        self._attributes[column] = self._attributes.get(column, 0) + amount
+        if extra:
+            self._attributes.update(extra)
+        self._original = dict(self._attributes)
+        return self
+
+    def decrement(self, column, amount=1, extra=None):
+        return self.increment(column, -amount, extra)
+
+    def fresh(self):
+        if not self._exists:
+            return None
+        return self.__class__.find(self._attributes[self.primary_key])
+
     def to_dict(self):
         return {
             key: self._serialize_value(key, value)
@@ -191,3 +222,23 @@ class Model:
             return self._cast_value(name, self._attributes[name])
         except KeyError as error:
             raise AttributeError(name) from error
+
+    def is_dirty(self, *attributes):
+        if not attributes:
+            return self._attributes != self._original
+        return any(
+            self._attributes.get(attr) != self._original.get(attr)
+            for attr in attributes
+        )
+
+    def get_dirty(self):
+        return {
+            key: value
+            for key, value in self._attributes.items()
+            if self._original.get(key) != value
+        }
+
+    def get_original(self, key=None, default=None):
+        if key is None:
+            return dict(self._original)
+        return self._original.get(key, default)
