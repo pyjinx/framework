@@ -1,9 +1,9 @@
 import inspect
 import operator
+from collections.abc import Callable
+from typing import Any, TypeVar
 
-from typing import Any, Callable, Optional, TypeVar
 from Illuminate.Support.HigherOrderTapProxy import HigherOrderTapProxy
-
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -25,7 +25,7 @@ def safe_eval_compare(key, oper, value):
         raise ValueError("Invalid operator")
 
 
-def tap(value: T, callback: Optional[Callable[[T], R]] = None):
+def tap(value: T, callback: Callable[[T], R] | None = None):
     if not callback:
         return HigherOrderTapProxy(value)
 
@@ -36,8 +36,8 @@ def tap(value: T, callback: Optional[Callable[[T], R]] = None):
 
 def transform(
     value: T,
-    callback: Optional[Callable[[T], R]] = None,
-    default: Optional[Callable[[T], R]] = None,
+    callback: Callable[[T], R] | None = None,
+    default: Callable[[T], R] | None = None,
 ):
     if value:
         return callback(value)
@@ -48,7 +48,7 @@ def transform(
     return default
 
 
-def with_(value: T, callback: Optional[Callable[[T], R]] = None) -> T:
+def with_(value: T, callback: Callable[[T], R] | None = None) -> T:
     if not callback:
         return value
 

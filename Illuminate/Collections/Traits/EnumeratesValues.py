@@ -1,7 +1,8 @@
-from typing import Any, Callable, List, Self
+from collections.abc import Callable
+from typing import Any, Self
+
 from Illuminate.Collections.Enumerable import Enumerable
 from Illuminate.Collections.helpers import data_get
-
 from Illuminate.Conditionable.Conditionable import Conditionable
 from Illuminate.Helpers.Util import Util
 from Illuminate.Routing.ResponseFactory import ResponseFactory
@@ -30,7 +31,7 @@ class EnumeratesValues(Conditionable, Enumerable):
     def is_listable(self) -> bool:
         return all([isinstance(item, int) for item in self._items])
 
-    def to_list(self) -> List[Any]:
+    def to_list(self) -> list[Any]:
         return list(self._items.values())
 
     def map_into(self, class_name) -> Self:

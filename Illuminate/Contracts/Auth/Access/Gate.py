@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, List
+from collections.abc import Callable
+from typing import Any
 
 
 class Gate(ABC):
     @abstractmethod
-    def check(self, ability: str, arguments: List[Any] = []) -> bool:
+    def check(self, ability: str, arguments: list[Any] = []) -> bool:
         pass
 
     @abstractmethod

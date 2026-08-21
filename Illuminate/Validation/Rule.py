@@ -1,6 +1,5 @@
 import abc
-
-from typing import Any, Dict, List, Literal, TYPE_CHECKING, Tuple, Union
+from typing import TYPE_CHECKING, Any, Literal
 
 from Illuminate.Collections.helpers import collect
 from Illuminate.Validation.helpers import pascal_to_snake
@@ -17,7 +16,7 @@ class Rule(abc.ABC):
         self.__params: dict = {}
         self.__data: dict = {}
         self.__rule_type: Literal["string", "object"] | None = None
-        self.__rules_mapper: "RulesMapper" | None = None
+        self.__rules_mapper: RulesMapper | None = None
 
     @property
     def args(self):
@@ -57,8 +56,8 @@ class Rule(abc.ABC):
     def get_formatted_message(
         self,
         rule_item: str,
-        messages: Dict[str, str],
-        data: Dict[str, str],
+        messages: dict[str, str],
+        data: dict[str, str],
     ):
         field = self.params.get("field")
 
@@ -83,7 +82,7 @@ class Rule(abc.ABC):
         self,
         rules_mapper: "RulesMapper",
         rule_type: Literal["string", "object"],
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ):
         self.__rules_mapper = rules_mapper
         self.__rule_type = rule_type
@@ -145,7 +144,7 @@ class Rule(abc.ABC):
     def value_exists(self, value: str):
         return self.is_countable(value) and len(value) > 0
 
-    def has_rule(self, field: str, rules: List[str]) -> bool:
+    def has_rule(self, field: str, rules: list[str]) -> bool:
         field_rules = self.get_field_rules(field)
 
         return all(rule in field_rules for rule in rules)
@@ -173,7 +172,7 @@ class Rule(abc.ABC):
         else:
             return len(str(value))
 
-    def is_numeric_value(self, value: Any) -> Tuple[bool, Union[int | float | None]]:
+    def is_numeric_value(self, value: Any) -> tuple[bool, int | float | None]:
         if isinstance(value, (int, float)):
             return True, value
 

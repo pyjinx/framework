@@ -1,21 +1,17 @@
 import math
-
+from collections.abc import Callable
 from typing import (
     Any,
-    Callable,
-    Dict,
     Generic,
-    List,
-    Optional,
     Self,
-    Tuple,
-    Union,
     TypeVar,
+    Union,
 )
+
 from Illuminate.Collections.Arr import Arr
 from Illuminate.Collections.Traits.EnumeratesValues import EnumeratesValues
-from Illuminate.Helpers.Util import Util
 from Illuminate.Contracts.Collections.Collection import Collection as CollectionContract
+from Illuminate.Helpers.Util import Util
 
 T = TypeVar("T")
 
@@ -54,7 +50,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
         return self
 
-    def filter(self, callback: Optional[Callable[..., Any]] = None) -> Self:
+    def filter(self, callback: Callable[..., Any] | None = None) -> Self:
         if not callback:
             return self.__class__({key: value for key, value in self if value})
 
@@ -95,7 +91,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
         return self.__class__(results)
 
     def first(
-        self, callback: Optional[Callable[[Any], bool]] = None, default=None
+        self, callback: Callable[[Any], bool] | None = None, default=None
     ) -> Any:
         items = self._items
 
@@ -105,7 +101,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
         return list(items.values())[0] if items else default
 
     def last(
-        self, callback: Optional[Callable[[Any], bool]] = None, default=None
+        self, callback: Callable[[Any], bool] | None = None, default=None
     ) -> Any:
         items = self._items
 
@@ -127,7 +123,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
     def get(self, key, default=None) -> Self:
         return self._items[key] if key in self._items else default
 
-    def unique(self, key: Optional[Callable] = None) -> Self:
+    def unique(self, key: Callable | None = None) -> Self:
         if not key:
             unique_values = set(self._items.values())
 
@@ -154,7 +150,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
         return self
 
-    def concat(self, data: Union[List[Any], Dict[Any, Any], "Collection"] = []) -> Self:
+    def concat(self, data: Union[list[Any], dict[Any, Any], "Collection"] = []) -> Self:
         if isinstance(data, list):
             iterator = enumerate(data)
         elif isinstance(data, dict):
@@ -181,10 +177,10 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
         return self.__class__(flattened_items)
 
-    def group_by(self, callback_or_string: Union[Callable[..., Any], str]):
+    def group_by(self, callback_or_string: Callable[..., Any] | str):
         group_callback = self._value_retriever(callback_or_string)
 
-        results: Dict[Any, Collection] = {}
+        results: dict[Any, Collection] = {}
 
         for key, value in self:
             group_keys = Util.callback_with_dynamic_args(group_callback, [value, key])
@@ -202,7 +198,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
     def sort_by(
         self,
-        callback_or_string: Union[Callable[..., Any], str],
+        callback_or_string: Callable[..., Any] | str,
         descending: bool = False,
     ) -> Self:
         sort_callback = self._value_retriever(callback_or_string)
@@ -219,7 +215,7 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
     def sort(
         self,
-        sort_callback: Optional[Callable[..., Any]] = None,
+        sort_callback: Callable[..., Any] | None = None,
         descending: bool = False,
     ) -> Self:
         if sort_callback:
@@ -242,13 +238,13 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
 
     def _sort_items(
         self,
-        items: List[Tuple[Any, Any]],
-        key: Optional[Callable[[Tuple[Any, Any]], Any]] = None,
+        items: list[tuple[Any, Any]],
+        key: Callable[[tuple[Any, Any]], Any] | None = None,
         descending: bool = False,
-    ) -> Dict[Any, Any]:
+    ) -> dict[Any, Any]:
         return dict(sorted(items, key=key, reverse=descending))
 
-    def _get_iterable_items(self, data: Any) -> Dict[Any, Any]:
+    def _get_iterable_items(self, data: Any) -> dict[Any, Any]:
         try:
             if isinstance(data, Collection):
                 return data._items
@@ -264,5 +260,5 @@ class Collection(EnumeratesValues, Generic[T], CollectionContract):
                 return data
             else:
                 return {0: data}
-        except Exception as e:
+        except Exception:
             raise Exception("Invalid Items passed to collection")

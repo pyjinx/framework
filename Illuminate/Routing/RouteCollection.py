@@ -1,10 +1,9 @@
 import re
 
-from typing import List, Optional
+from Illuminate.Contracts.Http.Request import Request
 from Illuminate.Exceptions.MethodNotAllowedException import MethodNotAllowedException
 from Illuminate.Exceptions.RouteNotFoundException import RouteNotFoundException
 from Illuminate.Routing.Route import Route
-from Illuminate.Contracts.Http.Request import Request
 
 
 class RouteCollection:
@@ -46,7 +45,7 @@ class RouteCollection:
             f"The route {request.get_url()} could not be found."
         )
 
-    def _match_against_routes(self, request: Request, routes: List[Route]):
+    def _match_against_routes(self, request: Request, routes: list[Route]):
         matched_routes = []
 
         for route in routes:
@@ -57,7 +56,7 @@ class RouteCollection:
 
         return matched_routes[0] if matched_routes else None
 
-    def _handle_matched_route(self, request: Request, route: Optional[Route]):
+    def _handle_matched_route(self, request: Request, route: Route | None):
         if route:
             return route.bind(request)
 

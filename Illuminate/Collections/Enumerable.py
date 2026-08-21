@@ -1,5 +1,7 @@
 from abc import abstractmethod
-from typing import Any, Callable, Self
+from collections.abc import Callable
+from typing import Any, Self
+
 from Illuminate.Contracts.Collections.Collection import Collection as CollectionContract
 
 

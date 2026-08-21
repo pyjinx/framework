@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Union
+from typing import Any
+
 from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Validation.Rule import Rule
 from Illuminate.Validation.RulesMapper import RulesMapper
@@ -8,10 +9,10 @@ from Illuminate.Validation.ValidationResponse import ValidationResponse
 class Validator:
     def __init__(
         self,
-        data: Dict[str, Any],
-        rules: Dict[str, List[Union[str | Rule]]],
-        messages: Dict[str, Any] | None = None,
-        attributes: Dict[str, Any] | None = None,
+        data: dict[str, Any],
+        rules: dict[str, list[str | Rule]],
+        messages: dict[str, Any] | None = None,
+        attributes: dict[str, Any] | None = None,
     ):
         self.data = data
 
@@ -59,8 +60,8 @@ class Validator:
         field: str,
         rule_item: str,
         rule_executor: Rule,
-        messages: Dict[str, Any],
-        data: Dict[str, Any],
+        messages: dict[str, Any],
+        data: dict[str, Any],
     ):
         validated = rule_executor.validate()
 
@@ -78,7 +79,7 @@ class Validator:
 
         return True
 
-    def get_params(self, field_name: str, rule_name: str) -> Dict[str, Any]:
+    def get_params(self, field_name: str, rule_name: str) -> dict[str, Any]:
         params = {}
 
         for field, rules in self.rules_mapper.rules.items():

@@ -1,6 +1,6 @@
 import re
-
 from typing import Any
+
 from Illuminate.Contracts.Container.Container import Container
 
 

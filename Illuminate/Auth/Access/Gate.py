@@ -1,4 +1,6 @@
-from typing import Any, Callable, List
+from collections.abc import Callable
+from typing import Any
+
 from Illuminate.Collections.helpers import collect
 from Illuminate.Contracts.Auth.Access.Gate import Gate as GateContract
 from Illuminate.Exceptions.UnauthorizedAccessException import (
@@ -14,8 +16,8 @@ class Gate(GateContract):
         user_resolver=lambda: None,
         abilities={},
         policies={},
-        before_callbacks: List[Callable[[Any], Any]] = [],
-        after_callbacks: List[Callable[[Any], Any]] = [],
+        before_callbacks: list[Callable[[Any], Any]] = [],
+        after_callbacks: list[Callable[[Any], Any]] = [],
     ) -> None:
         self.__app = app
         self.user_resolver = user_resolver
@@ -40,12 +42,12 @@ class Gate(GateContract):
         if callable(callback):
             self.abilities[ability] = callback
 
-    def check(self, abilities: list, arguments: List[Any] = []) -> bool:
+    def check(self, abilities: list, arguments: list[Any] = []) -> bool:
         return collect(abilities).every(
             lambda ability: self.inspect(ability, arguments)
         )
 
-    def authorize(self, ability: str, arguments: List[Any] = []):
+    def authorize(self, ability: str, arguments: list[Any] = []):
         assert isinstance(ability, str)
 
         allowed = self.inspect(ability, arguments)
@@ -53,12 +55,12 @@ class Gate(GateContract):
         if not allowed:
             raise UnauthorizedAccessException("Unauthorized")
 
-    def inspect(self, ability: str | list, arguments: List[Any] = []) -> bool:
+    def inspect(self, ability: str | list, arguments: list[Any] = []) -> bool:
         results = self.raw(ability, arguments)
 
         return results
 
-    def raw(self, ability: str, arguments: List[Any] = []) -> bool:
+    def raw(self, ability: str, arguments: list[Any] = []) -> bool:
         arguments = arguments if isinstance(arguments, list) else [arguments]
 
         auth_callback = self.get_auth_callback(ability, arguments)
@@ -73,7 +75,7 @@ class Gate(GateContract):
 
         return Util.callback_with_dynamic_args(auth_callback, [user, *arguments])
 
-    def get_auth_callback(self, ability: str | list, arguments: List[Any] = []):
+    def get_auth_callback(self, ability: str | list, arguments: list[Any] = []):
         auth_callback = None
 
         if len(arguments):
@@ -90,7 +92,7 @@ class Gate(GateContract):
 
         return auth_callback
 
-    def has(self, abilities: List[str]) -> bool:
+    def has(self, abilities: list[str]) -> bool:
         return all(self.abilities.get(ability, None) for ability in abilities)
 
     def get_policy_for(self, instance_or_class):
@@ -133,8 +135,8 @@ class Gate(GateContract):
     def resolve_policy(self, policy):
         return self.__app.make(policy)
 
-    def allows(self, ability: str, arguments: List[Any]) -> bool:
+    def allows(self, ability: str, arguments: list[Any]) -> bool:
         return self.check(ability, arguments)
 
-    def denies(self, ability: str, arguments: List[Any]) -> bool:
+    def denies(self, ability: str, arguments: list[Any]) -> bool:
         return not self.allows(ability, arguments)

@@ -1,6 +1,6 @@
+from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Events.Dispatcher import Dispatcher
 from Illuminate.Support.ServiceProvider import ServiceProvider
-from Illuminate.Contracts.Foundation.Application import Application
 
 
 class EventServiceProvider(ServiceProvider):

@@ -1,16 +1,16 @@
 import inspect
-
 from typing import Any, Self
+
 from Illuminate.Contracts.Foundation.Application import (
     Application as ApplicationContract,
 )
 from Illuminate.Events.Dispatcher import Dispatcher
+from Illuminate.Foundation.Console.Command import Command
 from Illuminate.Foundation.Console.ContainerCommandLoader import ContainerCommandLoader
 from Illuminate.Foundation.Console.Events.CommanderStarting import CommanderStarting
 from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
 from Illuminate.Foundation.Console.Output.ConsoleOutput import ConsoleOutput
 from Illuminate.Helpers.Util import Util
-from Illuminate.Foundation.Console.Command import Command
 
 
 class Application:
@@ -53,7 +53,7 @@ class Application:
 
             command.validate()
 
-            action = getattr(command, "handle")
+            action = command.handle
 
             return action()
         except Exception as e:

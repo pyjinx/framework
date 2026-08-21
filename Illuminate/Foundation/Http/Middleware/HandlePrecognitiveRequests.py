@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from typing import Any
+
 from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Contracts.Http.Request import Request
 

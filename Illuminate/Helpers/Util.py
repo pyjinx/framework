@@ -1,8 +1,8 @@
 import copy
 import inspect
 import types
-
-from typing import Any, Callable, Dict, List
+from collections.abc import Callable
+from typing import Any
 
 
 class Util:
@@ -62,7 +62,7 @@ class Util:
 
     @classmethod
     def callback_with_dynamic_args(
-        cls, callback: Callable, args: List[Any] = [], kwargs: Dict[Any, Any] = {}
+        cls, callback: Callable, args: list[Any] = [], kwargs: dict[Any, Any] = {}
     ):
         try:
             args_count = cls.get_callback_args_count(callback)

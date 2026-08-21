@@ -1,9 +1,11 @@
 from Illuminate.Contracts.Foundation.Application import Application
+from Illuminate.Contracts.Foundation.Console.Kernel import (
+    Kernel as ConsoleKernelContract,
+)
 from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
 from Illuminate.Foundation.Bootstrap.RegisterProviders import RegisterProviders
-from Illuminate.Foundation.Http.Kernel import Kernel as HttpKernel
-from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
 from Illuminate.Foundation.Console.Kernel import Kernel as ConsoleKernel
+from Illuminate.Foundation.Http.Kernel import Kernel as HttpKernel
 
 
 class ApplicationBuilder:

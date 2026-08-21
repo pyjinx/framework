@@ -1,8 +1,7 @@
 import os
 
-from typing import List
 from Cython.Build import cythonize
-from setuptools import setup, Extension
+from setuptools import Extension, setup
 
 
 def get_ext(package: str, package_path: str, file: str) -> Extension:
@@ -13,9 +12,9 @@ def get_ext(package: str, package_path: str, file: str) -> Extension:
 
 
 def find_extensions(
-    base_package: str, base_path: str, included_directories: List[str]
-) -> List[Extension]:
-    ext_modules: List[Extension] = []
+    base_package: str, base_path: str, included_directories: list[str]
+) -> list[Extension]:
+    ext_modules: list[Extension] = []
 
     for root, dirs, files in os.walk(base_path):
         # Convert the root path to package format

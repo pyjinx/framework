@@ -1,5 +1,5 @@
-import sys
 import importlib
+import sys
 
 
 class RouteLoader:

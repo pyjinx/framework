@@ -1,8 +1,7 @@
 import time
-
 from functools import lru_cache
 from importlib import import_module
-from typing import Any, Dict, List, Union
+from typing import Any
 
 
 def use_module(ref: str):
@@ -17,7 +16,7 @@ def use_module(ref: str):
     return getattr(module, class_name)
 
 
-def array_values(data: Dict[Any, Any]):
+def array_values(data: dict[Any, Any]):
     if isinstance(data, list):
         return data
     elif isinstance(data, dict):
@@ -26,13 +25,13 @@ def array_values(data: Dict[Any, Any]):
         return data
 
 
-from typing import Any, Dict, List, Union
+from typing import Any
 
 
 def array_merge(
-    main: Union[Dict[Any, Any], List[Any]],
-    other: Union[Dict[Any, Any], List[Any]],
-) -> Union[Dict[Any, Any], List[Any]]:
+    main: dict[Any, Any] | list[Any],
+    other: dict[Any, Any] | list[Any],
+) -> dict[Any, Any] | list[Any]:
     if isinstance(main, list) and isinstance(other, list):
         return main + other
     elif isinstance(main, dict) and isinstance(other, dict):
@@ -44,9 +43,9 @@ def array_merge(
 
 
 def array_merge_recursive(
-    main: Union[Dict[Any, Any], List[Any]],
-    other: Union[Dict[Any, Any], List[Any]],
-) -> Union[Dict[Any, Any], List[Any]]:
+    main: dict[Any, Any] | list[Any],
+    other: dict[Any, Any] | list[Any],
+) -> dict[Any, Any] | list[Any]:
     if isinstance(main, list) and isinstance(other, list):
         return main + other
     elif isinstance(main, dict) and isinstance(other, dict):

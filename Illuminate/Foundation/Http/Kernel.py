@@ -1,11 +1,8 @@
 from datetime import datetime
-from typing import Optional
 
 from Illuminate.Contracts.Foundation.Application import (
     Application as ApplicationContract,
 )
-from Illuminate.Foundation.Http.Events.RequestHandled import RequestHandled
-from Illuminate.Support.Facades.App import App
 from Illuminate.Contracts.Http.Request import Request
 from Illuminate.Contracts.Http.Response import Response
 from Illuminate.Contracts.Routing.Router import Router as RouterContract
@@ -17,11 +14,12 @@ from Illuminate.Foundation.Bootstrap.LoadEnvironmentVariables import (
 )
 from Illuminate.Foundation.Bootstrap.RegisterFacades import RegisterFacades
 from Illuminate.Foundation.Bootstrap.RegisterProviders import RegisterProviders
+from Illuminate.Foundation.Http.Events.RequestHandled import RequestHandled
 from Illuminate.Foundation.Http.Middleware.HandlePrecognitiveRequests import (
     HandlePrecognitiveRequests,
 )
-
 from Illuminate.Pipeline.Pipeline import Pipeline
+from Illuminate.Support.Facades.App import App
 
 
 class Kernel:
@@ -51,7 +49,7 @@ class Kernel:
             HandlePrecognitiveRequests,
         ]
 
-        self.request_started_at: Optional[datetime] = None
+        self.request_started_at: datetime | None = None
 
         self.__sync_middleware_to_router()
 

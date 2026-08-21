@@ -31,7 +31,7 @@ class WSGIServer:
 
     def send(self):
         try:
-            return ["test".encode("utf-8")]
+            return [b"test"]
         finally:
             print("done")
 

@@ -1,13 +1,14 @@
-from typing import Any, Dict, List
+from typing import Any
+
 from Illuminate.Collections.helpers import collect
 from Illuminate.Contracts.Events import Dispatcher
 from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Helpers.Util import Util
+from Illuminate.Http.Request import Request
+from Illuminate.Pipeline.Pipeline import Pipeline
 from Illuminate.Routing.Events.PreparingResponse import PreparingResponse
 from Illuminate.Routing.Events.ResponsePrepared import ResponsePrepared
 from Illuminate.Routing.Events.Routing import Routing
-from Illuminate.Http.Request import Request
-from Illuminate.Pipeline.Pipeline import Pipeline
 from Illuminate.Routing.MiddlewareNameResolver import MiddlewareNameResolver
 from Illuminate.Routing.Route import Route
 from Illuminate.Routing.RouteCollection import RouteCollection
@@ -66,12 +67,12 @@ class Router:
     def get_middleware_priorities(self):
         return self.__middleware_priorities
 
-    def middleware_priorities(self, middleware_priorities: List[Any]):
+    def middleware_priorities(self, middleware_priorities: list[Any]):
         self.__middleware_priorities = middleware_priorities
 
         return self
 
-    def middleware(self, middleware: List[Any]):
+    def middleware(self, middleware: list[Any]):
         self.__set_middleware(middleware)
 
         return self
@@ -266,7 +267,7 @@ class Router:
 
         return sorted_middleware
 
-    def __resolve_middleware(self, middleware: List[Any]):
+    def __resolve_middleware(self, middleware: list[Any]):
         return (
             collect(middleware)
             .map(
@@ -279,7 +280,7 @@ class Router:
             .all()
         )
 
-    def __sort_middleware_by_priorities(self, middleware: Dict[Any, Any]):
+    def __sort_middleware_by_priorities(self, middleware: dict[Any, Any]):
         priorities = []
 
         non_priorities = []
@@ -314,7 +315,7 @@ class Router:
     def get_registered_paths(self):
         return self.__registered_paths
 
-    def group(self, attributes: Dict[str, Any], route_resolver: Any):
+    def group(self, attributes: dict[str, Any], route_resolver: Any):
         group_routes = (
             route_resolver if isinstance(route_resolver, list) else [route_resolver]
         )

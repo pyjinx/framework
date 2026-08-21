@@ -2,9 +2,6 @@ from typing import TYPE_CHECKING, Any
 
 from Illuminate.Support.Facades.Facade import Facade
 
-if TYPE_CHECKING:
-    from Illuminate.Foundation.Application import Application
-
 
 class App(metaclass=Facade):
     @classmethod

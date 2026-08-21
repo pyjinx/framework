@@ -1,18 +1,18 @@
 import importlib
 import os
+from typing import Any
 
-from typing import Any, Dict, List, Type
-from Illuminate.Validation.Rule import Rule
 from Illuminate.Validation.helpers import snake_to_pascal
+from Illuminate.Validation.Rule import Rule
 
 
 class RulesMapper:
     def __init__(self) -> None:
-        self.__rule_executor_types: Dict[str, Type[Rule]] = (
+        self.__rule_executor_types: dict[str, type[Rule]] = (
             self.__get_rule_executor_types()
         )
 
-        self.__rules: dict[str, Dict[str, Rule]] = {}
+        self.__rules: dict[str, dict[str, Rule]] = {}
 
         self.__implicit_rules = [
             "accepted",
@@ -122,8 +122,8 @@ class RulesMapper:
         return self.__implicit_rules
 
     def __get_listable_rules(
-        self, rules: Dict[str, str | List[Any]]
-    ) -> Dict[str, List[Any]]:
+        self, rules: dict[str, str | list[Any]]
+    ) -> dict[str, list[Any]]:
         formatted_rules = {}
 
         for field, rule_item in rules.items():
@@ -158,7 +158,7 @@ class RulesMapper:
 
         return rule_executor_types
 
-    def set_rules(self, rules: Dict[str, List[Any]], data: Dict[str, Any]) -> None:
+    def set_rules(self, rules: dict[str, list[Any]], data: dict[str, Any]) -> None:
         listable_rules = self.__get_listable_rules(rules)
 
         for field, rule_items in listable_rules.items():

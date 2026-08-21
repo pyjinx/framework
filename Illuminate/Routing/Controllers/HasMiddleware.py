@@ -1,10 +1,10 @@
 from abc import ABC
-from typing import List, Self, Union
+from typing import Self
 
 
 class Middleware:
     def __init__(
-        self, name: str, only: List[str] = [], exclude: List[str] = []
+        self, name: str, only: list[str] = [], exclude: list[str] = []
     ) -> None:
         self.__name = name
         self.__only = only
@@ -22,12 +22,12 @@ class Middleware:
     def exclude(self):
         return self.__exclude
 
-    def set_only(self, only: Union[str | List[str]] = []) -> Self:
+    def set_only(self, only: str | list[str] = []) -> Self:
         self.__only = only if isinstance(only, list) else [only]
 
         return self
 
-    def set_exclude(self, exclude: Union[str | List[str]] = []) -> Self:
+    def set_exclude(self, exclude: str | list[str] = []) -> Self:
         self.__exclude = exclude if isinstance(exclude, list) else [exclude]
 
         return self
@@ -43,5 +43,5 @@ class Middleware:
 
 class HasMiddleware(ABC):
     @classmethod
-    def middleware(cls) -> List[Union[str, Middleware]]:
+    def middleware(cls) -> list[str | Middleware]:
         raise NotImplementedError("Must implement middleware method")

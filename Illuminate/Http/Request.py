@@ -1,9 +1,10 @@
-from typing import Any, Dict, Self
+from typing import Any, Self
+
 from Illuminate.Collections.helpers import collect
 from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Http.Concerns.InteractsWithContentTypes import InteractsWithContentTypes
-from Illuminate.Http.ServerBag.WSGIServer import WSGIServer
 from Illuminate.Http.RequestAdapter import RequestAdapter
+from Illuminate.Http.ServerBag.WSGIServer import WSGIServer
 from Illuminate.Http.WSGIRequestAdapter import WSGIRequestAdapter
 from Illuminate.Routing.Route import Route
 
@@ -70,7 +71,7 @@ class Request(InteractsWithContentTypes):
 
         return collect(url.split("/") if isinstance(url, str) else [])
 
-    def get_input_source(self) -> Dict[Any, Any]:
+    def get_input_source(self) -> dict[Any, Any]:
         if self.is_json():
             return self.json()
 
@@ -81,7 +82,7 @@ class Request(InteractsWithContentTypes):
 
         return self.form()
 
-    def input(self) -> Dict[Any, Any]:
+    def input(self) -> dict[Any, Any]:
         get_input_source_data = self.get_input_source()
 
         query_data = self.query()
@@ -90,7 +91,7 @@ class Request(InteractsWithContentTypes):
 
         return data
 
-    def all(self) -> Dict[Any, Any]:
+    def all(self) -> dict[Any, Any]:
         input_data = self.input()
 
         all_files_data = self.all_files()
@@ -123,26 +124,26 @@ class Request(InteractsWithContentTypes):
     def user(self) -> Any:
         return self.request_adapter.get_user()
 
-    def json(self) -> Dict[Any, Any]:
+    def json(self) -> dict[Any, Any]:
         return self.request_adapter.json_data()
 
-    def query(self) -> Dict[Any, Any]:
+    def query(self) -> dict[Any, Any]:
         return self.request_adapter.query_data()
 
-    def post(self) -> Dict[Any, Any]:
+    def post(self) -> dict[Any, Any]:
         return self.request_adapter.post_data()
 
-    def form(self) -> Dict[Any, Any]:
+    def form(self) -> dict[Any, Any]:
         return self.request_adapter.form_data()
 
-    def all_files(self) -> Dict[Any, Any]:
+    def all_files(self) -> dict[Any, Any]:
         return self.request_adapter.files_data()
 
-    def headers(self) -> Dict[Any, Any]:
+    def headers(self) -> dict[Any, Any]:
         return self.request_adapter.headers_data()
 
-    def sessions(self) -> Dict[Any, Any]:
+    def sessions(self) -> dict[Any, Any]:
         return self.request_adapter.sessions_data()
 
-    def cookies(self) -> Dict[Any, Any]:
+    def cookies(self) -> dict[Any, Any]:
         return self.request_adapter.cookies_data()

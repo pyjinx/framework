@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any
 
 
 class MiddlewareNameResolver:
@@ -6,8 +6,8 @@ class MiddlewareNameResolver:
     def resolve(
         cls,
         name: str,
-        map: Dict[str, Any],
-        middleware_groups: Dict[str, List[Union[str, Any]]],
+        map: dict[str, Any],
+        middleware_groups: dict[str, list[str | Any]],
     ):
         if isinstance(name, str):
             if name in map:

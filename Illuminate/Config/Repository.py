@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Any, Dict, Self
+from typing import Any, Self
 
 
 class Repository:
     def __init__(
-        self, items: Dict[str, Any] = {}, config_path: str | Path = ""
+        self, items: dict[str, Any] = {}, config_path: str | Path = ""
     ) -> None:
-        self.__items: Dict[str, Any] = items
+        self.__items: dict[str, Any] = items
 
         self.__config_path: Path = (
             config_path if isinstance(config_path, Path) else Path(config_path)

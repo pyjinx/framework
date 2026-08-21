@@ -1,5 +1,4 @@
 import inspect
-
 from functools import reduce
 
 
@@ -62,7 +61,7 @@ class Pipeline:
         if hasattr(obj, self.__method):
             return getattr(obj, self.__method)
         else:
-            return getattr(obj, "__call__")
+            return obj.__call__
 
     def __manage_pipe(self, should_continue, current_pipe):
         if should_continue:

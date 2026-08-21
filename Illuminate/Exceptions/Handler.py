@@ -3,4 +3,4 @@ class Handler:
         self.__app = app
 
     def handle(self, exception):
-        print(f"handlring exception", exception)
+        print("handlring exception", exception)

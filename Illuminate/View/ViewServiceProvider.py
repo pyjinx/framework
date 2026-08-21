@@ -1,8 +1,8 @@
+from Illuminate.Foundation.Application import Application
 from Illuminate.Foundation.Support.Providers.RouteServiceProvider import (
     RouteServiceProvider as ServiceProvider,
 )
 from Illuminate.View.ViewFactory import ViewFactory
-from Illuminate.Foundation.Application import Application
 
 
 class ViewServiceProvider(ServiceProvider):

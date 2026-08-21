@@ -1,8 +1,8 @@
-from typing import Any, Dict, List, Self
+from typing import Any, Self
 
 
 class ValidationResponse:
-    def __init__(self, data: Dict[str, Any]) -> None:
+    def __init__(self, data: dict[str, Any]) -> None:
         self.__initial_data = data
         self.__validated_data: dict = {}
         self.__validation_errors: dict = {}
@@ -13,11 +13,11 @@ class ValidationResponse:
         return self.__validated
 
     @property
-    def data(self) -> Dict[str, Any]:
+    def data(self) -> dict[str, Any]:
         return self.__validated_data
 
     @property
-    def errors(self) -> Dict[str, List[str]]:
+    def errors(self) -> dict[str, list[str]]:
         return self.__validation_errors
 
     def set_error(self, field, value) -> None:

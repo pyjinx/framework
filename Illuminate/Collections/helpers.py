@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from Illuminate.Helpers.Util import Util
 from Illuminate.Support.Facades.App import App
@@ -27,7 +27,7 @@ def value(target, *args, **kwargs):
     )
 
 
-def data_get(target: Any, key: Union[List[str], str] = None, default=None):
+def data_get(target: Any, key: list[str] | str = None, default=None):
     if not key or not isinstance(key, (list, str)):
         return target
 

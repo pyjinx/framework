@@ -1,5 +1,5 @@
-from Illuminate.Support.Facades.Facade import Facade
 from Illuminate.Contracts.Foundation.Application import Application
+from Illuminate.Support.Facades.Facade import Facade
 
 
 class RegisterFacades:

@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Self
+from typing import Any, Self
+
 from Illuminate.Contracts.Http.Request import Request
 from Illuminate.Helpers.Util import Util
 from Illuminate.Routing.Controllers.HasMiddleware import Middleware
@@ -57,10 +58,10 @@ class Route:
 
         return self
 
-    def set_action(self, action: List[Any]) -> None:
+    def set_action(self, action: list[Any]) -> None:
         self.action = action
 
-    def get_action(self) -> List[Any]:
+    def get_action(self) -> list[Any]:
         return self.action
 
     def bind(self, request: Request) -> Self:
@@ -133,7 +134,7 @@ class Route:
 
         uses = self.action.get("uses")
 
-        middleware_method = getattr(controller, "middleware", lambda: [])
+        middleware_method = getattr(controller, "middleware", list)
 
         middleware = [
             (
@@ -151,7 +152,7 @@ class Route:
 
         return self
 
-    def set_route_params(self, route_params: Dict[str, Any]) -> Self:
+    def set_route_params(self, route_params: dict[str, Any]) -> Self:
         self.__route_params = route_params
 
         return self

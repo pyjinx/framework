@@ -1,4 +1,5 @@
-from typing import Callable
+from collections.abc import Callable
+
 from Illuminate.Routing.RouteLoader import RouteLoader
 from Illuminate.Support.Facades.Route import Route
 from Illuminate.Support.ServiceProvider import ServiceProvider

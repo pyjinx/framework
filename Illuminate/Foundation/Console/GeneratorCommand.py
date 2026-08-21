@@ -1,7 +1,7 @@
-import re
 import os
-
+import re
 from pathlib import Path
+
 from Illuminate.Foundation.Console.Command import Command
 from Illuminate.Foundation.Console.Input.InputArgument import InputArgument
 

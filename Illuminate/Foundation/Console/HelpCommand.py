@@ -1,5 +1,6 @@
-from Illuminate.Foundation.Console.Command import Command
 from colorama import Fore
+
+from Illuminate.Foundation.Console.Command import Command
 
 
 class HelpCommand(Command):
@@ -12,15 +13,15 @@ class HelpCommand(Command):
 
         padding = 4
 
-        self.info(f"Description:")
+        self.info("Description:")
 
         self.line(" " * padding + command.description)
 
         self.new_line()
 
-        self.info(f"Usage:")
+        self.info("Usage:")
 
-        options = f" [options] [--] " if len(command.options) > 1 else " "
+        options = " [options] [--] " if len(command.options) > 1 else " "
 
         arguments = [f"<{argument['name']}>" for argument in command.arguments]
 
@@ -36,7 +37,7 @@ class HelpCommand(Command):
         description_start = padding + max_length + padding
 
         if len(command.arguments):
-            self.info(f"Arguments:")
+            self.info("Arguments:")
 
             for argument in command.arguments:
                 description_text = Fore.WHITE + argument["description"]
@@ -49,7 +50,7 @@ class HelpCommand(Command):
 
             self.new_line()
 
-        self.info(f"Options:")
+        self.info("Options:")
 
         for option in command.options:
             description_text = (

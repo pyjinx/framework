@@ -18,7 +18,7 @@ class AcceptedIf(Rule):
 
         required_if_value = self.params.get("required_if_value")
 
-        expression = f"'{self.data.get(required_if_key)}' == {repr(required_if_value)}"
+        expression = f"'{self.data.get(required_if_key)}' == {required_if_value!r}"
 
         status = eval(expression)
 

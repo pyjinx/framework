@@ -1,4 +1,5 @@
 from Illuminate.Contracts.Foundation.Application import Application
+from Illuminate.Http.Request import Request
 from Illuminate.Routing.CallableDispatcher import CallableDispatcher
 from Illuminate.Routing.Contracts.CallableDispatcher import (
     CallableDispatcher as CallableDispatcherContract,
@@ -8,12 +9,10 @@ from Illuminate.Routing.Contracts.ControllerDispatcher import (
 )
 from Illuminate.Routing.ControllerDispatcher import ControllerDispatcher
 from Illuminate.Routing.Redirector import Redirector
-from Illuminate.Routing.UrlGenerator import UrlGenerator
-
-from Illuminate.Support.ServiceProvider import ServiceProvider
-from Illuminate.Routing.Router import Router
-from Illuminate.Http.Request import Request
 from Illuminate.Routing.ResponseFactory import ResponseFactory
+from Illuminate.Routing.Router import Router
+from Illuminate.Routing.UrlGenerator import UrlGenerator
+from Illuminate.Support.ServiceProvider import ServiceProvider
 
 
 class RoutingServiceProvider(ServiceProvider):

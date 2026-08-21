@@ -1,8 +1,8 @@
 import re
-
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
-from colorama import Fore, Back, Style
+
+from colorama import Back, Fore, Style
 
 from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
 from Illuminate.Foundation.Console.Input.InputArgument import InputArgument
@@ -10,8 +10,8 @@ from Illuminate.Foundation.Console.Input.InputOption import InputOption
 from Illuminate.Helpers.Util import Util
 
 if TYPE_CHECKING:
-    from Illuminate.Foundation.Console.Application import Application as Commander
     from Illuminate.Foundation.Application import Application
+    from Illuminate.Foundation.Console.Application import Application as Commander
 
 
 class Command:
@@ -279,18 +279,18 @@ class Command:
         styled_text = f"{Back.RED}{Fore.WHITE}{Style.BRIGHT}{padded_message}"
 
         output = (
-            f"\n" * vertical_padding
+            "\n" * vertical_padding
             + f"{Back.RED}{top_bottom_border}\n"
             + styled_text
             + "\n"
             + f"{Back.RED}{top_bottom_border}"
-            + f"\n" * vertical_padding
+            + "\n" * vertical_padding
         )
 
         exit(output)
 
     def new_line(self, total=1):
-        for i in range(0, total):
+        for i in range(total):
             print("\n", end="")
 
     def transform_arguments(self, items: list):

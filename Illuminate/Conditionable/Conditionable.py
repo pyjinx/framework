@@ -1,4 +1,6 @@
-from typing import Any, Callable, Optional, Self, TypeVar, Generic
+from collections.abc import Callable
+from typing import Any, Generic, Self, TypeVar
+
 from Illuminate.Contracts.Collections.Collection import Collection as CollectionContract
 from Illuminate.Helpers.Util import Util
 
@@ -9,8 +11,8 @@ class Conditionable(Generic[T], CollectionContract):
     def when(
         self,
         value=None,
-        callback: Optional[Callable[..., Any]] = None,
-        default: Optional[Callable[..., Any]] = None,
+        callback: Callable[..., Any] | None = None,
+        default: Callable[..., Any] | None = None,
     ) -> Self:
         value = value(self) if callable(value) else value
 

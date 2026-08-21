@@ -1,7 +1,10 @@
-from Illuminate.Collections.helpers import collect
-from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
-from Illuminate.Foundation.Console.Command import Command
 from colorama import Fore, Style
+
+from Illuminate.Collections.helpers import collect
+from Illuminate.Contracts.Foundation.Console.Kernel import (
+    Kernel as ConsoleKernelContract,
+)
+from Illuminate.Foundation.Console.Command import Command
 
 
 class ListCommands(Command):
@@ -19,13 +22,13 @@ class ListCommands(Command):
 
         self.new_line()
 
-        self.info(f"Usage:")
+        self.info("Usage:")
 
-        self.line(" " * padding + f"Commands [options] [arguments]")
+        self.line(" " * padding + "Commands [options] [arguments]")
 
         self.new_line()
 
-        self.info(f"Options:")
+        self.info("Options:")
 
         max_length = self._get_max_length(self.options, commander.command_map.items())
 
@@ -42,7 +45,7 @@ class ListCommands(Command):
 
         self.new_line()
 
-        self.info(f"Available Commands:")
+        self.info("Available Commands:")
 
         commands = collect(commander.command_map).group_by(lambda item: item.segment)
 

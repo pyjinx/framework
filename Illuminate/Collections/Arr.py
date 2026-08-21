@@ -1,13 +1,13 @@
 import math
+from typing import Any
 
-from typing import Any, Dict, List, Union
 from Illuminate.Collections.helpers import data_get
 from Illuminate.Contracts.Collections.Collection import Collection as CollectionContract
 
 
 class Arr:
     @classmethod
-    def only(cls, items: Dict[Any, Any], keys: List[Any]):
+    def only(cls, items: dict[Any, Any], keys: list[Any]):
         return {key: value for key, value in items.items() if key in keys}
 
     @classmethod
@@ -15,7 +15,7 @@ class Arr:
         return data_get(items, key, default)
 
     @classmethod
-    def forget(cls, items, keys: List[str]):
+    def forget(cls, items, keys: list[str]):
         for key in keys:
             parts = key.split(".")
             current = items
@@ -39,8 +39,8 @@ class Arr:
 
     @classmethod
     def flatten(
-        cls, items: Union[Dict[Any, Any], CollectionContract], depth: int = math.inf
-    ) -> Dict[int, Any]:
+        cls, items: dict[Any, Any] | CollectionContract, depth: int = math.inf
+    ) -> dict[int, Any]:
         flattened = []
 
         def _flatten(current_items, current_depth):

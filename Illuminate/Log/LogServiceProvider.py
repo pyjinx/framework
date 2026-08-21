@@ -1,6 +1,6 @@
+from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Log.LogManager import LogManager
 from Illuminate.Support.ServiceProvider import ServiceProvider
-from Illuminate.Contracts.Foundation.Application import Application
 
 
 class LogServiceProvider(ServiceProvider):

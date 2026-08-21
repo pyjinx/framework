@@ -1,4 +1,16 @@
-from sqlalchemy import MetaData, Select, Table, and_, delete, func, insert, or_, select, text, update
+from sqlalchemy import (
+    MetaData,
+    Select,
+    Table,
+    and_,
+    delete,
+    func,
+    insert,
+    or_,
+    select,
+    text,
+    update,
+)
 
 
 class QueryBuilder:

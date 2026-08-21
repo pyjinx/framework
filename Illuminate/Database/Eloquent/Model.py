@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import json
+from datetime import datetime, timezone
 
 from Illuminate.Support.Facades.DB import DB
 
@@ -118,8 +118,9 @@ class Model:
         return HasOne(query, self, foreign_key, local_key)
 
     def belongs_to(self, related_class, foreign_key=None, owner_key=None, relation_name=None):
-        from Illuminate.Database.Eloquent.Relations.BelongsTo import BelongsTo
         import inspect
+
+        from Illuminate.Database.Eloquent.Relations.BelongsTo import BelongsTo
         
         if not relation_name:
             # Inspect stack to find the name of the calling method

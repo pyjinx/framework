@@ -1,12 +1,26 @@
 from pathlib import Path
-from typing import Any, Self, Type
-from Illuminate.Auth.AuthServiceProvider import AuthServiceProvider
-from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
-from Illuminate.Foundation.Console.Output.ConsoleOutput import ConsoleOutput
-from Illuminate.Events.Dispatcher import Dispatcher
+from typing import Any, Self
 
+from Illuminate.Auth.AuthServiceProvider import AuthServiceProvider
+from Illuminate.Container.Container import Container
+from Illuminate.Contracts.Container.Container import Container as ContainerContract
+from Illuminate.Contracts.Foundation.Application import (
+    Application as ApplicationContract,
+)
+from Illuminate.Contracts.Foundation.Console.Kernel import (
+    Kernel as ConsoleKernelContract,
+)
+from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
+from Illuminate.Contracts.Routing.Router import Router as RouterContract
+from Illuminate.Contracts.Support.ServiceProvider import (
+    ServiceProvider as ServiceProviderContract,
+)
+from Illuminate.Database.DatabaseServiceProvider import DatabaseServiceProvider
+from Illuminate.Events.Dispatcher import Dispatcher
 from Illuminate.Events.EventServiceProvider import EventServiceProvider
 from Illuminate.Foundation.Configuration.ApplicationBuilder import ApplicationBuilder
+from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
+from Illuminate.Foundation.Console.Output.ConsoleOutput import ConsoleOutput
 from Illuminate.Foundation.Http.Events.RequestReceived import RequestReceived
 from Illuminate.Foundation.Providers.CommanderServiceProvider import (
     CommanderServiceProvider,
@@ -14,24 +28,8 @@ from Illuminate.Foundation.Providers.CommanderServiceProvider import (
 from Illuminate.Helpers.Util import Util
 from Illuminate.Http.Request import Request
 from Illuminate.Routing.ResponseFactory import ResponseFactory
-from Illuminate.Log.LogServiceProvider import LogServiceProvider
-from Illuminate.Routing.RoutingServiceProvider import RoutingServiceProvider
-from Illuminate.Database.DatabaseServiceProvider import DatabaseServiceProvider
-
-from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
-from Illuminate.Contracts.Foundation.Console.Kernel import Kernel as ConsoleKernelContract
-from Illuminate.Container.Container import Container
-from Illuminate.Contracts.Container.Container import Container as ContainerContract
-from Illuminate.Contracts.Foundation.Application import (
-    Application as ApplicationContract,
-)
-from Illuminate.Contracts.Support.ServiceProvider import (
-    ServiceProvider as ServiceProviderContract,
-)
-
 from Illuminate.Routing.Router import Router
-from Illuminate.Contracts.Routing.Router import Router as RouterContract
-
+from Illuminate.Routing.RoutingServiceProvider import RoutingServiceProvider
 from Illuminate.Support.Facades.Config import Config
 from Illuminate.Validation.Factory import Factory as ValidationFactory
 from Illuminate.Validation.ValidationServiceProvider import ValidationServiceProvider
@@ -309,7 +307,7 @@ class Application(Container, ApplicationContract):
         for callback in callbacks:
             callback(self)
 
-    def register(self, provider_class: Type[ServiceProviderContract]):
+    def register(self, provider_class: type[ServiceProviderContract]):
         registered = self.get_provider(provider_class)
 
         if registered:

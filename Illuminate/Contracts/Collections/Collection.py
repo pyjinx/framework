@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Any, Dict, Self
+from typing import Any, Self
+
 from Illuminate.Contracts.Support.JsonSerializable import JsonSerializable
 
 
@@ -13,7 +14,7 @@ class Collection(JsonSerializable):
         raise NotImplementedError("Not Implemented")
 
     @abstractmethod
-    def all(self) -> Dict[Any, Any]:
+    def all(self) -> dict[Any, Any]:
         raise NotImplementedError("Not Implemented")
 
     @abstractmethod

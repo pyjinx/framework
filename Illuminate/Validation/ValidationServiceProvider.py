@@ -1,5 +1,5 @@
-from Illuminate.Support.ServiceProvider import ServiceProvider
 from Illuminate.Contracts.Foundation.Application import Application
+from Illuminate.Support.ServiceProvider import ServiceProvider
 from Illuminate.Validation.Factory import Factory
 
 

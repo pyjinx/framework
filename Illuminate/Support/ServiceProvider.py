@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from Illuminate.Foundation.Console.Application import Application as Commander
 from Illuminate.Routing.RouteLoader import RouteLoader
 

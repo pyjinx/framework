@@ -1,13 +1,13 @@
 import inspect
+from typing import Any
 
-from typing import Any, Dict
 from Illuminate.Support.helpers import is_class, is_class_instance
 
 
 class Dispatcher:
     def __init__(self, app) -> None:
         self.__app = app
-        self.__listeners: Dict[Any, Any] = {}
+        self.__listeners: dict[Any, Any] = {}
 
     def dispatch(self, event, args=[]):
         event_name = self.parse_event_name(event)

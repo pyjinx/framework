@@ -1,8 +1,9 @@
 import inspect
-
 from abc import ABC
-from typing import Any, Dict, Callable, List, Optional
+from collections.abc import Callable
 from inspect import getfullargspec
+from typing import Any
+
 from Illuminate.Helpers.Util import Util
 from Illuminate.Support.builtins import array_merge
 
@@ -28,16 +29,16 @@ class BuildingNewInstanceRequired(Exception):
 
 class Container(ABC):
     def __init__(self) -> None:
-        self.__bindings: Dict[str, Dict[str, Any]] = {}
-        self.__instances: Dict[str, Any] = {}
-        self.__resolved: Dict[str, bool] = {}
-        self.__aliases: Dict[str, str] = {}
-        self.__abstract_aliases: Dict[str, list] = {}
-        self.__contextual_bindings: Dict[Any, Dict[Any, Any]] = {}
+        self.__bindings: dict[str, dict[str, Any]] = {}
+        self.__instances: dict[str, Any] = {}
+        self.__resolved: dict[str, bool] = {}
+        self.__aliases: dict[str, str] = {}
+        self.__abstract_aliases: dict[str, list] = {}
+        self.__contextual_bindings: dict[Any, dict[Any, Any]] = {}
         self.__build_stack: list = []
-        self.__extenders: Dict[Any, list] = {}
-        self.__tags: Dict[Any, list] = {}
-        self.__rebound_callbacks: Dict[Any, list] = {}
+        self.__extenders: dict[Any, list] = {}
+        self.__tags: dict[Any, list] = {}
+        self.__rebound_callbacks: dict[Any, list] = {}
         self.__scoped_instances: list = []
         self._global_before_resolving_callbacks: list = []
         self._before_resolving_callbacks: dict = {}
@@ -73,7 +74,7 @@ class Container(ABC):
         abstract = self.get_alias(abstract)
         self.__contextual_bindings.setdefault(concrete, {})[abstract] = implementation
 
-    def make(self, key: str, parameters: Dict[str, Any] = {}) -> Any:
+    def make(self, key: str, parameters: dict[str, Any] = {}) -> Any:
         assert isinstance(parameters, dict), "Parameters must be key, value"
 
         return self.resolve(key, parameters)
@@ -81,7 +82,7 @@ class Container(ABC):
     def resolve(
         self,
         abstract: str,
-        parameters: Dict[str, Any] = {},
+        parameters: dict[str, Any] = {},
     ):
         abstract = self.get_alias(abstract)
 
@@ -103,7 +104,7 @@ class Container(ABC):
 
         return concrete
 
-    def _get_contextual_concrete(self, abstract: str, parameters: Dict[str, Any] = {}):
+    def _get_contextual_concrete(self, abstract: str, parameters: dict[str, Any] = {}):
         binding = self._find_in_contextual_bindings(abstract, parameters)
 
         if binding:
@@ -121,7 +122,7 @@ class Container(ABC):
                 return binding
 
     def _fire_before_resolving_callbacks(
-        self, abstract: str, parameters: Dict[str, Any] = {}
+        self, abstract: str, parameters: dict[str, Any] = {}
     ):
         self._fire_before_callback_array(
             abstract, parameters, self._global_before_resolving_callbacks
@@ -249,22 +250,22 @@ class Container(ABC):
     def is_alias(self, name) -> bool:
         return name in self.__aliases
 
-    def get_aliases(self) -> Dict[str, str]:
+    def get_aliases(self) -> dict[str, str]:
         return self.__aliases
 
-    def get_abstract_aliases(self) -> Dict[str, list]:
+    def get_abstract_aliases(self) -> dict[str, list]:
         return self.__abstract_aliases
 
-    def get_bindings(self) -> Dict[str, Dict[str, Any]]:
+    def get_bindings(self) -> dict[str, dict[str, Any]]:
         return self.__bindings
 
-    def get_instance(self, key: str) -> Optional[Any]:
+    def get_instance(self, key: str) -> Any | None:
         return self.__instances.get(key)
 
-    def get_instances(self) -> Dict[str, Any]:
+    def get_instances(self) -> dict[str, Any]:
         return self.__instances
 
-    def get_resolved(self) -> Dict[str, bool]:
+    def get_resolved(self) -> dict[str, bool]:
         return self.__resolved
 
     def extend(self, abstract, extender):
@@ -325,8 +326,8 @@ class Container(ABC):
         return instance
 
     def _find_in_contextual_bindings(
-        self, abstract: str, parameters: List[Any] = []
-    ) -> Optional[Any]:
+        self, abstract: str, parameters: list[Any] = []
+    ) -> Any | None:
         if self.__build_stack:
             concrete = self.__build_stack[-1]
             implementation = self.__contextual_bindings.get(concrete, {}).get(abstract)
@@ -350,7 +351,7 @@ class Container(ABC):
 
         return instance
 
-    def _get_concrete(self, abstract: str, parameters: Dict[str, Any] = {}) -> Any:
+    def _get_concrete(self, abstract: str, parameters: dict[str, Any] = {}) -> Any:
         try:
             return self.__resolve(abstract, abstract, parameters)
         except BindingResolutionException as e:
@@ -383,7 +384,7 @@ class Container(ABC):
         return binding_resolver(self, parameters)
 
     def __resolve(
-        self, abstract: str, binding_resolver: Any, parameters: Dict[str, Any] = {}
+        self, abstract: str, binding_resolver: Any, parameters: dict[str, Any] = {}
     ) -> Any:
         if abstract in self.__build_stack:
             chain = " -> ".join(
@@ -413,8 +414,8 @@ class Container(ABC):
     def get_dependencies(
         self,
         class_info,
-        parameters: Dict[str, Any] | None = None,
-    ) -> List[Any]:
+        parameters: dict[str, Any] | None = None,
+    ) -> list[Any]:
         parameters = parameters or {}
         args_info = getfullargspec(class_info)
         dependencies = []
@@ -456,7 +457,7 @@ class Container(ABC):
 
         return dependencies
 
-    def get_resolved_dependencies(self, abstract: str) -> Dict[str, Any]:
+    def get_resolved_dependencies(self, abstract: str) -> dict[str, Any]:
         if abstract not in self.__resolved:
             raise BindingResolutionException(f"{abstract} is not resolved")
 
