@@ -1,7 +1,16 @@
+from datetime import datetime, timezone
+
+from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
+
+
 class Builder:
     def __init__(self, model_class):
         self.model_class = model_class
         self.query = model_class._query_builder()
+        self._default_scope_applied = False
+        if issubclass(model_class, SoftDeletes):
+            self.query.where_null(model_class.DELETED_AT)
+            self._default_scope_applied = True
 
     # ---- Where clauses ----
 
@@ -78,10 +87,7 @@ class Builder:
     # ---- Read operations ----
 
     def get(self):
-        return [
-            self.model_class(record, exists=True)
-            for record in self.query.get()
-        ]
+        return [self.model_class(record, exists=True) for record in self.query.get()]
 
     def first(self):
         record = self.query.first()
@@ -90,9 +96,7 @@ class Builder:
     def first_or_fail(self):
         instance = self.first()
         if instance is None:
-            raise LookupError(
-                f"{self.model_class.__name__} was not found."
-            )
+            raise LookupError(f"{self.model_class.__name__} was not found.")
         return instance
 
     def value(self, column):
@@ -140,5 +144,40 @@ class Builder:
     def update(self, values):
         return self.query.update(values)
 
+    # ---- Soft deleting ----
+
+    def _remove_default_scope(self):
+        if not self._default_scope_applied:
+            return
+        clause = ("null", "and", self.model_class.DELETED_AT, None)
+        if clause in self.query._where_clauses:
+            self.query._where_clauses.remove(clause)
+        self._default_scope_applied = False
+
+    def with_trashed(self):
+        """Include soft-deleted records in the query results."""
+        self._remove_default_scope()
+        return self
+
+    def without_trashed(self):
+        """Exclude soft-deleted records from the query results."""
+        self._remove_default_scope()
+        self.query.where_null(self.model_class.DELETED_AT)
+        return self
+
+    def only_trashed(self):
+        """Include only soft-deleted records in the query results."""
+        self._remove_default_scope()
+        self.query.where_not_null(self.model_class.DELETED_AT)
+        return self
+
+    def restore(self):
+        """Restore all soft-deleted records matching the current query."""
+        self.with_trashed()
+        return self.query.update({self.model_class.DELETED_AT: None})
+
     def delete(self):
+        if issubclass(self.model_class, SoftDeletes):
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
+            return self.query.update({self.model_class.DELETED_AT: now})
         return self.query.delete()
