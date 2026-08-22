@@ -421,6 +421,60 @@ class QueryBuilder:
     def for_page(self, page: int, per_page: int = 15):
         return self.offset((page - 1) * per_page).limit(per_page)
 
+    def chunk(self, count: int, callback):
+        if count < 1:
+            raise ValueError("The chunk size should be at least 1.")
+        if not self._orders:
+            raise RuntimeError(
+                "You must specify an order_by clause when using this function."
+            )
+
+        offset = self._offset or 0
+        remaining = self._limit
+        page = 1
+
+        while True:
+            limit = count if remaining is None else min(count, remaining)
+            if limit == 0:
+                break
+
+            results = self.offset(offset).limit(limit).get()
+            result_count = len(results)
+            if result_count == 0:
+                break
+
+            if remaining is not None:
+                remaining = max(remaining - result_count, 0)
+
+            if callback(results, page) is False:
+                return False
+
+            page += 1
+            offset += count
+            if result_count != count:
+                break
+
+        return True
+
+    def each(self, callback, count: int = 1000):
+        return self.chunk(
+            count,
+            lambda rows, _page: all(
+                callback(row, index) is not False for index, row in enumerate(rows)
+            ),
+        )
+
+    def cursor(self):
+        statement = self._build_select()
+
+        def iterate():
+            with self.manager._query_connection(self.connection_name) as connection:
+                result = connection.execute(statement)
+                for row in result.mappings():
+                    yield dict(row)
+
+        return iterate()
+
     # ---- Write operations ----
 
     def insert(self, values):
