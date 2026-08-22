@@ -397,6 +397,7 @@ class DatabaseManager:
             bindings = [parameters]
 
         database_name, read_write_type = self.parse_connection_name(name)
+        connection_name = self.get_name_with_read_write_type(name)
         details = dict(self._configuration(database_name))
         exception_type = (
             UniqueConstraintViolationException
@@ -404,7 +405,7 @@ class DatabaseManager:
             else QueryException
         )
         return exception_type(
-            database_name,
+            connection_name,
             statement,
             bindings,
             error,
