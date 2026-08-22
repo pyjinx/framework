@@ -522,13 +522,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `force_fill`, `force_create`, `force_create_quietly`, `save_quietly`,
     `update_quietly`, and `delete_quietly` now mirror the corresponding
     Laravel quiet/unguarded boundaries.
+  - Partial slice (2026-08-22): Eloquent Builder `first_or_new`,
+    `first_or_create`, and `create_or_first` resolve callable or mapping
+    values, preserve existing matches, instantiate unpersisted models, and
+    translate unique-constraint races into a matching existing model.
   - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
-    `Model::deleteQuietly` (1776–1779), and `Builder::forceCreate`
-    (1256–1264).
+    `Model::deleteQuietly` (1776–1779), `Builder::forceCreate` (1256–1264),
+    `Builder::firstOrNew`/`firstOrCreate`/`createOrFirst` (694–735).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
+    tests/test_eloquent_model.py tests/test_eloquent_attributes.py
+    tests/test_eloquent_relationships.py tests/test_eloquent_soft_deletes.py -q`
+    — 41 passed, 17 warnings; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 219 passed, 20 warnings.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
     upsert, cast-aware dirty/original synchronization, and complete CRUD
     option/error semantics remain open.

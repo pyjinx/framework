@@ -1,8 +1,11 @@
 from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Any, Self
-from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
 
+from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
+from Illuminate.Database.UniqueConstraintViolationException import (
+    UniqueConstraintViolationException,
+)
 
 class Builder:
     def __init__(self, model_class):
@@ -328,6 +331,44 @@ class Builder:
     def first(self):
         record = self.query.first()
         return self.model_class(record, exists=True) if record else None
+
+    @staticmethod
+    def _resolve_creation_values(values):
+        resolved = values() if callable(values) else values
+        return dict(resolved or {})
+
+    def _find_by_attributes(self, attributes):
+        lookup = self.model_class.query()
+        for column, value in attributes.items():
+            lookup.where(column, value)
+        return lookup.first()
+
+    def first_or_new(self, attributes=None, values=None):
+        attributes = dict(attributes or {})
+        values = self._resolve_creation_values(values)
+        instance = self._find_by_attributes(attributes)
+        if instance is not None:
+            return instance
+        return self.model_class().fill({**attributes, **values})
+
+    def first_or_create(self, attributes=None, values=None):
+        attributes = dict(attributes or {})
+        values = self._resolve_creation_values(values)
+        instance = self._find_by_attributes(attributes)
+        if instance is not None:
+            return instance
+        return self.create_or_first(attributes, values)
+
+    def create_or_first(self, attributes=None, values=None):
+        attributes = dict(attributes or {})
+        values = self._resolve_creation_values(values)
+        try:
+            return self.create({**attributes, **values})
+        except UniqueConstraintViolationException:
+            instance = self._find_by_attributes(attributes)
+            if instance is None:
+                raise
+            return instance
 
     def first_or_fail(self):
         instance = self.first()
