@@ -430,12 +430,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     middleware exist.
   - Partial slice (2026-08-22): `Illuminate.Auth.GenericUser` now exposes
     authentication identifiers, password access, remember-token access/update,
-    and attribute-backed user values.
-  - Source mapping: Laravel `Auth\GenericUser` (21–140) and
+    and attribute-backed user values. `AuthenticationException` now carries
+    checked guards and explicit or callback-generated redirect destinations.
+  - Source mapping: Laravel `Auth\GenericUser` (21–140),
+    `Auth\AuthenticationException` (8–82), and
     `Contracts\Auth\Authenticatable`.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_auth.py -q` — 1 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 168 passed.
+    tests/test_auth.py tests/test_auth_exception.py -q` — 2 passed; full
+    PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 171 passed.
   - Source mapping: `references/framework/src/Illuminate/Auth`,
     `Illuminate/Contracts/Auth`, and `Illuminate/Auth/Middleware`.
   - Residual parity gaps: complete public-method inventory, session/cookie
