@@ -1,7 +1,7 @@
 import inspect
 import json
 from datetime import datetime, timezone
-
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from Illuminate.Database.Eloquent.Casts.Attribute import Attribute
 from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
 from Illuminate.Support.Facades.DB import DB
@@ -584,7 +584,15 @@ class Model:
         if cast_type in {"float", "real", "double"}:
             return float(value)
         if cast_type == "decimal":
-            return round(float(value), int(precision or 2))
+            try:
+                decimals = int(precision or 2)
+                quantum = Decimal(1).scaleb(-decimals)
+                decimal_value = Decimal(str(value)).quantize(
+                    quantum, rounding=ROUND_HALF_UP
+                )
+                return format(decimal_value, f".{decimals}f")
+            except (InvalidOperation, ValueError) as error:
+                raise ValueError("Unable to cast value to a decimal.") from error
         if cast_type in {"bool", "boolean"}:
             if isinstance(value, str):
                 return value.strip().lower() not in {"", "0", "false", "off", "no"}

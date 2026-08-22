@@ -312,18 +312,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     APIs. Annotated `Attribute` setters can expand one logical assignment into
     multiple persisted attributes, matching the existing getter resolution
     boundary. Primitive `integer`, `float`, `boolean`, `json`, `date`, string,
-    and timestamp casts convert stored values at attribute access.
+    timestamp, and fixed-scale `decimal` casts convert stored values at
+    attribute access; decimal values use string output and half-up rounding.
   - Source mapping: Laravel `HasAttributes::getDirty` (2301–2315),
     `isDirty`/`isClean` (2222–2238), `getChanges`/`wasChanged`
     (2261–2332), `syncOriginal`/`syncOriginalAttribute`/
     `syncOriginalAttributes`/`syncChanges` (2166–2214),
-    `getRawOriginal` (2118–2121), `castAttribute` (848–906), and
-    `Casts\Attribute` setter contract (5–79).
+    `getRawOriginal` (2118–2121), `castAttribute` (848–906),
+    `asDecimal` (1536–1543), and `Casts\Attribute` setter contract (5–79).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 16 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 162 passed.
   - Residual parity gaps: cast-aware dirty comparison, original rewinding,
-    legacy mutator edge semantics, decimal/enum/collection/custom casts,
+    legacy mutator edge semantics, enum/collection/custom casts,
     encrypted/hashed/JSON/date serialization edge cases, and mass-assignment
     exceptions remain open.
 - [~] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
