@@ -9,6 +9,19 @@ tested, and revalidated against the pinned Laravel 13.x baseline.
 This loop is a development control record, not a claim that parity is already
 complete.
 
+## Executor requirement
+
+This document defines the backlog, invariants, and resume protocol; Markdown
+does not self-execute. A coordinator must invoke the loop and keep dispatching
+implementation, verification, review, and delivery work.
+
+In this environment, `/goal` is the coordinator invocation. Each invocation
+can execute bounded slices and persist the next checkpoint, but it cannot
+continue after the API response or start an unattended model process. An
+external scheduler or orchestration runtime is required for unattended
+execution. The absence of such a runtime MUST NOT be described as autonomous
+background execution.
+
 ## Authoritative trackers
 
 The loop keeps both copies synchronized:
