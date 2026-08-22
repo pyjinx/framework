@@ -326,6 +326,12 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     preserved.
   - Partial slice (2026-08-22): `where_in` and `where_not_in` reject nested
     arrays before query execution, matching Laravel's invalid-argument boundary.
+  - Partial slice (2026-08-22): `where_raw` and `or_where_raw` support
+    positional `?` bindings through SQLAlchemy bind parameters. Comparison
+    construction now avoids evaluating unsupported operators eagerly, allowing
+    NULL equality predicates to compile correctly.
+  - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305) and
+    `orWhereRaw` (1308–1310).
   - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
     `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
     `orWhereNotIn` (1490–1492).
@@ -359,8 +365,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 78 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 199
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 79 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 200
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,

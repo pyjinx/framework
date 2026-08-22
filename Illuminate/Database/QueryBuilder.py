@@ -5,6 +5,7 @@ from sqlalchemy import (
     Select,
     Table,
     and_,
+    bindparam,
     delete,
     exists,
     func,
@@ -99,6 +100,15 @@ class QueryBuilder:
             operator = "="
         self._conditions.append(("or", column, operator, value))
         return self
+
+    def where_raw(self, sql: str, bindings=None, boolean: str = "and"):
+        self._where_clauses.append(
+            ("raw", boolean, sql, [] if bindings is None else bindings)
+        )
+        return self
+
+    def or_where_raw(self, sql: str, bindings=None):
+        return self.where_raw(sql, bindings, "or")
 
     def where_null_safe_equals(self, column, value, boolean: str = "and"):
         self._where_clauses.append(("null_safe_equals", boolean, column, value))
@@ -748,6 +758,18 @@ class QueryBuilder:
 
     average = avg
 
+    @staticmethod
+    def _raw_expression(sql, bindings):
+        if isinstance(bindings, dict):
+            return text(sql).bindparams(**bindings)
+
+        bindings = list(bindings)
+        for index, _ in enumerate(bindings):
+            sql = sql.replace("?", f":raw_{index}", 1)
+        return text(sql).bindparams(
+            *[bindparam(f"raw_{index}", value) for index, value in enumerate(bindings)]
+        )
+
     def min(self, column):
         return self._aggregate(func.min, column)
 
@@ -827,6 +849,13 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "raw":
+                expr = self._raw_expression(column, val)
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "not_basic":
                 operator, value = val
                 expr = ~self._comparison(self._resolve_column(column), operator, value)
@@ -1068,18 +1097,20 @@ class QueryBuilder:
 
     @staticmethod
     def _comparison(column, operator, value):
-        comparisons = {
-            "=": column == value,
-            "==": column == value,
-            "!=": column != value,
-            "<>": column != value,
-            ">": column > value,
-            ">=": column >= value,
-            "<": column < value,
-            "<=": column <= value,
-            "like": column.like(value),
-            "not like": ~column.like(value),
-        }
-        if operator not in comparisons:
-            raise ValueError(f"Unsupported where operator: {operator}")
-        return comparisons[operator]
+        if operator in {"=", "=="}:
+            return column == value
+        if operator in {"!=", "<>"}:
+            return column != value
+        if operator == ">":
+            return column > value
+        if operator == ">=":
+            return column >= value
+        if operator == "<":
+            return column < value
+        if operator == "<=":
+            return column <= value
+        if operator == "like":
+            return column.like(value)
+        if operator == "not like":
+            return ~column.like(value)
+        raise ValueError(f"Unsupported where operator: {operator}")
