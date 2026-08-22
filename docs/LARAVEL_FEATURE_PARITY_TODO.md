@@ -180,6 +180,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 - [ ] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
 - [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
+  - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
+  - Evidence: focused manager coverage 11 passed, database component coverage 15 passed, full PyJinx suite 112 passed; canonical and runtime `DatabaseManager.py` and tracker copies are synchronized.
+  - Residual parity gaps: raw `Engine.connect()` proxy lifecycle remains an explicit SQLAlchemy boundary for the next connection-resource slice; Laravel read/write/direct variants, full URL parsing, prefixes, strict mode, non-SQLite drivers, connector extensions/events, transaction manager semantics, retries, listeners, normalized exceptions, and complete connection API remain open. `ValueError` is the documented Python analogue of Laravel's `InvalidArgumentException`.
 - [ ] Complete database manager/resolver parity: connection switching, transactions, nested transactions, retries, query listeners, and normalized exceptions.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
 - [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.
