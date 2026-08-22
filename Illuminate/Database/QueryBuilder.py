@@ -39,6 +39,7 @@ class QueryBuilder:
         self._loaded_tables = None
         self._raw_selects = []
         self._raw_orders = []
+        self._raw_groups = []
         self._lock = None
 
     # ---- Select ----
@@ -519,6 +520,12 @@ class QueryBuilder:
 
     def group_by(self, *columns):
         self._groups.extend(columns)
+        return self
+
+    def group_by_raw(self, expression: str, bindings=None):
+        self._raw_groups.append(
+            self._raw_expression(expression, [] if bindings is None else bindings)
+        )
         return self
 
     def having(self, column, operator="=", value=None):
@@ -1056,6 +1063,8 @@ class QueryBuilder:
 
         if self._distinct:
             statement = statement.distinct()
+        for expression in self._raw_groups:
+            statement = statement.group_by(expression)
 
         statement = self._apply_wheres(table, statement)
 
