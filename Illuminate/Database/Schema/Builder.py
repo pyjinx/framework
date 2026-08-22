@@ -20,33 +20,37 @@ class SchemaBuilder:
     def _get_connection(self):
         return self.manager.connection(self.connection_name)
 
+    def _table_name(self, table_name: str) -> str:
+        return self.manager.prefixed_table_name(table_name, self.connection_name)
+
     def has_table(self, table_name: str) -> bool:
-        return inspect(self._get_connection()).has_table(table_name)
+        return inspect(self._get_connection()).has_table(self._table_name(table_name))
 
     def has_column(self, table_name: str, column_name: str) -> bool:
         return column_name.lower() in {
-            column["name"].lower()
-            for column in inspect(self._get_connection()).get_columns(table_name)
+            column["name"].lower() for column in self.get_columns(table_name)
         }
 
     def has_columns(self, table_name: str, columns: list[str]) -> bool:
-        available = {
-            column["name"].lower()
-            for column in inspect(self._get_connection()).get_columns(table_name)
-        }
+        available = {column["name"].lower() for column in self.get_columns(table_name)}
         return all(column.lower() in available for column in columns)
 
     def get_columns(self, table_name: str) -> list[dict]:
-        return inspect(self._get_connection()).get_columns(table_name)
+        return inspect(self._get_connection()).get_columns(self._table_name(table_name))
 
     def get_indexes(self, table_name: str) -> list[dict]:
-        return inspect(self._get_connection()).get_indexes(table_name)
+        return inspect(self._get_connection()).get_indexes(self._table_name(table_name))
 
     def get_foreign_keys(self, table_name: str) -> list[dict]:
-        return inspect(self._get_connection()).get_foreign_keys(table_name)
+        return inspect(self._get_connection()).get_foreign_keys(
+            self._table_name(table_name)
+        )
 
     def has_view(self, view_name: str) -> bool:
-        return view_name in inspect(self._get_connection()).get_view_names()
+        return (
+            self._table_name(view_name)
+            in inspect(self._get_connection()).get_view_names()
+        )
 
     def get_tables(self, schema: str | None = None) -> list[dict]:
         return [
@@ -71,6 +75,7 @@ class SchemaBuilder:
 
     def create(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
         """Create a new table on the schema."""
+        table_name = self._table_name(table_name)
         blueprint = Blueprint(table_name)
         callback(blueprint)
 
@@ -88,7 +93,7 @@ class SchemaBuilder:
     def drop(self, table_name: str) -> None:
         """Drop a table from the schema."""
         metadata = sa.MetaData()
-        table = sa.Table(table_name, metadata)
+        table = sa.Table(self._table_name(table_name), metadata)
         with self._get_connection().begin() as conn:
             conn.execute(DropTable(table))
 
@@ -99,6 +104,7 @@ class SchemaBuilder:
         return f'"{identifier.replace(chr(34), chr(34) * 2)}"'
 
     def table(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
+        table_name = self._table_name(table_name)
         blueprint = Blueprint(table_name)
         callback(blueprint)
         quoted_table = self._quote_identifier(table_name)
@@ -126,7 +132,7 @@ class SchemaBuilder:
     def drop_if_exists(self, table_name: str) -> None:
         """Drop a table from the schema if it exists."""
         metadata = sa.MetaData()
-        table = sa.Table(table_name, metadata)
+        table = sa.Table(self._table_name(table_name), metadata)
         with self._get_connection().begin() as conn:
             conn.execute(DropTable(table, if_exists=True))
 
@@ -134,6 +140,8 @@ class SchemaBuilder:
         """Rename a table using quoted SQLite identifiers."""
         if not source or not target or "\x00" in source or "\x00" in target:
             raise ValueError("Table names must be non-empty and NUL-free.")
+        source = self._table_name(source)
+        target = self._table_name(target)
         quoted_source = f'"{source.replace(chr(34), chr(34) * 2)}"'
         quoted_target = f'"{target.replace(chr(34), chr(34) * 2)}"'
         with self._get_connection().begin() as conn:

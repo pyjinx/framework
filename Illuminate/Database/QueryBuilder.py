@@ -21,8 +21,8 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 class QueryBuilder:
     def __init__(self, manager, table_name: str, connection_name=None):
         self.manager = manager
-        self.table_name = table_name
         self.connection_name = connection_name
+        self.table_name = manager.prefixed_table_name(table_name, connection_name)
         self._columns = None
         self._conditions = []
         self._or_conditions = []
@@ -65,12 +65,14 @@ class QueryBuilder:
 
     def join(self, table, first, operator="=", second=None):
         """Add an inner join clause."""
+        table = self.manager.prefixed_table_name(table, self.connection_name)
         self._joins.append(("inner", table, first, operator, second))
         self._loaded_tables = None
         return self
 
     def left_join(self, table, first, operator="=", second=None):
         """Add a left join clause."""
+        table = self.manager.prefixed_table_name(table, self.connection_name)
         self._joins.append(("left", table, first, operator, second))
         self._loaded_tables = None
         return self
@@ -700,6 +702,9 @@ class QueryBuilder:
         """Resolve a column reference, supporting table.column qualifiers."""
         if isinstance(column, str) and "." in column:
             table_name, column_name = column.split(".", 1)
+            table_name = self.manager.prefixed_table_name(
+                table_name, self.connection_name
+            )
             return getattr(self._load_tables()[table_name].c, column_name)
         return getattr(self._table().c, column)
 

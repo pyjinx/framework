@@ -206,6 +206,14 @@ class DatabaseManager:
             f"{database_name}::{connection_type}" if connection_type else database_name
         )
 
+    def get_table_prefix(self, name: str | None = None) -> str:
+        requested = name or self.get_default_connection()
+        database_name, _ = self.parse_connection_name(requested)
+        return str(self._configuration(database_name).get("prefix", ""))
+
+    def prefixed_table_name(self, table_name: str, name: str | None = None) -> str:
+        return f"{self.get_table_prefix(name)}{table_name}"
+
     def disconnect(self, name: str | None = None) -> None:
         name = name or self.get_default_connection()
         cleanup_error = self._close_sessions(name)
