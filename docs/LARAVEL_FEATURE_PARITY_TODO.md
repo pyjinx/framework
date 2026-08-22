@@ -48,10 +48,16 @@ revalidated.
      `JsonSerializable` contract and `Application.handle_request` recursively
      normalizes model/list/dict responses through `ResponseFactory.serialize`;
      controllers can return model objects directly.
+   - CLI runtime slice (2026-08-22): the editable application/framework
+     installation exposes the `pyjinx` console entry point; `pyjinx --version`,
+     `pyjinx serve --help`, and the real serve request path now load
+     `ApplicationBuilder` successfully under the moved project layout.
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_exception_handler.py tests/test_serve_command.py
-    tests/test_post_comments_api.py -q` — 9 focused checks; full suite:
-     `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
+    tests/test_post_comments_api.py -q` plus direct
+    `./.venv/bin/pyjinx --version` and `./.venv/bin/pyjinx serve --help`;
+    full suite: `uv run --no-sync python3 -m pytest tests/ -q` — 219 passed,
+    20 warnings.
      Source mapping and residuals are in `IMPLEMENTATION_DECISIONS.md`.
    - Gaps: full Laravel bootstrap policy, maintenance mode, complete Laravel
      exception conversion/rendering, and service registration lifecycle
