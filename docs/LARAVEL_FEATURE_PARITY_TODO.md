@@ -330,8 +330,21 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     - SQLAlchemy/Alembic-backed manager, query/schema builders, migrations, and early Eloquent slices exist; broad Laravel API parity remains incomplete.
 - [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.
   - Partial slice (2026-08-22): SQLite schema creation materializes `foreign_id(...).constrained()` foreign-key constraints with `on_delete`/`on_update` actions, named single/composite `unique` and `index` definitions, fluent column modifiers, and escaped string defaults.
-  - Source mapping: `Blueprint::unique` (662), `index` (675), `foreign` (741), `foreignId` (1037), `indexCommand` (1772), `createIndexName` (1815), `ColumnDefinition` fluent modifiers, `ForeignIdColumnDefinition::constrained` (37) and `references` (52), `ForeignKeyDefinition` action helpers, and `Builder::create` (518)/`rename` (610).
-  - Evidence: `cd port/pyjinx && uv run --no-sync pytest tests/test_schema_builder.py -q` — 8 passed; full PyJinx suite: 135 passed (database FK metadata, conventional/called index names, unique enforcement, invalid-reference rejection, `ON DELETE CASCADE`, explicit-vs-fluent unique overloads, quoted defaults, boolean fluent index/primary naming, quoted identifiers, and None-default behavior). Canonical/runtime schema code and tracker copies are synchronized.
+  - Partial slice (2026-08-22): `SchemaBuilder.has_table`,
+    `has_column`, `has_columns`, and `get_columns` expose SQLite schema
+    introspection through SQLAlchemy's inspector with case-insensitive table
+    column checks.
+  - Source mapping: Laravel `Schema\Builder::hasTable` (169–184),
+    `hasColumn` (270–277), `hasColumns` (284–295), and `getColumns` (393–409);
+    current creation mapping remains `Blueprint::unique` (662), `index` (675),
+    `foreign` (741), `foreignId` (1037), `indexCommand` (1772),
+    `createIndexName` (1815), `ColumnDefinition` modifiers,
+    `ForeignIdColumnDefinition::constrained` (37),
+    `ForeignKeyDefinition` action helpers, and `Builder::create` (518) /
+    `rename` (610).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_schema_builder.py -q` — 9 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 186 passed, 20 warnings.
   - Residual parity gaps: SQLite-only creation; table alteration; column/index/foreign-key drops and renames; inspection; full types/modifiers/default expressions; composite/self-referential FKs; irregular plural inference; and non-SQLite grammar behavior.
 - [ ] Complete migration parity: Laravel-shaped files and paths, batches, status, rollback step/batch, reset, refresh, fresh, pretend, paths, seed integration, and failure recovery.
   - Partial slice (2026-08-22): `migrate:status --pending` now filters out applied revisions and reports `No pending migrations` when its filtered result is empty. The existing unfiltered status output remains available and reports `No migrations found` when the migration directory has no revisions.

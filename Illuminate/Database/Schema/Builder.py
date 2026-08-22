@@ -2,6 +2,7 @@ from collections.abc import Callable
 from typing import Any, Self
 
 import sqlalchemy as sa
+from sqlalchemy import inspect
 from Illuminate.Database.Schema.Blueprint import Blueprint
 from sqlalchemy.schema import CreateIndex, CreateTable, DropTable
 
@@ -19,9 +20,26 @@ class SchemaBuilder:
     def _get_connection(self):
         return self.manager.connection(self.connection_name)
 
-    def create(
-        self, table_name: str, callback: Callable[[Blueprint], Any]
-    ) -> None:
+    def has_table(self, table_name: str) -> bool:
+        return inspect(self._get_connection()).has_table(table_name)
+
+    def has_column(self, table_name: str, column_name: str) -> bool:
+        return column_name.lower() in {
+            column["name"].lower()
+            for column in inspect(self._get_connection()).get_columns(table_name)
+        }
+
+    def has_columns(self, table_name: str, columns: list[str]) -> bool:
+        available = {
+            column["name"].lower()
+            for column in inspect(self._get_connection()).get_columns(table_name)
+        }
+        return all(column.lower() in available for column in columns)
+
+    def get_columns(self, table_name: str) -> list[dict]:
+        return inspect(self._get_connection()).get_columns(table_name)
+
+    def create(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
         """Create a new table on the schema."""
         blueprint = Blueprint(table_name)
         callback(blueprint)
