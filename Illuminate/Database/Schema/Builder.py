@@ -45,6 +45,30 @@ class SchemaBuilder:
     def get_foreign_keys(self, table_name: str) -> list[dict]:
         return inspect(self._get_connection()).get_foreign_keys(table_name)
 
+    def has_view(self, view_name: str) -> bool:
+        return view_name in inspect(self._get_connection()).get_view_names()
+
+    def get_tables(self, schema: str | None = None) -> list[dict]:
+        return [
+            {"name": table_name}
+            for table_name in inspect(self._get_connection()).get_table_names(
+                schema=schema
+            )
+        ]
+
+    def get_views(self, schema: str | None = None) -> list[dict]:
+        inspector = inspect(self._get_connection())
+        return [
+            {
+                "name": view_name,
+                "definition": inspector.get_view_definition(view_name, schema=schema),
+            }
+            for view_name in inspector.get_view_names(schema=schema)
+        ]
+
+    def get_types(self, schema: str | None = None) -> list[dict]:
+        return []
+
     def create(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
         """Create a new table on the schema."""
         blueprint = Blueprint(table_name)
