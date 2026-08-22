@@ -679,6 +679,10 @@ class Model:
         if key is None:
             return dict(self._original)
         return self._original.get(key, default)
+    def get_raw_original(self, key=None, default=None):
+        if key is None:
+            return dict(self._original)
+        return self._original.get(key, default)
     def sync_original(self):
         self._original = dict(self._attributes)
         return self

@@ -306,20 +306,21 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `Model.is_dirty`, `is_clean`, `get_dirty`,
     `get_changes`, `was_changed`, and `get_original` distinguish current
     attributes from the last synchronized original state and retain the last
-    successful save changes. `sync_original`, `sync_original_attribute`,
-    `sync_original_attributes`, and `sync_changes` provide explicit baseline
-    synchronization.
+    successful save changes. `get_raw_original`,
+    `sync_original`, `sync_original_attribute`, `sync_original_attributes`,
+    and `sync_changes` provide explicit raw-baseline and synchronization
+    APIs.
   - Source mapping: Laravel `HasAttributes::getDirty` (2301–2315),
     `isDirty`/`isClean` (2222–2238), `getChanges`/`wasChanged`
     (2261–2332), `syncOriginal`/`syncOriginalAttribute`/
-    `syncOriginalAttributes`/`syncChanges` (2166–2214), and original-state
-    APIs (2084–2121).
+    `syncOriginalAttributes`/`syncChanges` (2166–2214),
+    `getRawOriginal` (2118–2121), and original-state APIs (2084–2115).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: cast-aware dirty comparison, original rewinding,
-    raw-original APIs, accessors/mutators, casts, encrypted/hashed/JSON/date
-    serialization, and mass-assignment exceptions remain open.
+    accessors/mutators, casts, encrypted/hashed/JSON/date serialization, and
+    mass-assignment exceptions remain open.
 - [~] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
   - Partial slice (2026-08-22): `Model.without_events` suppresses model callbacks
     across nested operations with restoration in `finally`; `create_quietly`,
