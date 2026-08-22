@@ -1,5 +1,6 @@
 import inspect
 import json
+import re
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from Illuminate.Database.Eloquent.Casts.Attribute import Attribute
@@ -146,8 +147,18 @@ class Model:
     def set_incrementing(self, value):
         self.incrementing = value
         return self
+
+    @staticmethod
+    def _default_table_name(model_name):
+        snake_name = re.sub(r"(?<!^)(?=[A-Z])", "_", model_name).lower()
+        if snake_name.endswith("y") and len(snake_name) > 1:
+            return snake_name[:-1] + "ies"
+        if snake_name.endswith(("s", "x", "z", "ch", "sh")):
+            return snake_name + "es"
+        return snake_name + "s"
+
     def get_table(self):
-        return self.table
+        return self.table or self._default_table_name(self.__class__.__name__)
 
     def set_table(self, table):
         self.table = table
