@@ -5,7 +5,7 @@ description = "PyJinx - Python MVC framework"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Krunal Dodiya", email = "kunal.dodiya1@gmail.com" }]
-license = { text = "MIT" }
+license = "MIT"
 dependencies = [
   "python-dotenv>=1.0.1",
   "pluralizer>=1.2.0",
