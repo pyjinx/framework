@@ -395,21 +395,27 @@ class QueryBuilder:
         self._where_clauses.append(("row_values", "or", columns, (operator, values)))
         return self
 
-    def where_in(self, column, values):
-        self._where_clauses.append(("in", "and", column, list(values)))
+    @staticmethod
+    def _validate_flat_in_values(values):
+        values = list(values)
+        if any(isinstance(value, (list, tuple, set, frozenset)) for value in values):
+            raise ValueError("Nested arrays may not be passed to whereIn method.")
+        return values
+
+    def where_in(self, column, values, boolean="and", not_in=False):
+        values = self._validate_flat_in_values(values)
+        kind = "not_in" if not_in else "in"
+        self._where_clauses.append((kind, boolean, column, values))
         return self
 
     def or_where_in(self, column, values):
-        self._where_clauses.append(("in", "or", column, list(values)))
-        return self
+        return self.where_in(column, values, "or")
 
-    def where_not_in(self, column, values):
-        self._where_clauses.append(("not_in", "and", column, list(values)))
-        return self
+    def where_not_in(self, column, values, boolean="and"):
+        return self.where_in(column, values, boolean, True)
 
     def or_where_not_in(self, column, values):
-        self._where_clauses.append(("not_in", "or", column, list(values)))
-        return self
+        return self.where_not_in(column, values, "or")
 
     def where_integer_in_raw(
         self, column, values, boolean: str = "and", not_in: bool = False

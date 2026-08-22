@@ -324,6 +324,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): Eloquent Builder forwards null-safe equality,
     scalar negated comparisons, and integer raw predicates with model hydration
     preserved.
+  - Partial slice (2026-08-22): `where_in` and `where_not_in` reject nested
+    arrays before query execution, matching Laravel's invalid-argument boundary.
+  - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
+    `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
+    `orWhereNotIn` (1490–1492).
   - Source mapping: Laravel `Query\Builder::whereNot` (1139–1155),
     `orWhereNot` (1158–1160), `whereNullSafeEquals` (1386–1397),
     `orWhereNullSafeEquals` (1406–1408), SQLite
@@ -354,8 +359,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 77 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 198
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 78 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 199
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
