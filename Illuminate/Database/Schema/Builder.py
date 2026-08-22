@@ -129,6 +129,9 @@ class SchemaBuilder:
                             )
                         )
 
+    def drop_columns(self, table_name: str, columns: str | list[str]) -> None:
+        self.table(table_name, lambda blueprint: blueprint.drop_column(columns))
+
     def drop_if_exists(self, table_name: str) -> None:
         """Drop a table from the schema if it exists."""
         metadata = sa.MetaData()

@@ -350,22 +350,27 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `SchemaBuilder.table` executes Blueprint
     `rename_column` and `drop_column` commands using SQLite's quoted
     `ALTER TABLE` operations with identifier validation.
+  - Partial slice (2026-08-22): `SchemaBuilder.drop_columns` forwards Laravel's
+    multi-column drop helper through the Blueprint mutation boundary.
   - Source mapping: Laravel `Schema\Builder::hasTable` (169–184),
     `hasView` (194–207), `getTables` (215–237), `getViews` (243–253),
     `getTypes` (256–265), `hasColumn` (270–277), `hasColumns` (284–295),
     `getColumns` (393–409), `getIndexes` (412–481),
-    `getForeignKeys` (486–550), `table` (506–510), and
-    `Blueprint::dropColumn` (422–427) / `renameColumn` (436–439);
-    current creation mapping remains `Blueprint::unique` (662), `index` (675),
-    `foreign` (741), `foreignId` (1037), `indexCommand` (1772),
-    `createIndexName` (1815), `ColumnDefinition` modifiers,
-    `ForeignIdColumnDefinition::constrained` (37),
-    `ForeignKeyDefinition` action helpers, and `Builder::create` (518) /
+    `getForeignKeys` (486–550), `table` (506–510),
+    `dropColumns` (560–565), and `Blueprint::dropColumn` (422–427) /
+    `renameColumn` (436–439); current creation mapping remains
+    `Blueprint::unique` (662), `index` (675), `foreign` (741), `foreignId`
+    (1037), `indexCommand` (1772), `createIndexName` (1815),
+    `ColumnDefinition` modifiers, `ForeignIdColumnDefinition::constrained`
+    (37), `ForeignKeyDefinition` action helpers, and `Builder::create` (518) /
     `rename` (610).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_schema_builder.py -q` — 10 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 187 passed, 20 warnings.
-  - Residual parity gaps: SQLite-only creation; table alteration; column/index/foreign-key drops and renames; inspection; full types/modifiers/default expressions; composite/self-referential FKs; irregular plural inference; and non-SQLite grammar behavior.
+    `uv run --no-sync python3 -m pytest tests/ -q` — 189 passed, 20 warnings.
+  - Residual parity gaps: SQLite-only creation; remaining table alteration,
+    index/foreign-key drops and renames; full types/modifiers/default
+    expressions; composite/self-referential FKs; irregular plural inference;
+    and non-SQLite grammar behavior.
 - [ ] Complete migration parity: Laravel-shaped files and paths, batches, status, rollback step/batch, reset, refresh, fresh, pretend, paths, seed integration, and failure recovery.
   - Partial slice (2026-08-22): `migrate:status --pending` filters out
     applied revisions and reports `No pending migrations` when empty.
