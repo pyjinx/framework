@@ -232,6 +232,35 @@ class QueryBuilder:
     def or_where_json_doesnt_contain(self, column, value):
         self._where_clauses.append(("json_contains", "or", column, (value, True)))
         return self
+    def where_json_contains_key(self, column):
+        self._where_clauses.append(("json_key", "and", column, False))
+        return self
+
+    def or_where_json_contains_key(self, column):
+        self._where_clauses.append(("json_key", "or", column, False))
+        return self
+
+    def where_json_doesnt_contain_key(self, column):
+        self._where_clauses.append(("json_key", "and", column, True))
+        return self
+
+    def or_where_json_doesnt_contain_key(self, column):
+        self._where_clauses.append(("json_key", "or", column, True))
+        return self
+
+    def where_json_length(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(("json_length", "and", column, (operator, value)))
+        return self
+
+    def or_where_json_length(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(("json_length", "or", column, (operator, value)))
+        return self
 
 
     def where_in(self, column, values):
@@ -548,6 +577,12 @@ class QueryBuilder:
             table_name, column_name = column.split(".", 1)
             return getattr(self._load_tables()[table_name].c, column_name)
         return getattr(self._table().c, column)
+    def _json_source(self, column):
+        parts = column.split("->")
+        source = self._resolve_column(parts[0])
+        if len(parts) > 1:
+            source = func.json_extract(source, "$." + ".".join(parts[1:]))
+        return source
 
     def _apply_wheres(self, table, statement):
         """Apply all where conditions to any statement (select/update/delete)."""
@@ -562,7 +597,8 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
-            base_column = column.split("->", 1)[0] if kind == "json_contains" else column
+            json_kind = kind in {"json_contains", "json_key", "json_length"}
+            base_column = column.split("->", 1)[0] if json_kind else column
             col = self._resolve_column(base_column)
             if kind == "column":
                 operator, right_column = val
@@ -593,13 +629,9 @@ class QueryBuilder:
                 expr = self._comparison(func.strftime("%Y", col), operator, value)
             elif kind == "json_contains":
                 value, not_contains = val
-                json_parts = column.split("->")
-                json_source = self._resolve_column(json_parts[0])
-                if len(json_parts) > 1:
-                    json_source = func.json_extract(
-                        json_source, "$." + ".".join(json_parts[1:])
-                    )
-                json_values = func.json_each(json_source).table_valued("value")
+                json_values = func.json_each(self._json_source(column)).table_valued(
+                    "value"
+                )
                 expr = exists(
                     select(1)
                     .select_from(json_values)
@@ -607,6 +639,18 @@ class QueryBuilder:
                 )
                 if not_contains:
                     expr = ~expr
+            elif kind == "json_key":
+                not_contains = val
+                expr = func.json_type(self._json_source(column)).is_not(None)
+                if not_contains:
+                    expr = ~expr
+            elif kind == "json_length":
+                operator, value = val
+                expr = self._comparison(
+                    func.json_array_length(self._json_source(column)),
+                    operator,
+                    value,
+                )
             elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
