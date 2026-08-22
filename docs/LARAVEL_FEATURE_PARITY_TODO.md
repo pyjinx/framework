@@ -316,9 +316,15 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `or_where_*` variants accept subquery builders or callback-configured
     subqueries, including `from_` table selection, and compile SQLite EXISTS
     predicates.
+  - Partial slice (2026-08-22): `where_like`, `where_not_like`, and `or_where_*`
+    variants support case-insensitive SQLite LIKE and Laravel-compatible
+    case-sensitive GLOB pattern conversion.
   - Source mapping: Laravel `Query\Builder::whereExists` (2143–2162),
     `orWhereExists` (2166–2172), `whereNotExists` (2178–2181),
-    `orWhereNotExists` (2189–2191), `whereColumn` (1172–1205),
+    `orWhereNotExists` (2189–2191), `whereLike` (1323–1336),
+    `orWhereLike` (1346–1349), `whereNotLike` (1360–1363),
+    `orWhereNotLike` (1373–1376), SQLite `SQLiteGrammar::whereLike` (54–62),
+    `prepareWhereLikeBinding` (71–78), `whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
     (1697–1700), `whereDate`/`orWhereDate` (1801–1838),
@@ -340,8 +346,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py -q` — 51 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 193 passed, 20 warnings.
+    tests/test_query_builder.py -q` — 52 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 194 passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
     SQL grammar abstraction, binding buckets/cleaning, before-query callbacks,

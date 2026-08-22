@@ -100,6 +100,30 @@ class QueryBuilder:
         self._conditions.append(("or", column, operator, value))
         return self
 
+    def where_like(
+        self,
+        column,
+        value,
+        case_sensitive: bool = False,
+        boolean: str = "and",
+        not_like: bool = False,
+    ):
+        self._where_clauses.append(
+            ("like", boolean, column, (value, case_sensitive, not_like))
+        )
+        return self
+
+    def or_where_like(self, column, value, case_sensitive: bool = False):
+        return self.where_like(column, value, case_sensitive, "or")
+
+    def where_not_like(
+        self, column, value, case_sensitive: bool = False, boolean: str = "and"
+    ):
+        return self.where_like(column, value, case_sensitive, boolean, True)
+
+    def or_where_not_like(self, column, value, case_sensitive: bool = False):
+        return self.where_not_like(column, value, case_sensitive, "or")
+
     def where_exists(self, callback_or_query, boolean: str = "and", not_exists=False):
         query = callback_or_query
         if callable(callback_or_query):
@@ -756,6 +780,27 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "like":
+                value, case_sensitive, negate = val
+                col = self._resolve_column(column)
+                if case_sensitive:
+                    value = (
+                        str(value)
+                        .replace("*", "[*]")
+                        .replace("?", "[?]")
+                        .replace("%", "*")
+                        .replace("_", "?")
+                    )
+                    expr = col.op("GLOB")(value)
+                else:
+                    expr = col.like(value)
+                if negate:
+                    expr = ~expr
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "exists":
                 expr = exists(column._build_select())
                 if val:
