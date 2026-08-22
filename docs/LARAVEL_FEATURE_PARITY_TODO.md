@@ -321,14 +321,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     case-sensitive GLOB pattern conversion.
   - Partial slice (2026-08-22): Eloquent Builder forwards exists and like
     predicates while preserving model hydration and fluent chaining.
-  - Partial slice (2026-08-22): integer raw IN/NOT IN predicates normalize
-    nested values to integer comparisons and provide `or_where_*` variants.
-  - Partial slice (2026-08-22): `where_null_safe_equals` and
-    `or_where_null_safe_equals` compile SQLite's null-safe `IS` comparison
-    for both NULL and non-NULL values.
-  - Partial slice (2026-08-22): scalar `where_not` and `or_where_not`
-    negate comparison expressions while preserving the existing boolean
-    predicate grouping.
+  - Partial slice (2026-08-22): Eloquent Builder forwards null-safe equality,
+    scalar negated comparisons, and integer raw predicates with model hydration
+    preserved.
   - Source mapping: Laravel `Query\Builder::whereNot` (1139–1155),
     `orWhereNot` (1158–1160), `whereNullSafeEquals` (1386–1397),
     `orWhereNullSafeEquals` (1406–1408), SQLite

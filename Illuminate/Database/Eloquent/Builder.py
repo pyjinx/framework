@@ -25,6 +25,33 @@ class Builder:
         self.query.or_where(column, operator, value)
         return self
 
+    def where_null_safe_equals(self, column, value, boolean="and"):
+        self.query.where_null_safe_equals(column, value, boolean)
+        return self
+
+    def or_where_null_safe_equals(self, column, value):
+        return self.where_null_safe_equals(column, value, "or")
+
+    def where_not(self, column, operator="=", value=None, boolean="and"):
+        self.query.where_not(column, operator, value, boolean)
+        return self
+
+    def or_where_not(self, column, operator="=", value=None):
+        return self.where_not(column, operator, value, "or")
+
+    def where_integer_in_raw(self, column, values, boolean="and", not_in=False):
+        self.query.where_integer_in_raw(column, values, boolean, not_in)
+        return self
+
+    def or_where_integer_in_raw(self, column, values):
+        return self.where_integer_in_raw(column, values, "or")
+
+    def where_integer_not_in_raw(self, column, values, boolean="and"):
+        return self.where_integer_in_raw(column, values, boolean, True)
+
+    def or_where_integer_not_in_raw(self, column, values):
+        return self.where_integer_not_in_raw(column, values, "or")
+
     def where_exists(self, callback_or_query, boolean="and", not_exists=False):
         self.query.where_exists(callback_or_query, boolean, not_exists)
         return self
