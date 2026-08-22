@@ -122,9 +122,9 @@ Use short, shippable milestones:
 - Add CLI runner module (new, e.g., `Illuminate/Foundation/Console/Runner.py`)
 
 **Tasks:**
-1. Introduce Typer or Click entrypoint and wire single command dispatcher.
+1. Introduce the CLI entrypoint and wire one command dispatcher.
 2. Add command discovery registry with strict command object metadata (`name`, `description`, `aliases`, `options`, `arguments`).
-3. Standardize output style, exit codes, and global flags (`--quiet`, `--version`, `--help`).
+3. Standardize output style, exit codes, global flags, and Laravel Prompts-compatible interactive behavior through a PyJinx-owned prompt boundary backed by `prompt_toolkit` and `Rich`.
 4. Preserve existing minimal list/help semantics while migrating internals.
 
 **Acceptance:**
@@ -308,7 +308,9 @@ Use short, shippable milestones:
 - Keep dependency additions minimal and scoped:
   - ASGI stack (Starlette/uvicorn-compatible primitives).
   - SQLAlchemy + Alembic for ORM/migrations.
-  - Typer/Click for CLI (single choice, one library).
+  - One CLI dispatcher library.
+  - `prompt_toolkit` for Laravel Prompts-compatible interactive input.
+  - `Rich` for terminal tables, progress, spinners, and styled output.
   - Pydantic/Jinja2/jinja templating for validation and views as required.
 
 ---

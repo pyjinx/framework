@@ -37,3 +37,20 @@
 - Internal status tracker: `./LARAVEL_FEATURE_PARITY_TODO.md`
 - Implementation execution plan: `./IMPLEMENTATION_PLAN.md`
 - Roadmap: `./ROADMAP.md`
+
+## 2026-08-22 — Laravel Prompts-compatible terminal UI boundary
+
+- **Decision:** Use `prompt_toolkit` for interactive prompt behavior and
+  `Rich` for terminal presentation behind a PyJinx-owned console prompt
+  boundary.
+- **Rationale:** Laravel Prompts provides interactive text, textarea, number,
+  password, confirm, select, multiselect, suggest, search, pause, forms,
+  tables, spinners, progress, and task output. `prompt_toolkit` supplies the
+  input/editing/validation/navigation primitives; `Rich` supplies tables,
+  styled output, progress, spinners, and live task presentation.
+- **Boundary:** Commands MUST depend on PyJinx prompt/output APIs, not directly
+  on either third-party library. Non-interactive and CI fallback behavior,
+  validation, cancellation, and testing fakes remain PyJinx-owned contracts
+  ported from Laravel Prompts.
+- **Status:** Decision only; implementation remains in the Laravel console
+  parity queue. No dependency is added until its focused parity slice begins.

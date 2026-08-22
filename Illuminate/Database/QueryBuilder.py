@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from sqlalchemy import (
     MetaData,
     Select,
@@ -11,6 +13,7 @@ from sqlalchemy import (
     text,
     update,
 )
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 
 class QueryBuilder:
@@ -31,6 +34,7 @@ class QueryBuilder:
         self._joins = []
         self._aliased_columns = []
         self._loaded_tables = None
+        self._lock = None
 
     # ---- Select ----
 
@@ -205,6 +209,52 @@ class QueryBuilder:
                 result.inserted_primary_key[0] if result.inserted_primary_key else None
             )
 
+    def upsert(self, values, unique_by, update_columns=None) -> int:
+        """Insert values or update matching SQLite rows."""
+        if not unique_by:
+            raise ValueError("The unique columns must not be empty.")
+        if not values:
+            return 0
+
+        rows = [values] if isinstance(values, Mapping) else list(values)
+        rows = [dict(sorted(row.items())) for row in rows]
+        table = self._table()
+
+        if update_columns is not None and not update_columns:
+            with self.manager.connection(self.connection_name).begin() as connection:
+                connection.execute(sqlite_insert(table).values(rows))
+            return 1
+
+        unique_columns = [unique_by] if isinstance(unique_by, str) else list(unique_by)
+        if update_columns is None:
+            update_columns = list(rows[0])
+
+        statement = sqlite_insert(table).values(rows)
+        if isinstance(update_columns, Mapping):
+            update_values = dict(update_columns)
+        else:
+            update_values = {
+                column: statement.excluded[column] for column in update_columns
+            }
+        statement = statement.on_conflict_do_update(
+            index_elements=unique_columns, set_=update_values
+        )
+
+        with self.manager.connection(self.connection_name).begin() as connection:
+            return connection.execute(statement).rowcount
+
+    # ---- Row locks ----
+
+    def lock(self, value=True):
+        self._lock = value
+        return self
+
+    def lock_for_update(self):
+        return self.lock(True)
+
+    def shared_lock(self):
+        return self.lock(False)
+
     def update(self, values: dict) -> int:
         table = self._table()
         statement = update(table).values(**values)
@@ -311,6 +361,20 @@ class QueryBuilder:
         with engine.connect() as connection:
             result = connection.execute(statement).scalar()
         return result
+
+    # ---- SQL inspection ----
+
+    def to_sql(self) -> str:
+        """Return the compiled parameterized SELECT statement."""
+        return str(self._compile_select())
+
+    def get_bindings(self) -> list:
+        """Return the compiled SELECT bindings in placeholder order."""
+        compiled = self._compile_select()
+        parameter_names = compiled.positiontup or tuple(compiled.params)
+        return self._flatten_bindings(
+            compiled.params[name] for name in parameter_names
+        )
 
     # ---- Internals ----
 
@@ -422,6 +486,11 @@ class QueryBuilder:
                 col.asc() if direction == "asc" else col.desc()
             )
 
+        if self._lock is True:
+            statement = statement.with_for_update()
+        elif self._lock is False:
+            statement = statement.with_for_update(read=True)
+
         if self._limit is not None:
             statement = statement.limit(self._limit)
         if self._offset is not None:
@@ -439,6 +508,22 @@ class QueryBuilder:
             for column, alias in self._aliased_columns
         )
         return columns
+
+    def _compile_select(self):
+        return self._build_select().compile(
+            self.manager.connection(self.connection_name),
+            compile_kwargs={"render_postcompile": True},
+        )
+
+    @staticmethod
+    def _flatten_bindings(bindings):
+        flattened = []
+        for binding in bindings:
+            if isinstance(binding, (list, tuple)):
+                flattened.extend(QueryBuilder._flatten_bindings(binding))
+            else:
+                flattened.append(binding)
+        return flattened
 
     @staticmethod
     def _comparison(column, operator, value):
