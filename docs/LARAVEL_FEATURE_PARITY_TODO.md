@@ -368,7 +368,24 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Residual parity gaps: scopes, macros, collections, lazy collections,
     chunk/cursor, eager/lazy loading, N+1 controls, and the remainder of the
     builder API remain open.
-- [ ] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
+- [~] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
+  - Partial slice (2026-08-22): the application now has `Post`/`Comment`
+    models, `User.posts`/`User.comments`, `Post.user`/`Post.comments`, and
+    `Comment.post`/`Comment.user` relationships. A deterministic seeder
+    creates multiple posts and varied comments across users; `GET
+    /api/posts/{post}?comment_email=...` returns only comments authored by the
+    requested email.
+  - Source mapping: Laravel `Model::hasMany`/`belongsTo` relationship
+    contracts and `HasOneOrMany`/`BelongsTo` relation boundaries; application
+    implementation is in `app/Models/Post.py`, `Comment.py`, `User.py`,
+    `PostController.py`, and the posts/comments migration and seeder.
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_post_comments_api.py -q` — 1 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 166 passed.
+  - Residual parity gaps: through/polymorphic relations, touching, eager
+    constraints/loading, relation matching, collection behavior, N+1
+    prevention, complete relation lifecycle events, and broad Laravel
+    relationship API parity remain open.
 - [ ] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
 
 ### Authentication, sessions, and security
