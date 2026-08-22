@@ -25,6 +25,7 @@ class Model:
         self._attributes = dict(attributes or {})
         self._exists = exists
         self._original = dict(self._attributes)
+        self._changes = {}
         self._relations = {}
         self._appends = list(self.appends)
         if exists:
@@ -338,6 +339,7 @@ class Model:
             self._exists = True
             self._fire_event("created", halt=False)
 
+        self._changes = self.get_dirty()
         self._original = dict(self._attributes)
         self._fire_event("saved", halt=False)
         return self
@@ -677,3 +679,13 @@ class Model:
         if key is None:
             return dict(self._original)
         return self._original.get(key, default)
+    def is_clean(self, *attributes):
+        return not self.is_dirty(*attributes)
+
+    def get_changes(self):
+        return dict(self._changes)
+
+    def was_changed(self, *attributes):
+        if not attributes:
+            return bool(self._changes)
+        return any(attribute in self._changes for attribute in attributes)
