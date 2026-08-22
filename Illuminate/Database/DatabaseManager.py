@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 from weakref import WeakSet
 
@@ -6,6 +7,31 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
+
+class _TransactionCallbacks:
+    def __init__(self) -> None:
+        self.after_commit = []
+        self.after_rollback = []
+        self.committed_children = []
+
+    def run_after_commit(self) -> None:
+        for child in self.committed_children:
+            child.run_after_commit()
+        for callback in self.after_commit:
+            callback()
+
+    def run_after_rollback(self) -> None:
+        for child in self.committed_children:
+            child.run_after_rollback()
+        for callback in self.after_rollback:
+            callback()
+
+
+
+class _TransactionCallbackFailure(Exception):
+    def __init__(self, original):
+        self.original = original
+        super().__init__(str(original))
 
 class DatabaseManager:
     def __init__(self, app, config) -> None:
@@ -15,6 +41,12 @@ class DatabaseManager:
         self._engine_fingerprints: dict[str, tuple[str, bool]] = {}
         self._session_factories: dict[str, sessionmaker] = {}
         self._active_sessions: dict[str, WeakSet[Session]] = {}
+        self._transaction_sessions: ContextVar[dict[str, tuple[Session, ...]] | None] = (
+            ContextVar("database_manager_transaction_sessions", default=None)
+        )
+        self._transaction_callbacks: ContextVar[
+            dict[str, tuple[_TransactionCallbacks, ...]] | None
+        ] = ContextVar("database_manager_transaction_callbacks", default=None)
 
     def connection(self, name: str | None = None) -> Engine:
         name = name or self.get_default_connection()
@@ -129,19 +161,149 @@ class DatabaseManager:
         self._active_sessions.setdefault(name, WeakSet()).add(session)
         return session
 
+    def transaction(self, callback=None, attempts: int = 1, name: str | None = None):
+        if callable(callback):
+            return self._run_transaction(callback, attempts, name)
+
+        if callback is not None:
+            if not isinstance(callback, str) or name is not None:
+                raise TypeError("Transaction callback must be callable.")
+            name = callback
+
+        return self._transaction_context(name)
+
     @contextmanager
-    def transaction(self, name: str | None = None):
+    def _transaction_context(self, name: str | None):
         name = name or self.get_default_connection()
-        session = self.session(name)
+        sessions = (self._transaction_sessions.get() or {}).get(name, ())
+        session = sessions[-1] if sessions else self.session(name)
         try:
-            with session.begin():
-                yield session
+            transaction = session.begin_nested() if sessions else session.begin()
         except Exception:
-            session.rollback()
+            if not sessions:
+                self._close_transaction_session(name, session)
             raise
+
+        session_stacks = dict(self._transaction_sessions.get() or {})
+        session_stacks[name] = (*sessions, session)
+        session_token = self._transaction_sessions.set(session_stacks)
+        callbacks = (self._transaction_callbacks.get() or {}).get(name, ())
+        callback_stacks = dict(self._transaction_callbacks.get() or {})
+        transaction_callbacks = _TransactionCallbacks()
+        callback_stacks[name] = (*callbacks, transaction_callbacks)
+        callback_token = self._transaction_callbacks.set(callback_stacks)
+
+        body_error = None
+        body_raised = False
+        rollback_failed = False
+        try:
+            try:
+                with transaction:
+                    try:
+                        yield session
+                    except BaseException as error:
+                        body_raised = True
+                        body_error = error
+                        raise
+            except BaseException as error:
+                rollback_failed = body_error is not None and error is not body_error
+                body_error = error
+
+            if body_error is None and callbacks:
+                callbacks[-1].committed_children.append(transaction_callbacks)
         finally:
+            self._transaction_callbacks.reset(callback_token)
+            self._transaction_sessions.reset(session_token)
+            if not sessions:
+                self._close_transaction_session(name, session)
+        if body_error is not None:
+            if body_raised and not rollback_failed:
+                try:
+                    transaction_callbacks.run_after_rollback()
+                except Exception as callback_error:
+                    raise _TransactionCallbackFailure(callback_error) from body_error
+            raise body_error
+
+        if not callbacks:
+            try:
+                transaction_callbacks.run_after_commit()
+            except Exception as callback_error:
+                raise _TransactionCallbackFailure(callback_error) from None
+
+    def _run_transaction(self, callback, attempts: int, name: str | None):
+        name = name or self.get_default_connection()
+        for current_attempt in range(1, attempts + 1):
+            is_nested = self.transaction_level(name) > 0
+            try:
+                with self._transaction_context(name) as session:
+                    result = callback(session)
+            except _TransactionCallbackFailure as error:
+                raise error.original from error
+            except Exception as error:
+                if (
+                    not is_nested
+                    and current_attempt < attempts
+                    and self._caused_by_concurrency_error(error)
+                ):
+                    continue
+                raise
+            return result
+
+        return None
+
+    def transaction_level(self, name: str | None = None) -> int:
+        name = name or self.get_default_connection()
+        return len((self._transaction_sessions.get() or {}).get(name, ()))
+
+    def after_commit(self, callback, name: str | None = None) -> None:
+        name = name or self.get_default_connection()
+        callbacks = (self._transaction_callbacks.get() or {}).get(name, ())
+        if callbacks:
+            callbacks[-1].after_commit.append(callback)
+        else:
+            callback()
+
+    def after_rollback(self, callback, name: str | None = None) -> None:
+        name = name or self.get_default_connection()
+        callbacks = (self._transaction_callbacks.get() or {}).get(name, ())
+        if callbacks:
+            callbacks[-1].after_rollback.append(callback)
+
+    def _close_transaction_session(self, name: str, session: Session) -> None:
+        try:
             session.close()
+        finally:
             self._active_sessions.get(name, WeakSet()).discard(session)
+
+    @staticmethod
+    def _caused_by_concurrency_error(error: Exception) -> bool:
+        messages = (
+            "Deadlock found when trying to get lock",
+            "deadlock detected",
+            "The database file is locked",
+            "database is locked",
+            "database table is locked",
+            "A table in the database is locked",
+            "has been chosen as the deadlock victim",
+            "Lock wait timeout exceeded; try restarting transaction",
+            "WSREP detected deadlock/conflict and aborted the transaction. Try restarting the transaction",
+            "Record has changed since last read in table",
+        )
+        current = error
+        seen = set()
+        while current is not None and id(current) not in seen:
+            seen.add(id(current))
+            if str(getattr(current, "code", "")) == "40001" or str(
+                getattr(current, "sqlstate", "")
+            ) == "40001":
+                return True
+            if any(message in str(current) for message in messages):
+                return True
+            current = getattr(current, "orig", None) or getattr(
+                current, "__cause__", None
+            )
+
+        return False
 
     def dispose(self) -> None:
         cleanup_error = None

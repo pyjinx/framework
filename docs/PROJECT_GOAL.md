@@ -99,6 +99,24 @@ These are the currently accepted, documented deviations:
 
 Anything beyond these requires a new written entry before implementation.
 
+## Future Public Identity
+
+The selected future public framework name is **Veyra**. The current PyJinx
+package, namespace, CLI, and repositories remain unchanged until a dedicated
+compatibility-preserving migration slice after Laravel parity work.
+
+Future migration checklist:
+
+- Python package and namespace: `veyra`
+- CLI executable: `veyra`
+- Starter identity: `veyra-starter`
+- GitHub organization repositories currently named:
+  - `pyjinx/framework`
+  - `pyjinx/pyjinx`
+- Check PyPI, GitHub, domains, and trademarks before migration.
+- Preserve import/CLI compatibility aliases for the documented migration
+  window, then remove obsolete paths only after the clean cutover.
+
 ## Engineering Process Requirement
 
 Every implementation, review, debugging, testing, and delivery slice MUST
