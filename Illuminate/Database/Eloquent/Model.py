@@ -1,6 +1,8 @@
+import inspect
 import json
 from datetime import datetime, timezone
 
+from Illuminate.Database.Eloquent.Casts.Attribute import Attribute
 from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
 from Illuminate.Support.Facades.DB import DB
 
@@ -178,6 +180,34 @@ class Model:
     def create(cls, attributes):
         return cls().fill(attributes).save()
 
+    def _attribute_definition(self, key):
+        """Resolve an annotated Python method returning Laravel's Attribute."""
+        method = getattr(type(self), key, None)
+        if not callable(method):
+            return None
+        annotation = inspect.signature(method).return_annotation
+        if annotation not in (Attribute, "Attribute"):
+            return None
+        definition = method(self)
+        return definition if isinstance(definition, Attribute) else None
+
+    def _set_attribute_value(self, key, value):
+        definition = self._attribute_definition(key)
+        if definition is not None and definition.set is not None:
+            result = definition.set(value, dict(self._attributes))
+            if isinstance(result, dict):
+                self._attributes.update(result)
+            else:
+                self._attributes[key] = result
+            return
+
+        legacy_setter = getattr(self, f"set_{key}_attribute", None)
+        if callable(legacy_setter):
+            legacy_setter(value)
+            return
+
+        self._attributes[key] = value
+
     def fill(self, attributes):
         if self.fillable:
             accepted = {
@@ -192,7 +222,8 @@ class Model:
                 if key not in self.guarded
             }
 
-        self._attributes.update(accepted)
+        for key, value in accepted.items():
+            self._set_attribute_value(key, value)
         return self
 
     def save(self):
@@ -210,7 +241,7 @@ class Model:
                 return False
             identifier = self._attributes[self.primary_key]
             updates = {
-                key: value
+                key: self._storage_value(key, value)
                 for key, value in self._attributes.items()
                 if key != self.primary_key
             }
@@ -219,7 +250,7 @@ class Model:
         else:
             if not self._fire_event("creating"):
                 return False
-            identifier = self._query_builder().insert(self._attributes)
+            identifier = self._query_builder().insert(self._storage_attributes())
             if identifier is not None:
                 self._attributes.setdefault(self.primary_key, identifier)
             self._exists = True
@@ -282,10 +313,25 @@ class Model:
             if key not in self.hidden
         }
 
+    def _storage_value(self, key, value):
+        cast = self.casts.get(key)
+        cast_type = cast.split(":", 1)[0] if isinstance(cast, str) else cast
+        if cast_type in {"array", "json", "object"} and value is not None:
+            return value if isinstance(value, str) else json.dumps(value)
+        return value
+
+    def _storage_attributes(self):
+        return {
+            key: self._storage_value(key, value)
+            for key, value in self._attributes.items()
+        }
+
     def _serialize_value(self, key, value):
         if isinstance(value, datetime):
             return value.isoformat()
-        if self.casts.get(key) == "json" and isinstance(value, str):
+        cast = self.casts.get(key)
+        cast_type = cast.split(":", 1)[0] if isinstance(cast, str) else cast
+        if cast_type in {"array", "json", "object"} and isinstance(value, str):
             return json.loads(value)
         return value
 
@@ -293,16 +339,28 @@ class Model:
         cast = self.casts.get(key)
         if value is None or cast is None:
             return value
-        if cast == "datetime" and isinstance(value, str):
-            return datetime.fromisoformat(value)
-        if cast in {"int", "integer"}:
+        cast_type, _, precision = (
+            cast.partition(":") if isinstance(cast, str) else (cast, "", "")
+        )
+        if cast_type in {"datetime", "date"} and isinstance(value, str):
+            parsed = datetime.fromisoformat(value)
+            return parsed.date() if cast_type == "date" else parsed
+        if cast_type in {"int", "integer"}:
             return int(value)
-        if cast in {"float", "double"}:
+        if cast_type in {"float", "real", "double"}:
             return float(value)
-        if cast in {"bool", "boolean"}:
+        if cast_type == "decimal":
+            return round(float(value), int(precision or 2))
+        if cast_type in {"bool", "boolean"}:
+            if isinstance(value, str):
+                return value.strip().lower() not in {"", "0", "false", "off", "no"}
             return bool(value)
-        if cast == "json" and isinstance(value, str):
+        if cast_type in {"array", "json", "object"} and isinstance(value, str):
             return json.loads(value)
+        if cast_type == "string":
+            return str(value)
+        if cast_type == "timestamp":
+            return int(value.timestamp()) if isinstance(value, datetime) else int(value)
         return value
 
     def load(self, *relations):
@@ -326,20 +384,31 @@ class Model:
                 self._relations[key] = results
                 return results
 
-        return None
+    def __getattribute__(self, name):
+        if not name.startswith("_"):
+            definition = object.__getattribute__(self, "_attribute_definition")(name)
+            if definition is not None and definition.get is not None:
+                attributes = object.__getattribute__(self, "_attributes")
+                return definition.get(attributes.get(name), dict(attributes))
+        return super().__getattribute__(name)
 
     def __getattr__(self, name):
-        if name in self._attributes:
-            return self._cast_value(name, self._attributes[name])
+        if name in self._attributes or self._attribute_definition(name) is not None:
+            definition = self._attribute_definition(name)
+            raw_value = self._attributes.get(name)
+            if definition is not None and definition.get is not None:
+                return definition.get(raw_value, dict(self._attributes))
 
-        # Removed get_relation_value check here since methods shadow relations in Python
+            legacy_getter = getattr(self, f"get_{name}_attribute", None)
+            if callable(legacy_getter):
+                return legacy_getter(raw_value)
+            return self._cast_value(name, raw_value)
 
         raise AttributeError(
             f"'{self.__class__.__name__}' object has no attribute '{name}'"
         )
 
     def __setattr__(self, name, value):
-        # Internal attributes start with _ or are class-level defined properties
         if name.startswith("_") or name in (
             "table",
             "primary_key",
@@ -348,10 +417,12 @@ class Model:
             "guarded",
             "hidden",
             "casts",
+            "DELETED_AT",
+            "incrementing",
         ):
             super().__setattr__(name, value)
         else:
-            self._attributes[name] = value
+            self._set_attribute_value(name, value)
 
     def is_dirty(self, *attributes):
         if not attributes:
