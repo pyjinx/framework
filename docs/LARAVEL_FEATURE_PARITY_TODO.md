@@ -6,8 +6,8 @@ Source reference:
 ## Reference and snapshot metadata
 
 - **Last reviewed:** 2026-08-22
-- **Feature checklist:** 11/38 implementation-present, 5/38 partial, 22/38 not started
-- **Exact parity audit:** 0/38 verified exact; 16/38 partial; 22/38 not started
+- **Feature checklist:** 10/38 implementation-present, 7/38 partial, 21/38 not started
+- **Exact parity audit:** 0/38 verified exact; all 38/38 remain provisional or incomplete
 - **Audit method:** compare the local Laravel 13 reference projects and framework source, inspect the Laravel 13.x API namespace index, and run focused PyJinx behavior checks where a runtime exists.
 - **Audit conclusion:** every implementation-present area remains provisional; no area currently has evidence for 100% Laravel 13 parity.
 - **Quality-risk categories:** 3 (performance, code smell, memory leak)
@@ -102,8 +102,8 @@ revalidated.
     - Gate and middleware scaffolding; user contract placeholder.
     - Missing: guard manager, provider adapters, session/web authentication flows.
 
-15. [ ] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
-    - Only a small `Serializable` utility exists; no SQLAlchemy-backed models/migrations/query builder.
+15. [~] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
+    - SQLAlchemy/Alembic-backed database manager, schema/migration/query builders, Eloquent models, relationships, eager loading, soft deletes, casts, and a tested post/comment API scenario exist; broad Laravel parity remains incomplete.
 
 16. [ ] **Queueing** (`Illuminate\Queue`)
     - No queue contracts/workers/failed job stores implemented.
@@ -111,8 +111,8 @@ revalidated.
 17. [ ] **Cache** (`Illuminate\Cache`)
     - No cache repository, stores, lock/rate limiting support.
 
-18. [ ] **Session** (`Illuminate\Session`)
-    - No session middleware/store/driver integration.
+18. [~] **Session** (`Illuminate\Session`)
+    - In-memory `Store` and file session handler foundations exist with focused tests; middleware, persistent integration, cookies, flash lifecycle, and complete drivers remain unimplemented.
 
 19. [ ] **Cache/Session/Cookie security** (`Illuminate\Cookie`)
     - Cookie facade/IO not fully implemented.
@@ -174,16 +174,17 @@ revalidated.
 38. [ ] **Contract namespaces beyond current baseline** (`Illuminate\Contracts\*`)
     - Only partial contracts exist for Foundation, Container, Http, Support.
 
-## Revalidation result — 2026-08-20
+## Revalidation result — 2026-08-22
 
 No feature is currently verified as 100% Laravel 13 parity.
 
 | Items | Revalidation result | Evidence |
 |---|---|---|
-| 1–14 | Partial implementation; not exact parity | Python source namespaces exist, but lifecycle, error, middleware, adapter, provider, validation, and auth behavior differ materially from the Laravel framework reference. |
-| 15–29 | Not started or no equivalent subsystem | The corresponding Laravel namespaces are absent from `Illuminate/`; focused namespace inventory confirmed no Database, Queue, Cache, Session, Cookie, Mail, Notifications, Broadcasting, Filesystem, Redis, Hashing, Encryption, Translation, Pagination, JsonSchema, or Testing implementation. |
-| 30 | Partial implementation; not exact parity | `pyjinx`, `serve`, grouped command listing, and `make:controller` exist; the broader Artisan command surface is absent. |
-| 31–38 | Not started or incomplete contract surface | Scheduling, process, HTTP client, image, JSON API resources, concurrency, extension hooks, password hardening, and most Laravel contracts are absent or incomplete. |
+| 1–14 | Partial implementation; not exact parity | Foundation, container, routing, HTTP, middleware, validation, configuration, events, collections, support, logging, views, and Auth have implementation slices but material Laravel lifecycle, API, error, or edge-case gaps. |
+| 15–18 | Partial implementation; not exact parity | Database/ORM and Session now have SQLAlchemy/Alembic, Eloquent, relationship, migration, query, session-store, and file-handler slices, but broad Laravel contracts and lifecycle integration remain incomplete. |
+| 19–29 | Not started or incomplete subsystem | Cookie security, mail, notifications, broadcasting, filesystem, Redis, encryption/hashing, translation, pagination, JSON schema, and testing helpers remain absent or partial. |
+| 30 | Partial implementation; not exact parity | `pyjinx`, `serve`, grouped command listing, `make:controller`, migration, route, and session-related command foundations exist; the broader Artisan command surface remains absent. |
+| 31–38 | Not started or incomplete contract surface | Scheduling, process, HTTP client, image, JSON API resources, concurrency, extension hooks, password hardening, and most Laravel contracts remain absent or incomplete. |
 
 The audit used `references/laravel/` (application) and `references/framework/` (Laravel framework) as authoritative references.
 
