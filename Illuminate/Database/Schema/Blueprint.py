@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any, Self
+
 import sqlalchemy as sa
 
 
@@ -20,7 +24,7 @@ def _apply_default(column, value):
 class ForeignKeyDefinition:
     """Fluent definition of a SQLite foreign key constraint."""
 
-    def __init__(self, blueprint, columns, name=None):
+    def __init__(self, blueprint: Blueprint, columns: tuple[str, ...], name: str | None = None):
         self._blueprint = blueprint
         self._columns = tuple(columns)
         self._name = name or _index_name(blueprint.table_name, self._columns, "foreign")
@@ -29,11 +33,11 @@ class ForeignKeyDefinition:
         self._on_delete = None
         self._on_update = None
 
-    def references(self, columns):
+    def references(self, columns: str | list[str]) -> Self:
         self._references = (columns,) if isinstance(columns, str) else tuple(columns)
         return self
 
-    def on(self, table):
+    def on(self, table: str) -> Self:
         self._table = table
         return self
 
@@ -48,39 +52,39 @@ class ForeignKeyDefinition:
             if column not in table.c:
                 table.append_column(sa.Column(column))
 
-    def on_delete(self, action):
+    def on_delete(self, action: str) -> Self:
         self._on_delete = action
         return self
 
-    def on_update(self, action):
+    def on_update(self, action: str) -> Self:
         self._on_update = action
         return self
 
-    def cascade_on_delete(self):
+    def cascade_on_delete(self) -> Self:
         return self.on_delete("cascade")
 
-    def restrict_on_delete(self):
+    def restrict_on_delete(self) -> Self:
         return self.on_delete("restrict")
 
-    def null_on_delete(self):
+    def null_on_delete(self) -> Self:
         return self.on_delete("set null")
 
-    def no_action_on_delete(self):
+    def no_action_on_delete(self) -> Self:
         return self.on_delete("no action")
 
-    def cascade_on_update(self):
+    def cascade_on_update(self) -> Self:
         return self.on_update("cascade")
 
-    def restrict_on_update(self):
+    def restrict_on_update(self) -> Self:
         return self.on_update("restrict")
 
-    def null_on_update(self):
+    def null_on_update(self) -> Self:
         return self.on_update("set null")
 
-    def no_action_on_update(self):
+    def no_action_on_update(self) -> Self:
         return self.on_update("no action")
 
-    def as_constraint(self):
+    def as_constraint(self) -> sa.ForeignKeyConstraint:
         if self._references is None or self._table is None:
             raise ValueError(
                 "Foreign keys must specify both referenced columns and a referenced table."

@@ -10,6 +10,8 @@ from Illuminate.Support.Facades.DB import DB
 class Model:
     table = None
     primary_key = "id"
+    key_type = "int"
+    incrementing = True
     timestamps = True
     fillable = []
     guarded = ["*"]
@@ -102,6 +104,36 @@ class Model:
         if instance is None:
             raise LookupError(f"{cls.__name__} [{identifier}] was not found.")
         return instance
+
+    def get_key_name(self):
+        return self.primary_key
+
+    def set_key_name(self, key):
+        self.primary_key = key
+        return self
+
+    def get_key_type(self):
+        return self.key_type
+
+    def set_key_type(self, key_type):
+        self.key_type = key_type
+        return self
+
+    def get_incrementing(self):
+        return self.incrementing
+
+    def set_incrementing(self, value):
+        self.incrementing = value
+        return self
+
+    def get_key(self):
+        return getattr(self, self.get_key_name(), None)
+
+    def get_route_key(self):
+        route_key_name = getattr(
+            type(self), "route_key_name", self.get_key_name()
+        )
+        return getattr(self, route_key_name, None)
 
     @classmethod
     def get_route_key_name(cls):
@@ -429,6 +461,7 @@ class Model:
         if name.startswith("_") or name in (
             "table",
             "primary_key",
+            "key_type",
             "timestamps",
             "fillable",
             "guarded",

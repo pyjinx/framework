@@ -50,8 +50,10 @@ class Application:
 
             if command.option("help") or command.option("h"):
                 return self.call("help", {"name": command.name})
+            if command.option("version") or command.option("v"):
+                print(self.version)
+                return 0
 
-            command.validate()
 
             action = command.handle
 
