@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-
+from datetime import date, datetime, time
 from sqlalchemy import (
     MetaData,
     Select,
@@ -127,6 +127,45 @@ class QueryBuilder:
         self._where_clauses.append(
             ("between_columns", "or", column, (low, high, True))
         )
+        return self
+    def where_date(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        if isinstance(value, datetime | date):
+            value = value.strftime("%Y-%m-%d")
+        self._where_clauses.append(("date", "and", column, (operator, value)))
+        return self
+
+    def or_where_date(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        if isinstance(value, datetime | date):
+            value = value.strftime("%Y-%m-%d")
+        self._where_clauses.append(("date", "or", column, (operator, value)))
+        return self
+
+    def where_time(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        if isinstance(value, datetime):
+            value = value.strftime("%H:%M:%S")
+        elif isinstance(value, time):
+            value = value.strftime("%H:%M:%S")
+        self._where_clauses.append(("time", "and", column, (operator, value)))
+        return self
+
+    def or_where_time(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        if isinstance(value, datetime):
+            value = value.strftime("%H:%M:%S")
+        elif isinstance(value, time):
+            value = value.strftime("%H:%M:%S")
+        self._where_clauses.append(("time", "or", column, (operator, value)))
         return self
 
 
@@ -471,6 +510,12 @@ class QueryBuilder:
                 )
                 if not_between:
                     expr = ~expr
+            elif kind == "date":
+                operator, value = val
+                expr = self._comparison(func.date(col), operator, value)
+            elif kind == "time":
+                operator, value = val
+                expr = self._comparison(func.time(col), operator, value)
             elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
