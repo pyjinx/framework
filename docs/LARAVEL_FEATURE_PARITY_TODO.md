@@ -240,12 +240,17 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     upsert, full dirty/original synchronization, and complete CRUD
     option/error semantics remain open.
 - [~] Complete Eloquent model events: boot/booted, retrieved, saving/saved, creating/created, updating/updated, deleting/deleted, restoring/restored, observers, dispatch suppression, and event ordering.
-  - Partial slice (2026-08-22): callback dispatch suppression is shared across
-    model classes, nest-safe, and restoration-safe; quiet CRUD regression
-    coverage verifies callbacks are skipped without changing persisted results.
-  - Residual parity gaps: boot/booted discovery, retrieved/restoring/restored
-    events, observers, dispatcher contracts, event faking, and full Laravel
-    event ordering remain open.
+  - Partial slice (2026-08-22): `Model.retrieved` dispatches after persisted
+    models are hydrated, while callback dispatch suppression remains shared
+    across model classes, nest-safe, and restoration-safe.
+  - Source mapping: Laravel `Model::newFromBuilder` (794–805), which fires
+    `retrieved` after hydration, and `HasEvents::withoutEvents` (447–462).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_eloquent_model.py -q` — 13 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 152 passed.
+  - Residual parity gaps: boot/booted discovery, restoring/restored events,
+    observers, dispatcher contracts, event faking, and full Laravel event
+    ordering remain open.
 - [~] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
   - Partial slice (2026-08-22): Eloquent builders now expose `create_quietly`,
     `force_create`, and `force_create_quietly` through the model's guarded and

@@ -27,6 +27,8 @@ class Model:
         self._original = dict(self._attributes)
         self._relations = {}
         self._appends = list(self.appends)
+        if exists:
+            self._fire_event("retrieved", halt=False)
     @classmethod
     def _listeners(cls):
         if "_event_listeners" not in cls.__dict__:
@@ -77,6 +79,9 @@ class Model:
     @classmethod
     def deleted(cls, callback):
         return cls.on("deleted", callback)
+    @classmethod
+    def retrieved(cls, callback):
+        return cls.on("retrieved", callback)
 
     def _fire_event(self, event, halt=True):
         if Model._event_suppression_depth:
