@@ -86,6 +86,10 @@ class QueryBuilder:
             if isinstance(result, QueryBuilder):
                 query = result
         if not isinstance(query, QueryBuilder):
+            eloquent_query = getattr(query, "query", None)
+            if isinstance(eloquent_query, QueryBuilder):
+                query = eloquent_query
+        if not isinstance(query, QueryBuilder):
             raise TypeError("A derived table source requires a QueryBuilder.")
 
         self.table_name = alias

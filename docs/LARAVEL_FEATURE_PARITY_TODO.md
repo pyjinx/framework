@@ -339,6 +339,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     compiles it as an aliased derived table, and exposes the derived columns to
     outer selects and qualified predicates. Switching back through `from_`
     clears the derived source.
+  - Partial slice (2026-08-22): Eloquent Builder forwards `from_sub` and
+    accepts another Eloquent builder as the derived source while preserving
+    model hydration.
   - Partial slice (2026-08-22): `order_by_raw` supports parameterized raw
     ordering expressions while preserving existing fluent order clauses.
   - Partial slice (2026-08-22): `group_by_raw` supports parameterized raw
@@ -387,8 +390,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     (356) and lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock`
     (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 84 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 205
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 85 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 206
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,

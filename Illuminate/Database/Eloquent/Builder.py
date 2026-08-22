@@ -36,6 +36,10 @@ class Builder:
         self.query.select_raw(expression, bindings)
         return self
 
+    def from_sub(self, query_or_callback, alias):
+        self.query.from_sub(query_or_callback, alias)
+        return self
+
     def order_by_raw(self, expression, bindings=None):
         self.query.order_by_raw(expression, bindings)
         return self
