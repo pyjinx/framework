@@ -257,7 +257,8 @@ class DatabaseManager:
         return f"{self.get_table_prefix(name)}{table_name}"
 
     def disconnect(self, name: str | None = None) -> None:
-        name = name or self.get_default_connection()
+        requested = name or self.get_default_connection()
+        name, _ = self.parse_connection_name(requested)
         cleanup_error = self._close_sessions(name)
         dispose_error = None
         if engine := self._engines.get(name):
@@ -274,7 +275,8 @@ class DatabaseManager:
             raise dispose_error
 
     def purge(self, name: str | None = None) -> None:
-        name = name or self.get_default_connection()
+        requested = name or self.get_default_connection()
+        name, _ = self.parse_connection_name(requested)
         cleanup_error = None
         try:
             self.disconnect(name)
@@ -290,7 +292,8 @@ class DatabaseManager:
             raise cleanup_error
 
     def reconnect(self, name: str | None = None) -> Engine:
-        name = name or self.get_default_connection()
+        requested = name or self.get_default_connection()
+        name, _ = self.parse_connection_name(requested)
         if name not in self._engines:
             return self.connection(name)
 
