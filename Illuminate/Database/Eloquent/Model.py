@@ -679,6 +679,24 @@ class Model:
         if key is None:
             return dict(self._original)
         return self._original.get(key, default)
+    def sync_original(self):
+        self._original = dict(self._attributes)
+        return self
+
+    def sync_original_attribute(self, attribute):
+        return self.sync_original_attributes(attribute)
+
+    def sync_original_attributes(self, *attributes):
+        if len(attributes) == 1 and isinstance(attributes[0], (list, tuple)):
+            attributes = tuple(attributes[0])
+        for attribute in attributes:
+            if attribute in self._attributes:
+                self._original[attribute] = self._attributes[attribute]
+        return self
+
+    def sync_changes(self):
+        self._changes = self.get_dirty()
+        return self
     def is_clean(self, *attributes):
         return not self.is_dirty(*attributes)
 

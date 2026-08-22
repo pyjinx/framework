@@ -304,19 +304,22 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Residual parity gaps: table/connection metadata, UUID/ULID behavior, timestamp column/date-format and JSON serialization APIs, full cast/custom-cast and encrypted/hashed serialization, recursion prevention, Laravel's snake-case relation-key option and generic Arrayable collections, attribute-based route-key resolution, and broad relationship/eager-loading parity remain unported.
 - [~] Complete Eloquent attribute behavior: dirty tracking, original values, attribute accessors/mutators, casts, custom casts, encrypted casts, hashed casts, JSON casts, date casts, and mass-assignment exceptions.
   - Partial slice (2026-08-22): `Model.is_dirty`, `is_clean`, `get_dirty`,
-    `get_changes`, `was_changed`, and `get_original` now distinguish current
+    `get_changes`, `was_changed`, and `get_original` distinguish current
     attributes from the last synchronized original state and retain the last
-    successful save changes.
+    successful save changes. `sync_original`, `sync_original_attribute`,
+    `sync_original_attributes`, and `sync_changes` provide explicit baseline
+    synchronization.
   - Source mapping: Laravel `HasAttributes::getDirty` (2301–2315),
     `isDirty`/`isClean` (2222–2238), `getChanges`/`wasChanged`
-    (2261–2332), and original-state APIs (2084–2121).
+    (2261–2332), `syncOriginal`/`syncOriginalAttribute`/
+    `syncOriginalAttributes`/`syncChanges` (2166–2214), and original-state
+    APIs (2084–2121).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_eloquent_model.py -q` — 13 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 159 passed.
+    tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: cast-aware dirty comparison, original rewinding,
-    raw-original APIs, sync-original/sync-changes APIs, accessors/mutators,
-    casts, encrypted/hashed/JSON/date serialization, and mass-assignment
-    exceptions remain open.
+    raw-original APIs, accessors/mutators, casts, encrypted/hashed/JSON/date
+    serialization, and mass-assignment exceptions remain open.
 - [~] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
   - Partial slice (2026-08-22): `Model.without_events` suppresses model callbacks
     across nested operations with restoration in `finally`; `create_quietly`,
@@ -328,8 +331,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `Model::deleteQuietly` (1776–1779), and `Builder::forceCreate`
     (1256–1264).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_eloquent_model.py -q` — 13 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 159 passed.
+    tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
     upsert, cast-aware dirty/original synchronization, and complete CRUD
     option/error semantics remain open.
@@ -340,8 +343,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Source mapping: Laravel `Model::newFromBuilder` (794–805), which fires
     `retrieved` after hydration, and `HasEvents::withoutEvents` (447–462).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_eloquent_model.py -q` — 13 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 159 passed.
+    tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: boot/booted discovery, restoring/restored events,
     observers, dispatcher contracts, event faking, and full Laravel event
     ordering remain open.
