@@ -17,6 +17,7 @@ class Model:
     created_at_column = "created_at"
     updated_at_column = "updated_at"
     timestamps = True
+    date_format = None
     fillable = []
     guarded = ["*"]
     hidden = []
@@ -193,6 +194,12 @@ class Model:
         column = self.get_updated_at_column()
         if column is not None:
             self._set_attribute_value(column, value)
+        return self
+    def get_date_format(self):
+        return self.date_format
+
+    def set_date_format(self, date_format):
+        self.date_format = date_format
         return self
 
     def get_key(self):
@@ -725,6 +732,7 @@ class Model:
             "incrementing",
             "created_at_column",
             "updated_at_column",
+            "date_format",
         ):
             super().__setattr__(name, value)
         else:
