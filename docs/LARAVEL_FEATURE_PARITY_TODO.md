@@ -429,28 +429,30 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     session guard, users provider, password broker, and password timeout;
     only bounded `AuthServiceProvider`, `Gate`, and an empty `Authenticate`
     middleware exist.
-  - Partial slice (2026-08-22): `Illuminate.Auth.GenericUser` exposes
+  - Authentication slice (2026-08-22): `Illuminate.Auth.GenericUser` exposes
     authentication identifiers, password access, remember-token access/update,
-    and attribute-backed user values. `AuthenticationException` carries
-    checked guards and explicit or callback-generated redirect destinations.
+    and attribute-backed user values. `AuthenticationException` carries checked
+    guards and explicit or callback-generated redirect destinations.
     `RequestGuard` resolves and caches a callback user per request and exposes
-    check/guest/id/set-user/request operations. `EloquentUserProvider` now
-    retrieves users by identifier/credentials, validates passwords through an
-    injected hasher boundary, and updates remember tokens.
+    check/guest/id/set-user/request operations. `EloquentUserProvider` retrieves
+    users by identifier and credentials, supports collection and callback
+    constraints, applies provider query callbacks, validates passwords through
+    an injected hasher boundary, rehashes passwords when required, and updates
+    remember tokens without timestamp mutations.
   - Source mapping: Laravel `Auth\GenericUser` (21–140),
     `Auth\AuthenticationException` (8–82), `Auth\RequestGuard` (35–88),
-    `Auth\EloquentUserProvider` (40–273), `Contracts\Auth\Authenticatable`,
+    `Auth\EloquentUserProvider` (40–279), `Contracts\Auth\Authenticatable`,
     `Contracts\Auth\Guard`, and `Contracts\Auth\UserProvider`.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_auth.py tests/test_auth_exception.py tests/test_request_guard.py
-    tests/test_user_provider.py -q` — 4 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 173 passed.
+    tests/test_user_provider.py -q` — 8 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 177 passed, 20 warnings.
   - Source mapping: `references/framework/src/Illuminate/Auth`,
     `Illuminate/Contracts/Auth`, and `Illuminate/Auth/Middleware`.
   - Residual parity gaps: complete public-method inventory, session/cookie
-    lifecycle, guards/providers, password hashing/reset, CSRF, Sanctum,
-    authorization middleware, events/notifications, and all non-auth
-    security services remain unimplemented.
+    lifecycle, session/token guards, database user provider, password hashing/
+    reset, CSRF, Sanctum, authorization middleware, events/notifications, and
+    all non-auth security services remain unimplemented.
 - [~] Implement session stores, drivers, session middleware, lifecycle cleanup, regeneration, invalidation, and flash data.
   - Partial slice (2026-08-22): `Illuminate.Session.Store` provides an
     in-memory session attribute bag with start, get/put, existence checks,
