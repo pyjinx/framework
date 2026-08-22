@@ -538,16 +538,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     callable or mapping values, preserve existing matches, instantiate
     unpersisted models, update matched models, and translate unique-constraint
     races into a matching existing model.
+  - Partial slice (2026-08-22): `increment_or_create` creates a model with
+    the default counter value when attributes are absent, or atomically applies
+    the requested increment and extra values to the existing match.
   - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
     `Model::deleteQuietly` (1776–1779), `Builder::forceCreate` (1256–1264),
-    `Builder::firstOrNew`/`firstOrCreate`/`createOrFirst` (694–735), and
-    `Builder::updateOrCreate` (744–751).
+    `Builder::firstOrNew`/`firstOrCreate`/`createOrFirst` (694–735),
+    `Builder::updateOrCreate` (744–751), and
+    `Builder::incrementOrCreate` (753–769).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py tests/test_eloquent_attributes.py
     tests/test_eloquent_relationships.py tests/test_eloquent_soft_deletes.py -q`
-    — 41 passed, 17 warnings; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 219 passed, 20 warnings.
+    — 42 passed, 17 warnings; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 220 passed, 20 warnings.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
     upsert, transaction/savepoint handling for create-or-first races,
     cast-aware dirty/original synchronization, and complete CRUD

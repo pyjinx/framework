@@ -34,6 +34,12 @@ the application submodule pointer is advanced to the verified framework commit.
 Both repositories are required deliverables. A complete framework port with a
 non-parity starter application is not project completion.
 
+The intended distribution model follows Laravel's split exactly: `pyjinx/`
+is the project skeleton/template, while generated applications depend on the
+published `pyjinx` framework package. The `pyjinx/framework` submodule exists
+only for local framework development and parity verification; it is not
+intended to be copied into production projects.
+
 ## Fidelity Rule
 
 Behavior, architecture, system design, structure, lifecycle, dependency

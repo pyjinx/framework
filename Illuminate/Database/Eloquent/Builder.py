@@ -379,6 +379,22 @@ class Builder:
         instance.fill(values).save()
         return instance
 
+    def increment_or_create(
+        self,
+        attributes=None,
+        column="count",
+        default=1,
+        step=1,
+        extra=None,
+    ):
+        attributes = dict(attributes or {})
+        extra = dict(extra or {})
+        existing = self._find_by_attributes(attributes)
+        if existing is None:
+            return self.create({**attributes, column: default})
+        existing.increment(column, step, extra)
+        return existing
+
     def first_or_fail(self):
         instance = self.first()
         if instance is None:
