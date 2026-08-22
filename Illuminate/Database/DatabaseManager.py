@@ -199,6 +199,26 @@ class DatabaseManager:
         database_name, _ = self.parse_connection_name(requested)
         return database_name
 
+    def get_config(self, name: str | None = None, option: str | None = None):
+        requested = name or self.get_default_connection()
+        database_name, _ = self.parse_connection_name(requested)
+        config = dict(self._configuration(database_name))
+        if option is None:
+            return config
+
+        value = config
+        for segment in option.split("."):
+            if not isinstance(value, dict) or segment not in value:
+                return None
+            value = value[segment]
+        return value
+
+    def get_driver_name(self, name: str | None = None) -> str | None:
+        return self.get_config(name, "driver")
+
+    def get_database_name(self, name: str | None = None):
+        return self.get_config(name, "database")
+
     def get_name_with_read_write_type(self, name: str | None = None) -> str:
         requested = name or self.get_default_connection()
         database_name, connection_type = self.parse_connection_name(requested)

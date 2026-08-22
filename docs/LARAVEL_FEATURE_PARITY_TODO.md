@@ -217,16 +217,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     to raw QueryBuilder, Eloquent-backed queries, and SchemaBuilder table
     operations. Logical application table names remain unprefixed while SQLite
     stores and introspects the prefixed physical names.
-  - Source mapping: Laravel `Connection::getPdo` (1292–1305),
-    `getRawPdo` (1308–1311), `getReadPdo` (1318–1375),
-    `getName`/`getNameWithReadWriteType` (1479–1494),
+  - Partial slice (2026-08-22): `get_config`, `get_driver_name`, and
+    `get_database_name` expose Laravel connection metadata with dotted
+    configuration lookup and read/write suffix normalization.
+  - Source mapping: Laravel `Connection::getConfig` (1502–1517),
+    `getDriverName` (1535–1538), `getDatabaseName` (1766–1770),
+    `getPdo` (1292–1305), `getRawPdo` (1308–1311),
+    `getReadPdo` (1318–1375), `getName`/`getNameWithReadWriteType` (1479–1494),
     `getTablePrefix`/`setTablePrefix` (1812–1830);
     `DatabaseManager::parseConnectionName` (177–182), `build` (113–125),
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py -q` — 33 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 189 passed, 20 warnings.
+    tests/test_database.py -q` — 34 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 190 passed, 20 warnings.
   - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
     connector extensions/events, transaction manager semantics, retries,
     normalized exceptions, and complete connection API remain open.
