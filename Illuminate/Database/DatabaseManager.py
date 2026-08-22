@@ -134,6 +134,21 @@ class DatabaseManager:
         if isinstance(parameters, (tuple, list)):
             return list(parameters)
         return [parameters]
+    def get_pdo(self, name: str | None = None):
+        """Return SQLAlchemy's pooled DBAPI connection boundary."""
+        return self.connection(name).raw_connection()
+
+    def get_raw_pdo(self, name: str | None = None):
+        return self.get_pdo(name)
+
+    def get_read_pdo(self, name: str | None = None):
+        return self.get_pdo(name)
+
+    def get_name(self, name: str | None = None) -> str:
+        return name or self.get_default_connection()
+
+    def get_name_with_read_write_type(self, name: str | None = None) -> str:
+        return self.get_name(name)
 
     def disconnect(self, name: str | None = None) -> None:
         name = name or self.get_default_connection()

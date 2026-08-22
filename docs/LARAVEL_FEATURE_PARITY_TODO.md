@@ -194,8 +194,23 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - [ ] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
 - [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
-  - Evidence: focused manager coverage 11 passed, database component coverage 26 passed, full PyJinx suite 135 passed; canonical and runtime `DatabaseManager.py` and tracker copies are synchronized.
-  - Residual parity gaps: raw `Engine.connect()` proxy lifecycle remains an explicit SQLAlchemy boundary for the next connection-resource slice; Laravel read/write/direct variants, full URL parsing, prefixes, strict mode, non-SQLite drivers, connector extensions/events, transaction manager semantics, retries, listeners, normalized exceptions, and complete connection API remain open. `ValueError` is the documented Python analogue of Laravel's `InvalidArgumentException`.
+  - Partial slice (2026-08-22): the manager exposes `get_pdo`,
+    `get_raw_pdo`, `get_read_pdo`, `get_name`, and
+    `get_name_with_read_write_type` as explicit SQLAlchemy resource/name
+    boundaries. `get_pdo` returns a pooled DBAPI connection that callers must
+    close; read/write routing is intentionally collapsed to the configured
+    SQLite connection.
+  - Source mapping: Laravel `Connection::getPdo` (1292–1305),
+    `getRawPdo` (1308–1311), `getReadPdo` (1318–1375),
+    `getName`/`getNameWithReadWriteType` (1479–1494).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_database.py -q` — 28 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 154 passed.
+  - Residual parity gaps: Laravel read/write/direct variants, full URL
+    parsing, prefixes, strict mode, non-SQLite drivers, connector
+    extensions/events, transaction manager semantics, retries, normalized
+    exceptions, and complete connection API remain open. `ValueError` is the
+    documented Python analogue of Laravel's `InvalidArgumentException`.
 - [ ] Complete database manager/resolver parity: connection switching, transactions, nested transactions, retries, query listeners, and normalized exceptions.
   - Partial slice (2026-08-22): `DatabaseManager.transaction` accepts a callback, passes its managed SQLAlchemy `Session`, commits and returns the callback result, and preserves the existing no-callback context-manager form. Nested transactions share that session and use SQLAlchemy `begin_nested()` savepoints; recognized Laravel concurrency messages or SQLSTATE `40001` retry an outer callback transaction through its requested attempt count. `after_commit` executes immediately outside a transaction or after the root transaction commits; `after_rollback` runs only for the failed savepoint/root transaction, with nested callback order preserved.
   - Partial slice (2026-08-22): `DatabaseManager.listen` emits a Python
