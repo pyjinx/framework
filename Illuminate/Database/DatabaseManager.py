@@ -1,11 +1,15 @@
+from collections.abc import Callable
 from contextlib import contextmanager
 from contextvars import ContextVar
 from pathlib import Path
+from time import perf_counter
 from weakref import WeakSet
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
+
+from Illuminate.Database.Events.QueryExecuted import QueryExecuted
 
 
 class _TransactionCallbacks:
@@ -47,6 +51,7 @@ class DatabaseManager:
         self._transaction_callbacks: ContextVar[
             dict[str, tuple[_TransactionCallbacks, ...]] | None
         ] = ContextVar("database_manager_transaction_callbacks", default=None)
+        self._query_listeners: list[Callable[[QueryExecuted], object]] = []
 
     def connection(self, name: str | None = None) -> Engine:
         name = name or self.get_default_connection()
@@ -56,6 +61,20 @@ class DatabaseManager:
         connection = self._configuration(name)
         url = self._url(connection)
         engine = create_engine(url, future=True)
+        event.listen(engine, "before_cursor_execute", self._before_cursor_execute)
+        event.listen(
+            engine,
+            "after_cursor_execute",
+            lambda connection, cursor, statement, parameters, context, executemany: self._after_cursor_execute(
+                name,
+                connection,
+                cursor,
+                statement,
+                parameters,
+                context,
+                executemany,
+            ),
+        )
         if connection["driver"] == "sqlite" and connection.get("foreign_keys", True):
             self._enable_sqlite_foreign_keys(engine)
 
@@ -72,6 +91,49 @@ class DatabaseManager:
         )
         self._active_sessions.setdefault(name, WeakSet())
         return engine
+    def listen(self, callback: Callable[[QueryExecuted], object]) -> None:
+        self._query_listeners.append(callback)
+
+    @staticmethod
+    def _before_cursor_execute(
+        connection, cursor, statement, parameters, context, executemany
+    ) -> None:
+        context._pyjinx_query_started_at = perf_counter()
+
+    def _after_cursor_execute(
+        self,
+        name: str,
+        connection,
+        cursor,
+        statement,
+        parameters,
+        context,
+        executemany,
+    ) -> None:
+        started_at = getattr(context, "_pyjinx_query_started_at", None)
+        elapsed = 0.0 if started_at is None else (perf_counter() - started_at) * 1000
+        bindings = self._query_bindings(parameters, executemany)
+        query = QueryExecuted(
+            str(statement),
+            bindings,
+            elapsed,
+            self._engines[name],
+            name,
+        )
+        for callback in tuple(self._query_listeners):
+            callback(query)
+
+    @staticmethod
+    def _query_bindings(parameters, executemany: bool) -> list:
+        if parameters is None:
+            return []
+        if isinstance(parameters, dict):
+            return list(parameters.values())
+        if executemany:
+            return [value for row in parameters for value in row]
+        if isinstance(parameters, (tuple, list)):
+            return list(parameters)
+        return [parameters]
 
     def disconnect(self, name: str | None = None) -> None:
         name = name or self.get_default_connection()

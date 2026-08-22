@@ -198,8 +198,28 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Residual parity gaps: raw `Engine.connect()` proxy lifecycle remains an explicit SQLAlchemy boundary for the next connection-resource slice; Laravel read/write/direct variants, full URL parsing, prefixes, strict mode, non-SQLite drivers, connector extensions/events, transaction manager semantics, retries, listeners, normalized exceptions, and complete connection API remain open. `ValueError` is the documented Python analogue of Laravel's `InvalidArgumentException`.
 - [ ] Complete database manager/resolver parity: connection switching, transactions, nested transactions, retries, query listeners, and normalized exceptions.
   - Partial slice (2026-08-22): `DatabaseManager.transaction` accepts a callback, passes its managed SQLAlchemy `Session`, commits and returns the callback result, and preserves the existing no-callback context-manager form. Nested transactions share that session and use SQLAlchemy `begin_nested()` savepoints; recognized Laravel concurrency messages or SQLSTATE `40001` retry an outer callback transaction through its requested attempt count. `after_commit` executes immediately outside a transaction or after the root transaction commits; `after_rollback` runs only for the failed savepoint/root transaction, with nested callback order preserved.
-  - Evidence: `cd port/pyjinx && uv run --no-sync pytest tests/test_database.py -q` — 26 passed, plus `uv run --no-sync python3 -m pytest tests/ -q` — 135 passed (callback result/commit, nested savepoint rollback, recognized-concurrency retry, non-concurrency no-retry, immediate/deferred commit callbacks, nested/root rollback callbacks, callback-started root transactions, callback failure retry isolation, exact WSREP detection, and rollback-failure propagation). This maps Laravel `transaction`, `handleTransactionException`, `createTransaction`/`createSavepoint`, and `afterCommit`/`afterRollBack` to SQLAlchemy `Session` transactions. Canonical and runtime manager and tracker copies are synchronized.
-  - Residual parity gaps: SQLAlchemy has no Laravel `DatabaseTransactionsManager`, transaction lifecycle events, or query-grammar savepoint compilation. The available DBAPI exception surface cannot faithfully normalize every Laravel concurrency or lost-connection case, and nested concurrency errors are re-raised rather than translated to Laravel's `DeadlockException`; direct Laravel `beginTransaction`/`commit`/`rollBack` APIs remain unported.
+  - Partial slice (2026-08-22): `DatabaseManager.listen` emits a Python
+    `QueryExecuted` event after each successful SQLAlchemy cursor execution,
+    including SQL, ordered bindings, elapsed milliseconds, engine, and
+    connection name. Listener callbacks are invoked in registration order.
+  - Source mapping: Laravel `Connection::listen` (1115–1118),
+    `Connection::logQuery` (906–933), and `Events\QueryExecuted` (5–79).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_database.py -q` — 27 passed, plus full PyJinx evidence:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 153 passed. This maps
+    Laravel query events to SQLAlchemy engine cursor lifecycle hooks.
+    Canonical and runtime manager, event contract, and tracker copies are
+    synchronized.
+  - Residual parity gaps: SQLAlchemy has no Laravel
+    `DatabaseTransactionsManager`, transaction lifecycle events, or
+    query-grammar savepoint compilation. Query event dispatch still lacks
+    Laravel's application event dispatcher integration, read/write/direct
+    classification, raw SQL substitution, threshold handlers, and complete
+    connection API. The available DBAPI exception surface cannot faithfully
+    normalize every Laravel concurrency or lost-connection case, and nested
+    concurrency errors are re-raised rather than translated to Laravel's
+    `DeadlockException`; direct Laravel `beginTransaction`/`commit`/`rollBack`
+    APIs remain unported.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
   - Source mapping: `references/framework/src/Illuminate/Database/Query/Builder.php` `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at `Query/Grammars/SQLiteGrammar.php` `compileUpsert` (356) and lock behavior at `SQLiteGrammar.php` `compileLock` (31).
