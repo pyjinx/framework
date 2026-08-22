@@ -92,6 +92,37 @@ class SchemaBuilder:
         with self._get_connection().begin() as conn:
             conn.execute(DropTable(table))
 
+    @staticmethod
+    def _quote_identifier(identifier: str) -> str:
+        if not identifier or "\x00" in identifier:
+            raise ValueError("Schema identifiers must be non-empty and NUL-free.")
+        return f'"{identifier.replace(chr(34), chr(34) * 2)}"'
+
+    def table(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
+        blueprint = Blueprint(table_name)
+        callback(blueprint)
+        quoted_table = self._quote_identifier(table_name)
+
+        with self._get_connection().begin() as connection:
+            for command, values in blueprint.commands:
+                if command == "rename_column":
+                    source, target = values
+                    connection.execute(
+                        sa.text(
+                            f"ALTER TABLE {quoted_table} RENAME COLUMN "
+                            f"{self._quote_identifier(source)} TO "
+                            f"{self._quote_identifier(target)}"
+                        )
+                    )
+                elif command == "drop_column":
+                    for column in values:
+                        connection.execute(
+                            sa.text(
+                                f"ALTER TABLE {quoted_table} DROP COLUMN "
+                                f"{self._quote_identifier(column)}"
+                            )
+                        )
+
     def drop_if_exists(self, table_name: str) -> None:
         """Drop a table from the schema if it exists."""
         metadata = sa.MetaData()

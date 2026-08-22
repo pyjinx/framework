@@ -32,4 +32,9 @@ class Schema(metaclass=Facade):
         def drop_if_exists(cls, table_name: str) -> None: ...
 
         @classmethod
+        def table(
+            cls, table_name: str, callback: Callable[["Blueprint"], Any]
+        ) -> None: ...
+
+        @classmethod
         def rename(cls, source: str, target: str) -> None: ...

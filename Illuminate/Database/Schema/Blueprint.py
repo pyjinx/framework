@@ -6,7 +6,12 @@ import sqlalchemy as sa
 
 
 def _index_name(table_name, columns, index_type):
-    return f"{table_name}_{'_'.join(columns)}_{index_type}".lower().replace("-", "_").replace(".", "_")
+    return (
+        f"{table_name}_{'_'.join(columns)}_{index_type}".lower()
+        .replace("-", "_")
+        .replace(".", "_")
+    )
+
 
 def _apply_default(column, value):
     column.default = value
@@ -24,7 +29,9 @@ def _apply_default(column, value):
 class ForeignKeyDefinition:
     """Fluent definition of a SQLite foreign key constraint."""
 
-    def __init__(self, blueprint: Blueprint, columns: tuple[str, ...], name: str | None = None):
+    def __init__(
+        self, blueprint: Blueprint, columns: tuple[str, ...], name: str | None = None
+    ):
         self._blueprint = blueprint
         self._columns = tuple(columns)
         self._name = name or _index_name(blueprint.table_name, self._columns, "foreign")
@@ -112,9 +119,7 @@ class ColumnDefinition:
 
     def _column_definition(self) -> sa.Column[Any]:
         return next(
-            column
-            for column in self._blueprint.columns
-            if column.name == self._column
+            column for column in self._blueprint.columns if column.name == self._column
         )
 
     def nullable(self, is_nullable: bool = True) -> Self:
@@ -150,6 +155,7 @@ class ColumnDefinition:
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._blueprint, name)
+
 
 class ForeignIdColumnDefinition(ColumnDefinition):
     """Fluent modifier for a foreign ID column."""
@@ -189,6 +195,7 @@ class Blueprint:
         self.columns = []
         self.indexes = []
         self.foreign_keys = []
+        self.commands = []
 
     @property
     def constraints(self) -> list[sa.ForeignKeyConstraint]:
@@ -296,13 +303,20 @@ class Blueprint:
         self.indexes.append(sa.Index(name, *columns, unique=True))
         return self
 
-    def index(
-        self, columns: str | list[str], index_name: str | None = None
-    ) -> Self:
+    def index(self, columns: str | list[str], index_name: str | None = None) -> Self:
         """Create a non-unique index for one or more columns."""
         columns = (columns,) if isinstance(columns, str) else tuple(columns)
         name = index_name or _index_name(self.table_name, columns, "index")
         self.indexes.append(sa.Index(name, *columns))
+        return self
+
+    def drop_column(self, columns: str | list[str]) -> Self:
+        columns = (columns,) if isinstance(columns, str) else tuple(columns)
+        self.commands.append(("drop_column", columns))
+        return self
+
+    def rename_column(self, source: str, target: str) -> Self:
+        self.commands.append(("rename_column", (source, target)))
         return self
 
     def foreign(
