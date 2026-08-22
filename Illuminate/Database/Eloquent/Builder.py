@@ -25,6 +25,32 @@ class Builder:
         self.query.or_where(column, operator, value)
         return self
 
+    def where_raw(self, sql, bindings=None, boolean="and"):
+        self.query.where_raw(sql, bindings, boolean)
+        return self
+
+    def or_where_raw(self, sql, bindings=None):
+        return self.where_raw(sql, bindings, "or")
+
+    def select_raw(self, expression, bindings=None):
+        self.query.select_raw(expression, bindings)
+        return self
+
+    def order_by_raw(self, expression, bindings=None):
+        self.query.order_by_raw(expression, bindings)
+        return self
+
+    def group_by_raw(self, expression, bindings=None):
+        self.query.group_by_raw(expression, bindings)
+        return self
+
+    def having_raw(self, expression, bindings=None, boolean="and"):
+        self.query.having_raw(expression, bindings, boolean)
+        return self
+
+    def or_having_raw(self, expression, bindings=None):
+        return self.having_raw(expression, bindings, "or")
+
     def where_null_safe_equals(self, column, value, boolean="and"):
         self.query.where_null_safe_equals(column, value, boolean)
         return self
