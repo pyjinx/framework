@@ -223,8 +223,29 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Evidence: `cd port/pyjinx && uv run --no-sync pytest tests/test_eloquent_model.py -q` — 11 passed (visible-then-hidden ordering, legacy and `Attribute` appends, chainability/deduplication/conditional visibility, loaded relation/model-list filtering, and mutable-input isolation); full PyJinx suite: 142 passed. Canonical/runtime `Model.py` and parity trackers are synchronized.
   - Residual parity gaps: table/connection metadata, UUID/ULID behavior, timestamp column/date-format and JSON serialization APIs, full cast/custom-cast and encrypted/hashed serialization, recursion prevention, Laravel's snake-case relation-key option and generic Arrayable collections, attribute-based route-key resolution, and broad relationship/eager-loading parity remain unported.
 - [ ] Complete Eloquent attribute behavior: dirty tracking, original values, attribute accessors/mutators, casts, custom casts, encrypted casts, hashed casts, JSON casts, date casts, and mass-assignment exceptions.
-- [ ] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
-- [ ] Complete Eloquent model events: boot/booted, retrieved, saving/saved, creating/created, updating/updated, deleting/deleted, restoring/restored, observers, dispatch suppression, and event ordering.
+- [~] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
+  - Partial slice (2026-08-22): `Model.without_events` suppresses model callbacks
+    across nested operations with restoration in `finally`; `create_quietly`,
+    `force_fill`, `force_create`, `force_create_quietly`, `update_quietly`,
+    `save`-compatible event suppression, and `delete_quietly` now mirror the
+    corresponding Laravel quiet/unguarded boundaries.
+  - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
+    `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
+    `Model::deleteQuietly` (1776–1779), and `Builder::forceCreate`
+    (1256–1264).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_eloquent_model.py -q` — 12 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 151 passed.
+  - Residual parity gaps: builder quiet/force-create variants, update-or-fail,
+    save-or-fail, save-or-ignore, touch, upsert, full dirty/original
+    synchronization, and complete CRUD option/error semantics remain open.
+- [~] Complete Eloquent model events: boot/booted, retrieved, saving/saved, creating/created, updating/updated, deleting/deleted, restoring/restored, observers, dispatch suppression, and event ordering.
+  - Partial slice (2026-08-22): callback dispatch suppression is shared across
+    model classes, nest-safe, and restoration-safe; quiet CRUD regression
+    coverage verifies callbacks are skipped without changing persisted results.
+  - Residual parity gaps: boot/booted discovery, retrieved/restoring/restored
+    events, observers, dispatcher contracts, event faking, and full Laravel
+    event ordering remain open.
 - [ ] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
 - [ ] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
 - [ ] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.

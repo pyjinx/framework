@@ -20,7 +20,7 @@ class Model:
     appends = []
     casts = {}
     _event_listeners = {}
-
+    _event_suppression_depth = 0
     def __init__(self, attributes=None, exists=False):
         self._attributes = dict(attributes or {})
         self._exists = exists
@@ -37,6 +37,14 @@ class Model:
     def on(cls, event, callback):
         cls._listeners().setdefault(event, []).append(callback)
         return callback
+    @classmethod
+    def without_events(cls, callback):
+        Model._event_suppression_depth += 1
+        try:
+            return callback()
+        finally:
+            Model._event_suppression_depth -= 1
+
 
     @classmethod
     def saving(cls, callback):
@@ -71,6 +79,8 @@ class Model:
         return cls.on("deleted", callback)
 
     def _fire_event(self, event, halt=True):
+        if Model._event_suppression_depth:
+            return True
         for callback in self.__class__._listeners().get(event, []):
             if callback(self) is False and halt:
                 return False
@@ -276,6 +286,22 @@ class Model:
         for key, value in accepted.items():
             self._set_attribute_value(key, value)
         return self
+    def force_fill(self, attributes):
+        for key, value in attributes.items():
+            self._set_attribute_value(key, value)
+        return self
+
+    @classmethod
+    def create_quietly(cls, attributes):
+        return cls.without_events(lambda: cls.create(attributes))
+
+    @classmethod
+    def force_create(cls, attributes):
+        return cls().force_fill(attributes).save()
+
+    @classmethod
+    def force_create_quietly(cls, attributes):
+        return cls.without_events(lambda: cls.force_create(attributes))
 
     def save(self):
         if not self._fire_event("saving"):
@@ -310,9 +336,13 @@ class Model:
         self._original = dict(self._attributes)
         self._fire_event("saved", halt=False)
         return self
+    def save_quietly(self):
+        return self.without_events(self.save)
 
     def update(self, attributes):
         return self.fill(attributes).save()
+    def update_quietly(self, attributes):
+        return self.without_events(lambda: self.update(attributes))
 
     def delete(self):
         if not self._exists:
@@ -335,6 +365,8 @@ class Model:
         self._exists = False
         self._fire_event("deleted", halt=False)
         return deleted > 0
+    def delete_quietly(self):
+        return self.without_events(self.delete)
 
     def increment(self, column, amount=1, extra=None):
         if not self._exists:
