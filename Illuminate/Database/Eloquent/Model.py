@@ -488,6 +488,33 @@ class Model(JsonSerializable):
             return None
         return self.__class__.find(self._attributes[self.primary_key])
 
+    def replicate(self, except_attributes=None):
+        excluded = {
+            value
+            for value in (
+                self.get_key_name(),
+                self.get_created_at_column(),
+                self.get_updated_at_column(),
+                "laravel_through_key",
+            )
+            if value
+        }
+        excluded.update(except_attributes or [])
+        attributes = {
+            key: value
+            for key, value in self._attributes.items()
+            if key not in excluded
+        }
+        replica = self.__class__(attributes, exists=False)
+        replica._relations = dict(self._relations)
+        replica._fire_event("replicating", halt=False)
+        return replica
+
+    def replicate_quietly(self, except_attributes=None):
+        return self.__class__.without_events(
+            lambda: self.replicate(except_attributes)
+        )
+
     def get_arrayable_items(self, values):
         if self.get_visible():
             values = {

@@ -541,17 +541,22 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `increment_or_create` creates a model with
     the default counter value when attributes are absent, or atomically applies
     the requested increment and extra values to the existing match.
+  - Partial slice (2026-08-22): `Model.replicate` and
+    `replicate_quietly` clone persisted attributes and loaded relations into a
+    non-existing model while excluding identity, timestamps, and through keys.
   - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
-    `Model::deleteQuietly` (1776–1779), `Builder::forceCreate` (1256–1264),
+    `Model::deleteQuietly` (1776–1779),
+    `Model::replicate`/`replicateQuietly` (2162–2194),
+    `Builder::forceCreate` (1256–1264),
     `Builder::firstOrNew`/`firstOrCreate`/`createOrFirst` (694–735),
     `Builder::updateOrCreate` (744–751), and
     `Builder::incrementOrCreate` (753–769).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py tests/test_eloquent_attributes.py
     tests/test_eloquent_relationships.py tests/test_eloquent_soft_deletes.py -q`
-    — 42 passed, 17 warnings; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 220 passed, 20 warnings.
+    — 43 passed, 17 warnings; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 221 passed, 20 warnings.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
     upsert, transaction/savepoint handling for create-or-first races,
     cast-aware dirty/original synchronization, and complete CRUD
