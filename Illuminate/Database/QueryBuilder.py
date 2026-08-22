@@ -37,12 +37,20 @@ class QueryBuilder:
         self._joins = []
         self._aliased_columns = []
         self._loaded_tables = None
+        self._raw_selects = []
         self._lock = None
 
     # ---- Select ----
 
     def select(self, *columns):
         self._columns = columns or ("*",)
+        return self
+
+    def select_raw(self, expression: str, bindings=None):
+        self._raw_selects.append(
+            self._raw_expression(expression, [] if bindings is None else bindings)
+        )
+        self._columns = ()
         return self
 
     def from_(self, table_name: str):
@@ -1036,6 +1044,8 @@ class QueryBuilder:
                     join_table, on_clause, isouter=join_type == "left"
                 )
             statement = statement.select_from(from_clause)
+        if self._raw_selects and not self._joins:
+            statement = statement.select_from(table)
 
         if self._distinct:
             statement = statement.distinct()
@@ -1069,7 +1079,9 @@ class QueryBuilder:
         return statement
 
     def _selected_columns(self, table):
-        if not self._columns or self._columns == ("*",):
+        if self._raw_selects:
+            columns = list(self._raw_selects)
+        elif not self._columns or self._columns == ("*",):
             columns = list(table.c)
         else:
             columns = [self._resolve_column(column) for column in self._columns]
