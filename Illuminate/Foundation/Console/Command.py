@@ -235,6 +235,7 @@ class Command:
                 input_option_value = (
                     True if len(input_option_data) == 1 else input_option_data[1]
                 )
+                matched_option = None
 
                 for option in self.options:
                     if (
@@ -245,6 +246,17 @@ class Command:
                         and option["short_name"] == input_option_short_name
                     ):
                         option["value"] = input_option_value
+                        matched_option = option
+
+                if (
+                    matched_option is not None
+                    and matched_option["type"] == InputOption.VALUE_REQUIRED
+                    and len(input_option_data) == 1
+                ):
+                    try:
+                        matched_option["value"] = self.input_arguments.pop(0)
+                    except IndexError:
+                        matched_option["value"] = None
             except IndexError:
                 break
 

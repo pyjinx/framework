@@ -351,10 +351,24 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `uv run --no-sync python3 -m pytest tests/ -q` — 186 passed, 20 warnings.
   - Residual parity gaps: SQLite-only creation; table alteration; column/index/foreign-key drops and renames; inspection; full types/modifiers/default expressions; composite/self-referential FKs; irregular plural inference; and non-SQLite grammar behavior.
 - [ ] Complete migration parity: Laravel-shaped files and paths, batches, status, rollback step/batch, reset, refresh, fresh, pretend, paths, seed integration, and failure recovery.
-  - Partial slice (2026-08-22): `migrate:status --pending` now filters out applied revisions and reports `No pending migrations` when its filtered result is empty. The existing unfiltered status output remains available and reports `No migrations found` when the migration directory has no revisions.
-  - Source mapping: `references/framework/src/Illuminate/Database/Console/Migrations/StatusCommand.php` `handle` (64–102) and `getStatusFor` (112–128); current Laravel's repository implementation is `DatabaseMigrationRepository.php` `getRan` (47–53) and `getMigrationBatches` (104–110), rather than a `MigrationRepository.php` file.
-  - Evidence: `cd port/pyjinx && uv run --no-sync pytest tests/test_migration_commands.py -q` — 1 passed; current full-suite evidence is 142 passed (one generated migration is applied, a second remains pending and is the sole `--pending` result, then applying it yields `No pending migrations`). Canonical/runtime CLI documentation and parity trackers are synchronized.
-  - Residual parity gaps: Alembic's version table has no Laravel migration-name/batch repository, so applied statuses do not show batch numbers and rollback cannot implement Laravel `--step` or `--batch`; status still lacks Laravel database/path/realpath options, missing-repository diagnostics, and pending exit-status propagation.
+  - Partial slice (2026-08-22): `migrate:status --pending` filters out
+    applied revisions and reports `No pending migrations` when empty.
+    `migrate:rollback --step N` maps positive step counts to Alembic relative
+    downgrades, and `--pretend` computes an explicit current-to-target range
+    for SQL preview without mutating the database. Required CLI option values
+    now support both `--option=value` and `--option value` forms.
+  - Source mapping: Laravel `RollbackCommand::handle` (55–71) and
+    `getOptions` (79–89), `StatusCommand::handle` (64–102), and
+    `ManagesTransactions`; Python implementation:
+    `MigrationCommands.MigrateRollbackCommand` and
+    `Foundation\Console\Command.parse_options`.
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_migration_commands.py -q` — 1 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 186 passed, 20 warnings.
+  - Residual parity gaps: Alembic's version table has no Laravel
+    migration-name/batch repository, so `--batch` cannot implement Laravel
+    semantics; status still lacks Laravel database/path/realpath options,
+    missing-repository diagnostics, and pending exit-status propagation.
 - [~] Complete Eloquent model metadata: table, connection, keys, UUID/ULID, incrementing, timestamps, date formats, guarded/fillable, hidden/visible, appends, and serialization.
   - Partial slice (2026-08-22): `Model.to_dict()` now serializes arrayable attributes and loaded model/list relations through a visible allow-list followed by hidden exclusion. It provides chainable snake-case counterparts for Laravel's hidden/visible controls (`get/set/merge_hidden`, `get/set/merge_visible`, `make_visible`, `make_hidden`, and conditional forms) and appends controls (`append`, `get/set/merge_appends`, `has_appended`, `without_appends`). Appended legacy getter and `Attribute` values serialize on demand; configured appends are instance-local. `get_table`/`set_table`, `get_connection_name`/`set_connection`, `qualify_column`, and `get_qualified_key_name` expose table/connection metadata. Models without an explicit table use a snake-case plural fallback; `created_at_column`/`updated_at_column`, timestamp accessors/setters, `get_date_format`/`set_date_format`, and `from_date_time` expose the current timestamp/date-format boundary. Null timestamp columns suppress corresponding writes, and existing dirty timestamp values are preserved.
   - Source mapping: `Model.php` `toArray` (2033–2038), `getConnectionName`/`setConnection` (2236–2251), `getTable`/`setTable` (2301–2318), and `qualifyColumn`/`getQualifiedKeyName` (736–749, 2347–2350); Laravel `Str::snake`/`Str::pluralStudly` default table derivation; `HasTimestamps.php` `updateTimestamps` (87–104), `getCreatedAtColumn`/`getUpdatedAtColumn` (167–180), `setCreatedAt`/`setUpdatedAt` (112–132); `HasAttributes.php` `getDateFormat`/`setDateFormat` (1674–1690), `fromDateTime` (1625–1630), attribute serialization (225–458), and append controls (2447–2515); `HidesAttributes.php` hidden/visible controls (42–173).
