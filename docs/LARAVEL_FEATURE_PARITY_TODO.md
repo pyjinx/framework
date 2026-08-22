@@ -414,7 +414,26 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 ### Authentication, sessions, and security
 
-- [ ] Inventory Laravel Auth, Session, Cookie, Encryption, Hashing, Passwords, and Sanctum APIs class by class.
+- [~] Inventory Laravel Auth, Session, Cookie, Encryption, Hashing, Passwords, and Sanctum APIs class by class.
+  - Initial Auth inventory (2026-08-22): Laravel Auth contains
+    `AuthManager`, `SessionGuard`, `TokenGuard`, `RequestGuard`,
+    `DatabaseUserProvider`, `EloquentUserProvider`, `GenericUser`,
+    `AuthenticationException`, guard/provider contracts, authorization
+    `Gate`/responses, auth middleware, password brokers/token repositories,
+    auth events, and verification/reset notifications. The Contracts/Auth
+    namespace includes guard, stateful guard, factory, provider,
+    authenticatable, password broker, reset, verification, and authorization
+    interfaces.
+  - Current PyJinx prerequisite surface: `config/auth.py` declares a web
+    session guard, users provider, password broker, and password timeout;
+    only bounded `AuthServiceProvider`, `Gate`, and an empty `Authenticate`
+    middleware exist.
+  - Source mapping: `references/framework/src/Illuminate/Auth`,
+    `Illuminate/Contracts/Auth`, and `Illuminate/Auth/Middleware`.
+  - Residual parity gaps: complete public-method inventory, session/cookie
+    lifecycle, guards/providers, password hashing/reset, CSRF, Sanctum,
+    authorization middleware, events/notifications, and all non-auth
+    security services remain unimplemented.
 - [ ] Implement session stores, drivers, session middleware, lifecycle cleanup, regeneration, invalidation, and flash data.
 - [ ] Implement cookie creation, signing/encryption, SameSite/Secure/HttpOnly behavior, queues, and response integration.
 - [ ] Implement CSRF token generation, validation middleware, rotation, exemptions, and error behavior.
