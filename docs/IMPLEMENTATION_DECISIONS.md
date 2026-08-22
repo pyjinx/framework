@@ -54,3 +54,23 @@
   ported from Laravel Prompts.
 - **Status:** Decision only; implementation remains in the Laravel console
   parity queue. No dependency is added until its focused parity slice begins.
+
+## 2026-08-22 — Laravel error handling and Ignition-compatible diagnostics
+
+- **Decision:** Port Laravel's core exception reporting/rendering lifecycle
+  first, then provide an optional Veyra development error renderer inspired by
+  Spatie Laravel Ignition.
+- **Core contract:** report filtering, log levels, context, deduplication,
+  reportable/renderable callbacks, debug gating, HTTP exception conversion,
+  HTML/JSON negotiation, safe production responses, and testing fakes remain
+  framework-owned behavior.
+- **Optional diagnostics:** stack frames, source context, solutions,
+  environment details, and interactive development pages belong behind an
+  optional package boundary; they must never replace the core handler.
+- **Dependency rule:** `exceptionite` is not currently source-verified as a
+  maintained dependency and must not be added by assumption. Evaluate any
+  Python renderer against maintenance, security, API, and replacement-cost
+  criteria before adoption. Jinja2 and Python traceback/inspect primitives may
+  back the first owned renderer.
+- **Status:** Future parity slice; current `Handler.py` is not equivalent and
+  must remain visibly incomplete in the tracker.
