@@ -370,6 +370,15 @@ class Builder:
                 raise
             return instance
 
+    def update_or_create(self, attributes=None, values=None):
+        attributes = dict(attributes or {})
+        values = self._resolve_creation_values(values)
+        instance = self._find_by_attributes(attributes)
+        if instance is None:
+            return self.create({**attributes, **values})
+        instance.fill(values).save()
+        return instance
+
     def first_or_fail(self):
         instance = self.first()
         if instance is None:
