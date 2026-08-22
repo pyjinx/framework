@@ -31,11 +31,15 @@ class _TransactionCallbacks:
             callback()
 
 
-
 class _TransactionCallbackFailure(Exception):
     def __init__(self, original):
         self.original = original
         super().__init__(str(original))
+
+
+class _ManualRollback(Exception):
+    pass
+
 
 class DatabaseManager:
     def __init__(self, app, config) -> None:
@@ -45,12 +49,15 @@ class DatabaseManager:
         self._engine_fingerprints: dict[str, tuple[str, bool]] = {}
         self._session_factories: dict[str, sessionmaker] = {}
         self._active_sessions: dict[str, WeakSet[Session]] = {}
-        self._transaction_sessions: ContextVar[dict[str, tuple[Session, ...]] | None] = (
-            ContextVar("database_manager_transaction_sessions", default=None)
-        )
+        self._transaction_sessions: ContextVar[
+            dict[str, tuple[Session, ...]] | None
+        ] = ContextVar("database_manager_transaction_sessions", default=None)
         self._transaction_callbacks: ContextVar[
             dict[str, tuple[_TransactionCallbacks, ...]] | None
         ] = ContextVar("database_manager_transaction_callbacks", default=None)
+        self._manual_transaction_contexts: ContextVar[
+            dict[str, tuple[object, ...]] | None
+        ] = ContextVar("database_manager_manual_transaction_contexts", default=None)
         self._query_listeners: list[Callable[[QueryExecuted], object]] = []
 
     def connection(self, name: str | None = None) -> Engine:
@@ -65,14 +72,16 @@ class DatabaseManager:
         event.listen(
             engine,
             "after_cursor_execute",
-            lambda connection, cursor, statement, parameters, context, executemany: self._after_cursor_execute(
-                name,
-                connection,
-                cursor,
-                statement,
-                parameters,
-                context,
-                executemany,
+            lambda connection, cursor, statement, parameters, context, executemany: (
+                self._after_cursor_execute(
+                    name,
+                    connection,
+                    cursor,
+                    statement,
+                    parameters,
+                    context,
+                    executemany,
+                )
             ),
         )
         if connection["driver"] == "sqlite" and connection.get("foreign_keys", True):
@@ -91,6 +100,7 @@ class DatabaseManager:
         )
         self._active_sessions.setdefault(name, WeakSet())
         return engine
+
     def listen(self, callback: Callable[[QueryExecuted], object]) -> None:
         self._query_listeners.append(callback)
 
@@ -134,6 +144,7 @@ class DatabaseManager:
         if isinstance(parameters, (tuple, list)):
             return list(parameters)
         return [parameters]
+
     def get_pdo(self, name: str | None = None):
         """Return SQLAlchemy's pooled DBAPI connection boundary."""
         return self.connection(name).raw_connection()
@@ -233,10 +244,35 @@ class DatabaseManager:
 
     def session(self, name: str | None = None) -> Session:
         name = name or self.get_default_connection()
+        sessions = (self._transaction_sessions.get() or {}).get(name, ())
+        if sessions:
+            return sessions[-1]
+
         self.connection(name)
         session = self._session_factories[name]()
         self._active_sessions.setdefault(name, WeakSet()).add(session)
         return session
+
+    @contextmanager
+    def _query_connection(self, name: str | None = None, write: bool = False):
+        name = name or self.get_default_connection()
+        sessions = (self._transaction_sessions.get() or {}).get(name, ())
+        if sessions:
+            yield sessions[-1].connection()
+            return
+
+        engine = self.connection(name)
+        if write:
+            with engine.begin() as connection:
+                yield connection
+        else:
+            with engine.connect() as connection:
+                yield connection
+
+    def _query_bind(self, name: str | None = None):
+        name = name or self.get_default_connection()
+        sessions = (self._transaction_sessions.get() or {}).get(name, ())
+        return sessions[-1].connection() if sessions else self.connection(name)
 
     def transaction(self, callback=None, attempts: int = 1, name: str | None = None):
         if callable(callback):
@@ -248,6 +284,59 @@ class DatabaseManager:
             name = callback
 
         return self._transaction_context(name)
+
+    def begin_transaction(self, name: str | None = None) -> None:
+        """Start a transaction that is completed by commit or roll_back."""
+        name = name or self.get_default_connection()
+        context = self._transaction_context(name)
+        context.__enter__()
+
+        contexts = dict(self._manual_transaction_contexts.get() or {})
+        contexts[name] = (
+            *contexts.get(name, ()),
+            context,
+        )
+        self._manual_transaction_contexts.set(contexts)
+
+    def commit(self, name: str | None = None) -> None:
+        """Commit the active direct transaction."""
+        name = name or self.get_default_connection()
+        contexts = dict(self._manual_transaction_contexts.get() or {})
+        stack = contexts.get(name, ())
+        if not stack:
+            return
+
+        context = stack[-1]
+        try:
+            context.__exit__(None, None, None)
+        finally:
+            contexts[name] = stack[:-1]
+            self._manual_transaction_contexts.set(contexts)
+
+    def roll_back(self, to_level: int | None = None, name: str | None = None) -> None:
+        """Roll back direct transactions through the requested level."""
+        name = name or self.get_default_connection()
+        contexts = dict(self._manual_transaction_contexts.get() or {})
+        stack = contexts.get(name, ())
+        if not stack:
+            return
+
+        target = len(stack) - 1 if to_level is None else to_level
+        if target < 0 or target >= len(stack):
+            return
+
+        while len(stack) > target:
+            context = stack[-1]
+            rollback = _ManualRollback()
+            try:
+                context.__exit__(_ManualRollback, rollback, rollback.__traceback__)
+            except _ManualRollback as error:
+                if error is not rollback:
+                    raise
+            finally:
+                stack = stack[:-1]
+                contexts[name] = stack
+                self._manual_transaction_contexts.set(contexts)
 
     @contextmanager
     def _transaction_context(self, name: str | None):
@@ -370,9 +459,10 @@ class DatabaseManager:
         seen = set()
         while current is not None and id(current) not in seen:
             seen.add(id(current))
-            if str(getattr(current, "code", "")) == "40001" or str(
-                getattr(current, "sqlstate", "")
-            ) == "40001":
+            if (
+                str(getattr(current, "code", "")) == "40001"
+                or str(getattr(current, "sqlstate", "")) == "40001"
+            ):
                 return True
             if any(message in str(current) for message in messages):
                 return True

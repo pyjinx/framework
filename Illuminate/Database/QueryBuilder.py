@@ -90,6 +90,7 @@ class QueryBuilder:
             operator = "="
         self._conditions.append(("or", column, operator, value))
         return self
+
     def where_column(self, first, operator="=", second=None):
         if second is None:
             second = operator
@@ -103,6 +104,7 @@ class QueryBuilder:
             operator = "="
         self._where_clauses.append(("column", "or", first, (operator, second)))
         return self
+
     def where_between_columns(self, column, values):
         low, high = values
         self._where_clauses.append(
@@ -126,10 +128,9 @@ class QueryBuilder:
 
     def or_where_not_between_columns(self, column, values):
         low, high = values
-        self._where_clauses.append(
-            ("between_columns", "or", column, (low, high, True))
-        )
+        self._where_clauses.append(("between_columns", "or", column, (low, high, True)))
         return self
+
     def where_date(self, column, operator="=", value=None):
         if value is None:
             value = operator
@@ -169,6 +170,7 @@ class QueryBuilder:
             value = value.strftime("%H:%M:%S")
         self._where_clauses.append(("time", "or", column, (operator, value)))
         return self
+
     @staticmethod
     def _calendar_value(kind, value):
         if isinstance(value, datetime | date):
@@ -218,6 +220,7 @@ class QueryBuilder:
             value = operator
             operator = "="
         return self._where_calendar("year", column, operator, value, "or")
+
     def where_json_contains(self, column, value):
         self._where_clauses.append(("json_contains", "and", column, (value, False)))
         return self
@@ -233,6 +236,7 @@ class QueryBuilder:
     def or_where_json_doesnt_contain(self, column, value):
         self._where_clauses.append(("json_contains", "or", column, (value, True)))
         return self
+
     def where_json_contains_key(self, column):
         self._where_clauses.append(("json_key", "and", column, False))
         return self
@@ -262,14 +266,13 @@ class QueryBuilder:
             operator = "="
         self._where_clauses.append(("json_length", "or", column, (operator, value)))
         return self
+
     def where_row_values(self, columns, operator, values):
         columns = list(columns)
         values = list(values)
         if len(columns) != len(values):
             raise ValueError("The number of columns must match the number of values")
-        self._where_clauses.append(
-            ("row_values", "and", columns, (operator, values))
-        )
+        self._where_clauses.append(("row_values", "and", columns, (operator, values)))
         return self
 
     def or_where_row_values(self, columns, operator, values):
@@ -277,11 +280,8 @@ class QueryBuilder:
         values = list(values)
         if len(columns) != len(values):
             raise ValueError("The number of columns must match the number of values")
-        self._where_clauses.append(
-            ("row_values", "or", columns, (operator, values))
-        )
+        self._where_clauses.append(("row_values", "or", columns, (operator, values)))
         return self
-
 
     def where_in(self, column, values):
         self._where_clauses.append(("in", "and", column, list(values)))
@@ -385,7 +385,9 @@ class QueryBuilder:
     def insert(self, values):
         """Insert one record (dict) or multiple records (list of dicts)."""
         table = self._table()
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             if isinstance(values, list):
                 connection.execute(insert(table), values)
                 return True
@@ -397,7 +399,9 @@ class QueryBuilder:
     def insert_get_id(self, values: dict):
         """Insert a record and return the primary key."""
         table = self._table()
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             result = connection.execute(insert(table).values(**values))
             return (
                 result.inserted_primary_key[0] if result.inserted_primary_key else None
@@ -415,7 +419,9 @@ class QueryBuilder:
         table = self._table()
 
         if update_columns is not None and not update_columns:
-            with self.manager.connection(self.connection_name).begin() as connection:
+            with self.manager._query_connection(
+                self.connection_name, write=True
+            ) as connection:
                 connection.execute(sqlite_insert(table).values(rows))
             return 1
 
@@ -434,7 +440,9 @@ class QueryBuilder:
             index_elements=unique_columns, set_=update_values
         )
 
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             return connection.execute(statement).rowcount
 
     # ---- Row locks ----
@@ -453,19 +461,25 @@ class QueryBuilder:
         table = self._table()
         statement = update(table).values(**values)
         statement = self._apply_wheres(table, statement)
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             return connection.execute(statement).rowcount
 
     def delete(self) -> int:
         table = self._table()
         statement = delete(table)
         statement = self._apply_wheres(table, statement)
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             return connection.execute(statement).rowcount
 
     def truncate(self):
         """Remove all rows from the table."""
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             connection.execute(text(f"DELETE FROM {self.table_name}"))
 
     def increment(self, column, amount=1, extra=None):
@@ -477,7 +491,9 @@ class QueryBuilder:
             values.update(extra)
         statement = update(table).values(**values)
         statement = self._apply_wheres(table, statement)
-        with self.manager.connection(self.connection_name).begin() as connection:
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
             return connection.execute(statement).rowcount
 
     def decrement(self, column, amount=1, extra=None):
@@ -488,8 +504,7 @@ class QueryBuilder:
 
     def get(self):
         statement = self._build_select()
-        engine = self.manager.connection(self.connection_name)
-        with engine.connect() as connection:
+        with self.manager._query_connection(self.connection_name) as connection:
             rows = connection.execute(statement).mappings().all()
         return [dict(row) for row in rows]
 
@@ -551,8 +566,7 @@ class QueryBuilder:
             agg_expr = fn(self._resolve_column(column))
         statement = select(agg_expr).select_from(table)
         statement = self._apply_wheres(table, statement)
-        engine = self.manager.connection(self.connection_name)
-        with engine.connect() as connection:
+        with self.manager._query_connection(self.connection_name) as connection:
             result = connection.execute(statement).scalar()
         return result
 
@@ -566,9 +580,7 @@ class QueryBuilder:
         """Return the compiled SELECT bindings in placeholder order."""
         compiled = self._compile_select()
         parameter_names = compiled.positiontup or tuple(compiled.params)
-        return self._flatten_bindings(
-            compiled.params[name] for name in parameter_names
-        )
+        return self._flatten_bindings(compiled.params[name] for name in parameter_names)
 
     # ---- Internals ----
 
@@ -576,15 +588,13 @@ class QueryBuilder:
         """Lazily autoload the base table and joined tables into one MetaData."""
         if self._loaded_tables is None:
             metadata = MetaData()
-            engine = self.manager.connection(self.connection_name)
+            bind = self.manager._query_bind(self.connection_name)
             tables = {
-                self.table_name: Table(self.table_name, metadata, autoload_with=engine)
+                self.table_name: Table(self.table_name, metadata, autoload_with=bind)
             }
             for _, join_table, _, _, _ in self._joins:
                 if join_table not in tables:
-                    tables[join_table] = Table(
-                        join_table, metadata, autoload_with=engine
-                    )
+                    tables[join_table] = Table(join_table, metadata, autoload_with=bind)
             self._loaded_tables = tables
         return self._loaded_tables
 
@@ -597,6 +607,7 @@ class QueryBuilder:
             table_name, column_name = column.split(".", 1)
             return getattr(self._load_tables()[table_name].c, column_name)
         return getattr(self._table().c, column)
+
     def _json_source(self, column):
         parts = column.split("->")
         source = self._resolve_column(parts[0])
@@ -772,7 +783,7 @@ class QueryBuilder:
 
     def _compile_select(self):
         return self._build_select().compile(
-            self.manager.connection(self.connection_name),
+            self.manager._query_bind(self.connection_name),
             compile_kwargs={"render_postcompile": True},
         )
 
