@@ -28,6 +28,9 @@ class QueryBuilder:
         self._groups = []
         self._havings = []
         self._distinct = False
+        self._joins = []
+        self._aliased_columns = []
+        self._loaded_tables = None
 
     # ---- Select ----
 
@@ -35,8 +38,35 @@ class QueryBuilder:
         self._columns = columns or ("*",)
         return self
 
+    def add_select(self, *columns):
+        """Add columns to the current select, mirroring addSelect()."""
+        if not self._columns or self._columns == ("*",):
+            self._columns = tuple(columns)
+        else:
+            self._columns = tuple(self._columns) + tuple(columns)
+        return self
+
+    def add_select_aliased(self, column, alias):
+        """Select a qualified column under an alias."""
+        self._aliased_columns.append((column, alias))
+        return self
+
     def distinct(self):
         self._distinct = True
+        return self
+
+    # ---- Joins ----
+
+    def join(self, table, first, operator="=", second=None):
+        """Add an inner join clause."""
+        self._joins.append(("inner", table, first, operator, second))
+        self._loaded_tables = None
+        return self
+
+    def left_join(self, table, first, operator="=", second=None):
+        """Add a left join clause."""
+        self._joins.append(("left", table, first, operator, second))
+        self._loaded_tables = None
         return self
 
     # ---- Where clauses ----
@@ -162,14 +192,18 @@ class QueryBuilder:
                 connection.execute(insert(table), values)
                 return True
             result = connection.execute(insert(table).values(**values))
-            return result.inserted_primary_key[0] if result.inserted_primary_key else None
+            return (
+                result.inserted_primary_key[0] if result.inserted_primary_key else None
+            )
 
     def insert_get_id(self, values: dict):
         """Insert a record and return the primary key."""
         table = self._table()
         with self.manager.connection(self.connection_name).begin() as connection:
             result = connection.execute(insert(table).values(**values))
-            return result.inserted_primary_key[0] if result.inserted_primary_key else None
+            return (
+                result.inserted_primary_key[0] if result.inserted_primary_key else None
+            )
 
     def update(self, values: dict) -> int:
         table = self._table()
@@ -270,7 +304,7 @@ class QueryBuilder:
         if column == "*":
             agg_expr = fn()
         else:
-            agg_expr = fn(getattr(table.c, column))
+            agg_expr = fn(self._resolve_column(column))
         statement = select(agg_expr).select_from(table)
         statement = self._apply_wheres(table, statement)
         engine = self.manager.connection(self.connection_name)
@@ -280,29 +314,46 @@ class QueryBuilder:
 
     # ---- Internals ----
 
+    def _load_tables(self):
+        """Lazily autoload the base table and joined tables into one MetaData."""
+        if self._loaded_tables is None:
+            metadata = MetaData()
+            engine = self.manager.connection(self.connection_name)
+            tables = {
+                self.table_name: Table(self.table_name, metadata, autoload_with=engine)
+            }
+            for _, join_table, _, _, _ in self._joins:
+                if join_table not in tables:
+                    tables[join_table] = Table(
+                        join_table, metadata, autoload_with=engine
+                    )
+            self._loaded_tables = tables
+        return self._loaded_tables
+
     def _table(self):
-        return Table(
-            self.table_name,
-            MetaData(),
-            autoload_with=self.manager.connection(self.connection_name),
-        )
+        return self._load_tables()[self.table_name]
+
+    def _resolve_column(self, column):
+        """Resolve a column reference, supporting table.column qualifiers."""
+        if isinstance(column, str) and "." in column:
+            table_name, column_name = column.split(".", 1)
+            return getattr(self._load_tables()[table_name].c, column_name)
+        return getattr(self._table().c, column)
 
     def _apply_wheres(self, table, statement):
         """Apply all where conditions to any statement (select/update/delete)."""
         and_clauses = []
         or_clauses = []
 
-        # Simple comparison conditions
         for boolean, column, operator, value in self._conditions:
-            expr = self._comparison(getattr(table.c, column), operator, value)
+            expr = self._comparison(self._resolve_column(column), operator, value)
             if boolean == "or":
                 or_clauses.append(expr)
             else:
                 and_clauses.append(expr)
 
-        # Complex where clauses (in, null, between, etc.)
         for kind, boolean, column, val in self._where_clauses:
-            col = getattr(table.c, column)
+            col = self._resolve_column(column)
             if kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
@@ -323,7 +374,6 @@ class QueryBuilder:
             else:
                 and_clauses.append(expr)
 
-        # Combine: all AND clauses together, then OR with each OR clause
         if and_clauses and or_clauses:
             combined = or_(and_(*and_clauses), *or_clauses)
             statement = statement.where(combined)
@@ -341,25 +391,36 @@ class QueryBuilder:
         columns = self._selected_columns(table)
         statement = select(*columns)
 
+        if self._joins:
+            from_clause = table
+            for join_type, join_name, first, operator, second in self._joins:
+                join_table = self._load_tables()[join_name]
+                on_clause = self._comparison(
+                    self._resolve_column(first), operator, self._resolve_column(second)
+                )
+                from_clause = from_clause.join(
+                    join_table, on_clause, isouter=join_type == "left"
+                )
+            statement = statement.select_from(from_clause)
+
         if self._distinct:
             statement = statement.distinct()
 
-        # Apply where clauses
         statement = self._apply_wheres(table, statement)
 
-        # Group by
         for col_name in self._groups:
-            statement = statement.group_by(getattr(table.c, col_name))
+            statement = statement.group_by(self._resolve_column(col_name))
 
-        # Having
         for column, operator, value in self._havings:
-            col = getattr(table.c, column)
-            statement = statement.having(self._comparison(col, operator, value))
+            statement = statement.having(
+                self._comparison(self._resolve_column(column), operator, value)
+            )
 
-        # Order by
         for col_name, direction in self._orders:
-            col = getattr(table.c, col_name)
-            statement = statement.order_by(col.asc() if direction == "asc" else col.desc())
+            col = self._resolve_column(col_name)
+            statement = statement.order_by(
+                col.asc() if direction == "asc" else col.desc()
+            )
 
         if self._limit is not None:
             statement = statement.limit(self._limit)
@@ -370,8 +431,14 @@ class QueryBuilder:
 
     def _selected_columns(self, table):
         if not self._columns or self._columns == ("*",):
-            return list(table.c)
-        return [getattr(table.c, column) for column in self._columns]
+            columns = list(table.c)
+        else:
+            columns = [self._resolve_column(column) for column in self._columns]
+        columns.extend(
+            self._resolve_column(column).label(alias)
+            for column, alias in self._aliased_columns
+        )
+        return columns
 
     @staticmethod
     def _comparison(column, operator, value):

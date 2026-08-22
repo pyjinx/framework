@@ -27,9 +27,11 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 ### 3.1 Must-have goals
 
-1. **Laravel-inspired architecture with Python-native implementation**
-   - Keep lifecycle and boundaries (bootstrap → provider registration → middleware → routing → response).
-   - Avoid heavy magic; keep object graph explicit.
+1. **Exact Laravel framework/application port with Python runtime translation**
+   - Port `laravel/laravel` and `laravel/framework` behavior, architecture,
+     lifecycle, contracts, errors, commands, and edge cases to Python.
+   - Match Laravel exactly wherever technically possible; document and test
+     only unavoidable PHP-to-Python runtime differences.
 
 2. **ASGI-first runtime with WSGI compatibility path**
    - Primary request adapter must be ASGI-native.

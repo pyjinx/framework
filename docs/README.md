@@ -1,5 +1,8 @@
 # PyJinx Framework Documentation
 
+0) **Project goal** (canonical intent — read first):
+- [PROJECT_GOAL](./PROJECT_GOAL.md) — 100% Laravel port to Python.
+
 This folder now holds two documentation streams:
 
 1) **Strategy docs** (planning and execution):

@@ -134,6 +134,46 @@ class Model:
         query = related_class.query()
         return BelongsTo(query, self, foreign_key, owner_key, relation_name)
 
+    def belongs_to_many(
+        self,
+        related_class,
+        table=None,
+        foreign_pivot_key=None,
+        related_pivot_key=None,
+        parent_key=None,
+        related_key=None,
+        relation_name=None,
+    ):
+        """Define a Laravel-style many-to-many relationship."""
+        import inspect
+
+        from Illuminate.Database.Eloquent.Relations.BelongsToMany import (
+            BelongsToMany,
+        )
+        from Illuminate.Support.Str import Str
+
+        if relation_name is None:
+            relation_name = inspect.currentframe().f_back.f_code.co_name
+
+        parent_segment = Str.singular(Str.snake(self.__class__.__name__))
+        related_segment = Str.singular(Str.snake(related_class.__name__))
+        table = table or "_".join(sorted((parent_segment, related_segment)))
+        foreign_pivot_key = foreign_pivot_key or f"{parent_segment}_id"
+        related_pivot_key = related_pivot_key or f"{related_segment}_id"
+        parent_key = parent_key or self.primary_key
+        related_key = related_key or related_class.primary_key
+
+        return BelongsToMany(
+            related_class.query(),
+            self,
+            table,
+            foreign_pivot_key,
+            related_pivot_key,
+            parent_key,
+            related_key,
+            relation_name,
+        )
+
     @classmethod
     def create(cls, attributes):
         return cls().fill(attributes).save()

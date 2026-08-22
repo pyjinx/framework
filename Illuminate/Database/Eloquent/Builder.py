@@ -22,6 +22,28 @@ class Builder:
         self.query.or_where(column, operator, value)
         return self
 
+    # ---- Select and joins ----
+
+    def select(self, *columns):
+        self.query.select(*columns)
+        return self
+
+    def add_select(self, *columns):
+        self.query.add_select(*columns)
+        return self
+
+    def add_select_aliased(self, column, alias):
+        self.query.add_select_aliased(column, alias)
+        return self
+
+    def join(self, table, first, operator="=", second=None):
+        self.query.join(table, first, operator, second)
+        return self
+
+    def left_join(self, table, first, operator="=", second=None):
+        self.query.left_join(table, first, operator, second)
+        return self
+
     def where_in(self, column, values):
         self.query.where_in(column, values)
         return self

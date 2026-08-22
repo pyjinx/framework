@@ -1,0 +1,77 @@
+# PyJinx Project Goal — 100% Laravel Port to Python
+
+> **This is the canonical statement of project intent.** It is the backup of the
+> main decision recorded in long-term memory so it survives across sessions,
+> machines, and contributors. If any other doc conflicts with this file, this
+> file wins until a documented owner-approved decision supersedes it.
+
+## The Goal
+
+PyJinx is an **exact, bit-by-bit port of Laravel from PHP to Python** — not a
+"Laravel-inspired" or "Laravel-flavoured" framework.
+
+We mimic:
+
+- **`laravel/laravel`** — the application skeleton: directory layout
+  (`app/`, `bootstrap/`, `config/`, `database/`, `public/`, `resources/`,
+  `routes/`, `storage/`, `tests/`), bootstrap flow, providers, route files,
+  middleware organization, and configuration structure.
+- **`laravel/framework`** — the internals: container, service providers,
+  lifecycle, dependency direction, routing, HTTP layer, validation, Eloquent
+  ORM, migrations, queues, events, mail, notifications, sessions, cookies,
+  caching, filesystems, error semantics, command organization, public APIs,
+  contracts, edge cases, and lifecycle transitions.
+
+## Fidelity Rule
+
+Behavior, architecture, system design, structure, lifecycle, dependency
+direction, error semantics, and internal implementation logic must match
+Laravel as closely as technically possible — **100% exact mimicry wherever
+technically possible**.
+
+- Anything that is *not* a 100% exact mimic must be fixed or refactored.
+- The only allowed differences are those forced by the Python language/runtime.
+- Every unavoidable deviation must be:
+  1. explicit,
+  2. documented with a written rationale,
+  3. technically justified, and
+  4. backed by focused behavioral evidence (tests).
+
+## Authoritative References
+
+| Source | Role |
+|---|---|
+| `references/laravel/` | Authoritative PHP application skeleton (`laravel/laravel`) |
+| `references/framework/` | Authoritative PHP framework source (`laravel/framework`) |
+| `references/laravel-demo/` | Debugging aid for bootstrap/app/route/provider lifecycle |
+| Laravel 13.x API docs (`https://api.laravel.com/docs/13.x/index.html`) | Public API surface baseline |
+
+Do **not** invent behavior. When implementing a feature, read the
+corresponding Laravel source first and translate its logic, naming, ordering,
+and failure semantics into Python.
+
+## Established Deviations (Python-runtime-forced)
+
+These are the currently accepted, documented deviations:
+
+1. **snake_case method names** mirror Laravel's camelCase
+   (`belongsTo` → `belongs_to`, `firstOrCreate` → `first_or_create`) because
+   PEP 8 is the Python convention.
+2. **Relationships are called as methods** (`user.posts().get()`) instead of
+   magic properties (`$user->posts`) because Python methods and properties
+   share one namespace; attribute-style access would collide with real
+   attributes.
+3. **SQLAlchemy 2.x Core + Alembic** back the query builder, schema builder,
+   and migrations behind a thin PyJinx-owned `Illuminate.Database`
+   compatibility layer — PyJinx owns its API surface, return shapes,
+   exceptions, and lifecycle semantics rather than leaking SQLAlchemy objects.
+
+Anything beyond these requires a new written entry before implementation.
+
+## Verification Policy
+
+- Strict TDD: failing test → implement → green → refactor.
+- No feature is "done" by declaration; behavioral evidence is required.
+- Parity review compares layout, lifecycle, architecture, error semantics,
+  command organization, and implementation logic — not just exported names.
+- Progress tracking lives in [`LARAVEL_FEATURE_PARITY_TODO.md`](./LARAVEL_FEATURE_PARITY_TODO.md).
