@@ -62,12 +62,22 @@ class DatabaseManager:
         ] = ContextVar("database_manager_manual_transaction_contexts", default=None)
         self._query_listeners: list[Callable[[QueryExecuted], object]] = []
 
+    @staticmethod
+    def parse_connection_name(name: str) -> tuple[str, str | None]:
+        for connection_type in ("read", "write", "direct"):
+            suffix = f"::{connection_type}"
+            if name.endswith(suffix):
+                return name[: -len(suffix)], connection_type
+        return name, None
+
     def connection(self, name: str | None = None) -> Engine:
         name = name or self.get_default_connection()
-        if name in self._engines:
-            return self._engines[name]
+        database_name, _ = self.parse_connection_name(name)
+        name = database_name
+        if database_name in self._engines:
+            return self._engines[database_name]
 
-        connection = self._configuration(name)
+        connection = self._configuration(database_name)
         url = self._url(connection)
         engine = create_engine(url, future=True)
         event.listen(engine, "before_cursor_execute", self._before_cursor_execute)
@@ -185,10 +195,16 @@ class DatabaseManager:
         return self.get_pdo(name)
 
     def get_name(self, name: str | None = None) -> str:
-        return name or self.get_default_connection()
+        requested = name or self.get_default_connection()
+        database_name, _ = self.parse_connection_name(requested)
+        return database_name
 
     def get_name_with_read_write_type(self, name: str | None = None) -> str:
-        return self.get_name(name)
+        requested = name or self.get_default_connection()
+        database_name, connection_type = self.parse_connection_name(requested)
+        return (
+            f"{database_name}::{connection_type}" if connection_type else database_name
+        )
 
     def disconnect(self, name: str | None = None) -> None:
         name = name or self.get_default_connection()

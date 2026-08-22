@@ -209,15 +209,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `calculate_dynamic_connection_name` support Laravel-style dynamic SQLite
     connections. Forced rebuilds purge the previous engine while retaining the
     dynamic configuration for subsequent resolution.
+  - Partial slice (2026-08-22): `parse_connection_name` accepts Laravel
+    `::read`, `::write`, and `::direct` suffixes. SQLite resolves all three
+    names to the same underlying engine while preserving the requested
+    read/write type in `get_name_with_read_write_type`.
   - Source mapping: Laravel `Connection::getPdo` (1292–1305),
     `getRawPdo` (1308–1311), `getReadPdo` (1318–1375),
     `getName`/`getNameWithReadWriteType` (1479–1494);
-    `DatabaseManager::build` (113–125),
-    `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
-    `configuration` (219–231), and `purge` (301–312).
+    `DatabaseManager::parseConnectionName` (177–182),
+    `build` (113–125), `calculateDynamicConnectionName` (133–138),
+    `connectUsing` (150–169), `configuration` (219–231), and `purge`
+    (301–312).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py -q` — 31 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 185 passed, 20 warnings.
+    tests/test_database.py -q` — 32 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 188 passed, 20 warnings.
   - Residual parity gaps: Laravel read/write/direct variants, full URL
     parsing, prefixes, strict mode, non-SQLite drivers, connector
     extensions/events, transaction manager semantics, retries, normalized
