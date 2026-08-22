@@ -247,28 +247,35 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     portions. `where_day`, `or_where_day`, `where_month`, `or_where_month`,
     `where_year`, and `or_where_year` extract zero-padded calendar parts with
     Laravel's two-argument equality shorthand and comparison operators.
+    `where_json_contains`, `or_where_json_contains`,
+    `where_json_doesnt_contain`, and `or_where_json_doesnt_contain` use
+    SQLite `json_each` for scalar array membership.
   - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
     (1697–1700), `whereDate`/`orWhereDate` (1801–1838),
     `whereTime`/`orWhereTime` (1849–1886), `whereDay`/`orWhereDay`
     (1897–1938), `whereMonth`/`orWhereMonth` (1949–1990),
-    `whereYear`/`orWhereYear` (2001–2038), `lock` (3339),
-    `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447),
-    `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at
-    `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock behavior
-    at `SQLiteGrammar.php::compileLock` (31).
+    `whereYear`/`orWhereYear` (2001–2038),
+    `whereJsonContains`/`orWhereJsonContains` (2260–2282),
+    `whereJsonDoesntContain`/`orWhereJsonDoesntContain` (2293–2308),
+    `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365),
+    `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite
+    upsert grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356)
+    and lock behavior at `SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py -q` — 45 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 157 passed.
+    tests/test_query_builder.py -q` — 46 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 158 passed.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
-    supports SQLite); SQLAlchemy has no Laravel connection grammar, binding
-    buckets/cleaning, before-query callbacks, write-PDO routing, or
-    `toRawSql` substitution. JSON, nested, subquery, full-text, relationship,
-    and remaining Laravel where variants remain unported. SQLite emits no
-    locking clause, as Laravel's SQLite grammar does; custom lock strings are
-    retained as state but not rendered. Laravel expression objects and
-    non-SQLite grammar-specific upsert/lock semantics remain unported.
+    supports SQLite); JSON object/complex-array containment, JSON path/key
+    predicates, overlaps, JSON length, SQL grammar abstraction, binding
+    buckets/cleaning, before-query callbacks, write-PDO routing, and
+    `toRawSql` substitution remain incomplete. Nested, subquery, full-text,
+    relationship, and remaining Laravel where variants remain unported.
+    SQLite emits no locking clause, as Laravel's SQLite grammar does; custom
+    lock strings are retained as state but not rendered. Laravel expression
+    objects and non-SQLite grammar-specific upsert/lock semantics remain
+    unported.
 - [~] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
     - SQLAlchemy/Alembic-backed manager, query/schema builders, migrations, and early Eloquent slices exist; broad Laravel API parity remains incomplete.
 - [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.

@@ -6,6 +6,7 @@ from sqlalchemy import (
     Table,
     and_,
     delete,
+    exists,
     func,
     insert,
     or_,
@@ -216,6 +217,21 @@ class QueryBuilder:
             value = operator
             operator = "="
         return self._where_calendar("year", column, operator, value, "or")
+    def where_json_contains(self, column, value):
+        self._where_clauses.append(("json_contains", "and", column, (value, False)))
+        return self
+
+    def or_where_json_contains(self, column, value):
+        self._where_clauses.append(("json_contains", "or", column, (value, False)))
+        return self
+
+    def where_json_doesnt_contain(self, column, value):
+        self._where_clauses.append(("json_contains", "and", column, (value, True)))
+        return self
+
+    def or_where_json_doesnt_contain(self, column, value):
+        self._where_clauses.append(("json_contains", "or", column, (value, True)))
+        return self
 
 
     def where_in(self, column, values):
@@ -546,7 +562,8 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
-            col = self._resolve_column(column)
+            base_column = column.split("->", 1)[0] if kind == "json_contains" else column
+            col = self._resolve_column(base_column)
             if kind == "column":
                 operator, right_column = val
                 expr = self._comparison(
@@ -574,6 +591,22 @@ class QueryBuilder:
             elif kind == "year":
                 operator, value = val
                 expr = self._comparison(func.strftime("%Y", col), operator, value)
+            elif kind == "json_contains":
+                value, not_contains = val
+                json_parts = column.split("->")
+                json_source = self._resolve_column(json_parts[0])
+                if len(json_parts) > 1:
+                    json_source = func.json_extract(
+                        json_source, "$." + ".".join(json_parts[1:])
+                    )
+                json_values = func.json_each(json_source).table_valued("value")
+                expr = exists(
+                    select(1)
+                    .select_from(json_values)
+                    .where(json_values.c.value == value)
+                )
+                if not_contains:
+                    expr = ~expr
             elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
