@@ -124,3 +124,35 @@
   application commands belong to the application console registration path.
 - **Status:** Current PyJinx has partial manual provider loading; this remains
   a source-faithful parity slice.
+
+## 2026-08-22 — Application TDD and package naming boundary
+
+- **Decision:** Generated projects follow a strict pytest-based TDD workflow,
+  with `tests/Unit`, `tests/Feature`, deterministic fixtures, database reset
+  support, HTTP assertions, model factories, seeders, fakes, and controlled
+  date/time fixtures.
+- **Commands:** `uv run pytest` is the authoritative application test runner;
+  a future `veyra_manager new` project creator may add a test convenience
+  wrapper, but it must delegate to pytest rather than create a second test
+  system.
+- **Test boundary:** Generated application tests validate application behavior;
+  framework parity tests remain in the framework repository. The exhaustive
+  Laravel framework test-suite port begins only after parity completion.
+- **Current naming:** `pyjinx` is the temporary framework distribution and
+  `pyjinx-starter` is the temporary skeleton distribution. The dedicated
+  Veyra migration will use `veyra`, `veyra-starter`, and future
+  `veyra-manager`/`veyra_manager`.
+
+## 2026-08-22 — Carbon-equivalent date and time boundary
+
+- **Decision:** Use Pendulum as the closest Python equivalent to Laravel
+  Carbon for timezone-aware datetime, date arithmetic, parsing, formatting,
+  durations, humanization, and deterministic test clocks.
+- **Boundary:** Pendulum remains behind a PyJinx-owned date/time adapter,
+  rather than leaking third-party types throughout framework or application
+  code. The adapter must preserve Laravel-compatible serialization and
+  timezone semantics.
+- **SQLite warning policy:** Pendulum adoption must be paired with an
+  explicit SQLAlchemy/SQLite datetime binding and hydration strategy. Warning
+  filters or blanket suppression are prohibited; the deprecated implicit
+  sqlite3 datetime adapter must be eliminated with round-trip evidence.
