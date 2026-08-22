@@ -238,9 +238,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py tests/test_database_exceptions.py -q` — 42 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 212
-    passed, 20 warnings.
+    tests/test_database.py tests/test_database_exceptions.py
+    tests/test_lost_connection_detector.py -q` — 48 passed; full PyJinx
+    suite: `uv run --no-sync python3 -m pytest tests/ -q` — 218 passed,
+    20 warnings.
   - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
     connector extensions/events, transaction manager semantics, retries,
     normalized exception integration, and complete connection API remain open.
@@ -278,6 +279,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `DatabaseManager.set_application` replaces
     the application boundary, returns the manager fluently, and makes relative
     SQLite database paths resolve from the replacement application's base path.
+  - Partial slice (2026-08-22): `LostConnectionDetector` matches Laravel's
+    full message-pattern contract for server, socket, SSL, network, read-only,
+    proxy, and transport failures while rejecting unrelated database errors.
   - Source mapping: Laravel
     `Database\Concerns\ManagesTransactions` (26–76, 124–219, 261–378),
     `Connection::listen` (1115–1118), `Connection::logQuery` (906–933),
@@ -287,11 +291,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::setApplication` (476–487),
     `QueryException` (10–168),
     `UniqueConstraintViolationException` (5–44),
-    `DeadlockException` (5–10), and `Events\QueryExecuted` (5–79).
+    `DeadlockException` (5–10),
+    `LostConnectionDetector` (9–107), and `Events\QueryExecuted` (5–79).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py tests/test_database_exceptions.py -q` — 42 passed;
-    full PyJinx evidence: `uv run --no-sync python3 -m pytest tests/ -q` — 212
-    passed, 20 warnings.
+    tests/test_database.py tests/test_database_exceptions.py
+    tests/test_lost_connection_detector.py -q` — 48 passed; full PyJinx
+    evidence: `uv run --no-sync python3 -m pytest tests/ -q` — 218 passed,
+    20 warnings.
   - Residual parity gaps: SQLAlchemy has no Laravel
     `DatabaseTransactionsManager`, transaction lifecycle events, or
     query-grammar savepoint compilation. Query event dispatch still lacks
