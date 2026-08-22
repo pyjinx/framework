@@ -50,6 +50,7 @@ pyjinx new my-project
 ```bash
 pyjinx migrate
 pyjinx migrate:status
+pyjinx migrate:status --pending
 pyjinx migrate:rollback
 pyjinx db:seed
 ```

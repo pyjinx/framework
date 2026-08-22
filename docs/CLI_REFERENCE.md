@@ -52,7 +52,7 @@ This document is the concrete user-facing documentation for the CLI parity surfa
 | Command | Purpose |
 |---|---|
 | `pyjinx migrate` | Run pending migrations |
-| `pyjinx migrate:status` | Show migration state |
+| `pyjinx migrate:status [--pending]` | Show every migration or only pending migrations; reports when none are pending |
 | `pyjinx migrate:rollback` | Roll back last migration batch |
 | `pyjinx db:seed` | Run seed data commands |
 
