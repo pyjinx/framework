@@ -37,6 +37,37 @@ technically possible**.
   3. technically justified, and
   4. backed by focused behavioral evidence (tests).
 
+## Pinned Upstream Baseline
+
+The current compatibility target is **Laravel 13.x**. The port advances by
+upstream diffs; it does not restart from zero for every Laravel release.
+
+| Baseline | Pin |
+|---|---|
+| Laravel major | `13.x` |
+| `laravel/framework` source snapshot | `references/framework` at `8cb299dc2c07227f0cb664a2d53d0cde7839eaaf` |
+| `laravel/laravel` source snapshot | `references/laravel` at `4a27aeaa890579f6b70e4bbd9d44c96056174119` |
+| Compatibility line | `PyJinx Laravel 13.x` |
+| Upstream release reference | [Laravel 13 release notes](https://laravel.com/docs/13.x/releases) |
+
+### Upgrade policy
+
+When Laravel publishes a new minor, patch, or major version:
+
+1. Preserve the current pinned snapshot and green evidence.
+2. Read the official release notes and upstream changelog.
+3. Update the Laravel source snapshot only in a dedicated upgrade slice.
+4. Diff the upstream framework/application sources and API index.
+5. Port changed behavior, contracts, errors, tests, and documentation only.
+6. Run the focused parity tests and the complete ported Laravel test suite.
+7. Record intentional PHP-to-Python deviations and update the compatibility
+   line only after the evidence is green.
+
+Minor and patch updates should normally be incremental. A major release may
+require coordinated changes, but existing ported behavior and tests remain the
+starting point; reimplementation from scratch is prohibited unless an
+explicit architecture decision proves the old baseline incompatible.
+
 ## Authoritative References
 
 | Source | Role |
@@ -67,6 +98,22 @@ These are the currently accepted, documented deviations:
    exceptions, and lifecycle semantics rather than leaking SQLAlchemy objects.
 
 Anything beyond these requires a new written entry before implementation.
+
+## Engineering Process Requirement
+
+Every implementation, review, debugging, testing, and delivery slice MUST
+follow the repository's `software-engineering-handbook` skill:
+
+- Read the handbook README and applicable chapters before non-trivial work.
+- Map authoritative sources, contracts, dependencies, risks, and affected
+  callers before editing.
+- Use strict test-first behavioral verification for permanent changes.
+- Record material architecture decisions, unavoidable deviations, and residual
+  risks durably.
+- Verify the actual changed surface and report evidence without overstating
+  coverage.
+- Treat the complete `laravel/framework/tests/` port as a future acceptance
+  requirement; current focused tests are not full Laravel coverage.
 
 ## Verification Policy
 

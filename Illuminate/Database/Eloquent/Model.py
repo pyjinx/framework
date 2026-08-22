@@ -103,6 +103,23 @@ class Model:
             raise LookupError(f"{cls.__name__} [{identifier}] was not found.")
         return instance
 
+    @classmethod
+    def get_route_key_name(cls):
+        """Return the model column used for implicit route binding."""
+        return getattr(cls, "route_key_name", cls.primary_key)
+
+    @classmethod
+    def resolve_route_binding(cls, value, field=None):
+        """Resolve a route parameter using the model's route key."""
+        field = field or cls.get_route_key_name()
+        return cls.query().where(field, value).first()
+
+    @classmethod
+    def resolve_soft_deletable_route_binding(cls, value, field=None):
+        """Resolve a route parameter while including trashed models."""
+        field = field or cls.get_route_key_name()
+        return cls.query().with_trashed().where(field, value).first()
+
     def has_many(self, related_class, foreign_key=None, local_key=None):
         from Illuminate.Database.Eloquent.Relations.HasOneOrMany import HasMany
 

@@ -89,7 +89,10 @@ class Route:
             if not action:
                 raise Exception("Invalid route action")
 
-            dependencies = self.application.get_dependencies(action)
+            from Illuminate.Routing.ImplicitRouteBinding import ImplicitRouteBinding
+
+            ImplicitRouteBinding.resolve_for_route(self, action)
+            dependencies = self.application.get_dependencies(action, self.route_params)
 
             return Util.callback_with_dynamic_args(action, dependencies)
         except Exception as e:
