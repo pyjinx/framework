@@ -172,6 +172,17 @@ class Model:
 
     def get_updated_at_column(self):
         return self.updated_at_column
+    def set_created_at(self, value):
+        column = self.get_created_at_column()
+        if column is not None:
+            self._set_attribute_value(column, value)
+        return self
+
+    def set_updated_at(self, value):
+        column = self.get_updated_at_column()
+        if column is not None:
+            self._set_attribute_value(column, value)
+        return self
 
     def get_key(self):
         return getattr(self, self.get_key_name(), None)
