@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from datetime import datetime, timezone
-
+from typing import Any, Self
 from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
 
 
@@ -16,20 +17,26 @@ class Builder:
 
     # ---- Where clauses ----
 
-    def where(self, column, operator="=", value=None):
+    def where(
+        self, column: str, operator: str | Any = "=", value: Any = None
+    ) -> Self:
         self.query.where(column, operator, value)
         return self
 
     def or_where(self, column, operator="=", value=None):
         self.query.or_where(column, operator, value)
         return self
-    def with_(self, *relations):
+    def with_(self, *relations: str | list[str]) -> Self:
         if len(relations) == 1 and isinstance(relations[0], (list, tuple)):
             relations = tuple(relations[0])
         self._with_relations.extend(str(relation) for relation in relations)
         return self
 
-    def where_has(self, relation, callback=None):
+    def where_has(
+        self,
+        relation: str,
+        callback: Callable[["Builder"], "Builder"] | None = None,
+    ) -> Self:
         self._where_has_relations.append((relation, callback))
         return self
 
