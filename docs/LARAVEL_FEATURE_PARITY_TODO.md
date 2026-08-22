@@ -429,16 +429,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     session guard, users provider, password broker, and password timeout;
     only bounded `AuthServiceProvider`, `Gate`, and an empty `Authenticate`
     middleware exist.
-  - Partial slice (2026-08-22): `Illuminate.Auth.GenericUser` now exposes
+  - Partial slice (2026-08-22): `Illuminate.Auth.GenericUser` exposes
     authentication identifiers, password access, remember-token access/update,
-    and attribute-backed user values. `AuthenticationException` now carries
+    and attribute-backed user values. `AuthenticationException` carries
     checked guards and explicit or callback-generated redirect destinations.
+    `RequestGuard` resolves and caches a callback user per request and exposes
+    check/guest/id/set-user/request operations.
   - Source mapping: Laravel `Auth\GenericUser` (21–140),
-    `Auth\AuthenticationException` (8–82), and
-    `Contracts\Auth\Authenticatable`.
+    `Auth\AuthenticationException` (8–82), `Auth\RequestGuard` (35–88),
+    `Contracts\Auth\Authenticatable`, and `Contracts\Auth\Guard`.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_auth.py tests/test_auth_exception.py -q` — 2 passed; full
-    PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 171 passed.
+    tests/test_auth.py tests/test_auth_exception.py tests/test_request_guard.py
+    -q` — 3 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 172 passed.
   - Source mapping: `references/framework/src/Illuminate/Auth`,
     `Illuminate/Contracts/Auth`, and `Illuminate/Auth/Middleware`.
   - Residual parity gaps: complete public-method inventory, session/cookie
