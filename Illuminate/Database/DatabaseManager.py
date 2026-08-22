@@ -219,6 +219,14 @@ class DatabaseManager:
     def get_database_name(self, name: str | None = None):
         return self.get_config(name, "database")
 
+    @staticmethod
+    def supported_drivers() -> list[str]:
+        return ["mysql", "mariadb", "pgsql", "sqlite", "sqlsrv"]
+
+    @staticmethod
+    def available_drivers() -> list[str]:
+        return ["sqlite"]
+
     def get_name_with_read_write_type(self, name: str | None = None) -> str:
         requested = name or self.get_default_connection()
         database_name, connection_type = self.parse_connection_name(requested)
