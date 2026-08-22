@@ -40,6 +40,13 @@ published `pyjinx` framework package. The `pyjinx/framework` submodule exists
 only for local framework development and parity verification; it is not
 intended to be copied into production projects.
 
+Distribution names are transitional until the dedicated Veyra migration:
+`pyjinx` is the current framework package and `pyjinx-starter` is the current
+skeleton package. The final names are planned as `veyra`, `veyra-starter`, and
+future global installer `veyra-manager` with the console command
+`veyra_manager new hello-world`. Do not create a separate `pyjinx_core` or
+`pyjinx_framework` package.
+
 ## Fidelity Rule
 
 Behavior, architecture, system design, structure, lifecycle, dependency

@@ -488,6 +488,18 @@ class Model(JsonSerializable):
             return None
         return self.__class__.find(self._attributes[self.primary_key])
 
+    def refresh(self):
+        if not self._exists:
+            return self
+        fresh = self.__class__.find_or_fail(self._attributes[self.primary_key])
+        self._attributes = dict(fresh._attributes)
+        self._original = dict(self._attributes)
+        self._changes = {}
+        return self
+
+    def refresh_for_update(self):
+        return self.refresh()
+
     def replicate(self, except_attributes=None):
         excluded = {
             value
