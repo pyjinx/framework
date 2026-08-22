@@ -107,6 +107,16 @@ class QueryBuilder:
     def or_where_null_safe_equals(self, column, value):
         return self.where_null_safe_equals(column, value, "or")
 
+    def where_not(self, column, operator="=", value=None, boolean: str = "and"):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(("not_basic", boolean, column, (operator, value)))
+        return self
+
+    def or_where_not(self, column, operator="=", value=None):
+        return self.where_not(column, operator, value, "or")
+
     def where_like(
         self,
         column,
@@ -811,6 +821,14 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "not_basic":
+                operator, value = val
+                expr = ~self._comparison(self._resolve_column(column), operator, value)
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "null_safe_equals":
                 expr = self._resolve_column(column).is_(val)
                 if boolean == "or":

@@ -326,7 +326,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `where_null_safe_equals` and
     `or_where_null_safe_equals` compile SQLite's null-safe `IS` comparison
     for both NULL and non-NULL values.
-  - Source mapping: Laravel `Query\Builder::whereNullSafeEquals` (1386–1397),
+  - Partial slice (2026-08-22): scalar `where_not` and `or_where_not`
+    negate comparison expressions while preserving the existing boolean
+    predicate grouping.
+  - Source mapping: Laravel `Query\Builder::whereNot` (1139–1155),
+    `orWhereNot` (1158–1160), `whereNullSafeEquals` (1386–1397),
     `orWhereNullSafeEquals` (1406–1408), SQLite
     `SQLiteGrammar::whereNullSafeEquals` (87–90),
     `whereExists` (2143–2162), `orWhereExists` (2166–2172),
@@ -355,8 +359,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 76 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 197
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 77 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 198
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
