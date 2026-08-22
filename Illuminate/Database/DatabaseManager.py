@@ -339,6 +339,10 @@ class DatabaseManager:
     def get_connections(self) -> dict[str, Engine]:
         return dict(self._engines)
 
+    def set_application(self, app):
+        self.app = app
+        return self
+
     def table(self, table_name: str, connection_name: str | None = None):
         from Illuminate.Database.QueryBuilder import QueryBuilder
 
