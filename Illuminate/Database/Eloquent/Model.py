@@ -1,7 +1,7 @@
 import inspect
 import json
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from Illuminate.Database.Eloquent.Casts.Attribute import Attribute
 from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
@@ -201,6 +201,10 @@ class Model:
     def set_date_format(self, date_format):
         self.date_format = date_format
         return self
+    def from_date_time(self, value):
+        if value is None or not isinstance(value, (datetime, date)):
+            return value
+        return value.strftime(self.get_date_format() or "%Y-%m-%d %H:%M:%S")
 
     def get_key(self):
         return getattr(self, self.get_key_name(), None)
