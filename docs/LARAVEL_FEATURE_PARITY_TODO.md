@@ -237,9 +237,27 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     APIs remain unported.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
-  - Source mapping: `references/framework/src/Illuminate/Database/Query/Builder.php` `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at `Query/Grammars/SQLiteGrammar.php` `compileUpsert` (356) and lock behavior at `SQLiteGrammar.php` `compileLock` (31).
-  - Evidence: `cd port/pyjinx && uv run --no-sync pytest tests/test_query_builder.py -q` — 42 passed; full PyJinx suite: 135 passed (SQLite insert/update conflicts, single/batch/default upserts, empty-input and empty-update branches, empty unique target rejection, lock-state helpers, and compiled SQL/binding order). Canonical/runtime `QueryBuilder.py` and parity trackers are synchronized.
-  - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently supports SQLite); SQLAlchemy has no Laravel connection grammar, binding buckets/cleaning, before-query callbacks, write-PDO routing, or `toRawSql` substitution. SQLite emits no locking clause, as Laravel's SQLite grammar does; custom lock strings are retained as state but not rendered. Laravel expression objects and non-SQLite grammar-specific upsert/lock semantics remain unported.
+  - Partial slice (2026-08-22): `where_column` and
+    `or_where_column` compare two qualified columns without creating value
+    bindings, preserving Laravel's column-condition operator semantics.
+  - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
+    `orWhereColumn` (1208–1211), `lock` (3339), `lockForUpdate` (3355),
+    `sharedLock` (3365), `toSql` (3447), `upsert` (4378), and
+    `getBindings` (4625); SQLite upsert grammar at
+    `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock
+    behavior at `SQLiteGrammar.php::compileLock` (31).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_query_builder.py -q` — 43 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 155 passed.
+  - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
+    supports SQLite); SQLAlchemy has no Laravel connection grammar, binding
+    buckets/cleaning, before-query callbacks, write-PDO routing, or
+    `toRawSql` substitution. Date/time, JSON, between-column, nested,
+    subquery, full-text, relationship, and remaining Laravel where variants
+    remain unported. SQLite emits no locking clause, as Laravel's SQLite
+    grammar does; custom lock strings are retained as state but not rendered.
+    Laravel expression objects and non-SQLite grammar-specific upsert/lock
+    semantics remain unported.
 - [~] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
     - SQLAlchemy/Alembic-backed manager, query/schema builders, migrations, and early Eloquent slices exist; broad Laravel API parity remains incomplete.
 - [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.

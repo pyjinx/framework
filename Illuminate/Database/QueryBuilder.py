@@ -88,6 +88,20 @@ class QueryBuilder:
             operator = "="
         self._conditions.append(("or", column, operator, value))
         return self
+    def where_column(self, first, operator="=", second=None):
+        if second is None:
+            second = operator
+            operator = "="
+        self._where_clauses.append(("column", "and", first, (operator, second)))
+        return self
+
+    def or_where_column(self, first, operator="=", second=None):
+        if second is None:
+            second = operator
+            operator = "="
+        self._where_clauses.append(("column", "or", first, (operator, second)))
+        return self
+
 
     def where_in(self, column, values):
         self._where_clauses.append(("in", "and", column, list(values)))
@@ -418,7 +432,12 @@ class QueryBuilder:
 
         for kind, boolean, column, val in self._where_clauses:
             col = self._resolve_column(column)
-            if kind == "in":
+            if kind == "column":
+                operator, right_column = val
+                expr = self._comparison(
+                    col, operator, self._resolve_column(right_column)
+                )
+            elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
                 expr = col.notin_(val)
