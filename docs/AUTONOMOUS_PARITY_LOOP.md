@@ -135,13 +135,17 @@ For the selected slice:
   slice changes it.
 - Record warnings, residual gaps, and quality-risk deltas.
 
-### 6. Synchronize the split repository
+### 6. Advance the application submodule
 
-- Copy/synchronize framework changes from `framework` to
-  `pyjinx/framework`.
+- Make framework source changes only in the sibling `framework` repository.
+- Publish or otherwise land the verified framework commit in the framework
+  remote before advancing the application pointer.
+- Update `pyjinx/framework` to that exact commit and commit only the
+  application repository's gitlink; never copy framework files or create
+  divergent framework commits in the submodule checkout.
 - Clear stale `__pycache__` files before rerunning runtime checks.
-- Verify both framework copies resolve to the same source commit/content.
-- Update both parity tracker files and relevant docs together.
+- Verify the canonical and submodule checkouts resolve to the same framework
+  commit, then update both parity tracker files and relevant docs together.
 
 ### 7. Close the slice
 
