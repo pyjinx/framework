@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from Illuminate.Contracts.Foundation.Application import Application
 from Illuminate.Contracts.Foundation.Console.Kernel import (
     Kernel as ConsoleKernelContract,
