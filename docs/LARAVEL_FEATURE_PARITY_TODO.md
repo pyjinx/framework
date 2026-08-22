@@ -333,8 +333,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `select_raw` supports parameterized raw
     expressions as the selected projection and automatically retains the base
     table as the FROM clause.
+  - Partial slice (2026-08-22): `order_by_raw` supports parameterized raw
+    ordering expressions while preserving existing fluent order clauses.
   - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305),
-    `orWhereRaw` (1308–1310), and `selectRaw` (356–366).
+    `orWhereRaw` (1308–1310), `selectRaw` (356–366), and
+    `orderByRaw` (3119–3126).
   - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
     `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
     `orWhereNotIn` (1490–1492).
@@ -364,12 +367,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `whereNone`/`orWhereNone` (2648–2663), `chunk` (39–79),
     `each` (112–121), Eloquent Builder chunk/cursor forwarding, `cursor`
     (3786–3799), `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365),
-    `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite upsert
-    grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
-    lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
+    `orderByRaw` (3119–3126), `toSql` (3447), `upsert` (4378), and
+    `getBindings` (4625); SQLite upsert grammar at
+    `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock behavior
+    at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 80 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 201
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 81 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 202
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,

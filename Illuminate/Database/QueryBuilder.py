@@ -38,6 +38,7 @@ class QueryBuilder:
         self._aliased_columns = []
         self._loaded_tables = None
         self._raw_selects = []
+        self._raw_orders = []
         self._lock = None
 
     # ---- Select ----
@@ -497,6 +498,12 @@ class QueryBuilder:
         if direction not in ("asc", "desc"):
             raise ValueError('Order direction must be "asc" or "desc".')
         self._orders.append((column, direction))
+        return self
+
+    def order_by_raw(self, expression: str, bindings=None):
+        self._raw_orders.append(
+            self._raw_expression(expression, [] if bindings is None else bindings)
+        )
         return self
 
     def order_by_desc(self, column):
@@ -1065,6 +1072,8 @@ class QueryBuilder:
             statement = statement.order_by(
                 col.asc() if direction == "asc" else col.desc()
             )
+        for expression in self._raw_orders:
+            statement = statement.order_by(expression)
 
         if self._lock is True:
             statement = statement.with_for_update()
