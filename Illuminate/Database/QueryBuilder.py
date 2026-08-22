@@ -40,6 +40,7 @@ class QueryBuilder:
         self._raw_selects = []
         self._raw_orders = []
         self._raw_groups = []
+        self._raw_havings = []
         self._lock = None
 
     # ---- Select ----
@@ -533,7 +534,18 @@ class QueryBuilder:
             value = operator
             operator = "="
         self._havings.append((column, operator, value))
+
+    def having_raw(self, expression: str, bindings=None, boolean: str = "and"):
+        self._raw_havings.append(
+            (
+                self._raw_expression(expression, [] if bindings is None else bindings),
+                boolean,
+            )
+        )
         return self
+
+    def or_having_raw(self, expression: str, bindings=None):
+        return self.having_raw(expression, bindings, "or")
 
     # ---- Limit / Offset ----
 
@@ -1075,6 +1087,8 @@ class QueryBuilder:
             statement = statement.having(
                 self._comparison(self._resolve_column(column), operator, value)
             )
+        for expression, boolean in self._raw_havings:
+            statement = statement.having(expression)
 
         for col_name, direction in self._orders:
             col = self._resolve_column(col_name)

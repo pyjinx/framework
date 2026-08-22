@@ -337,9 +337,12 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     ordering expressions while preserving existing fluent order clauses.
   - Partial slice (2026-08-22): `group_by_raw` supports parameterized raw
     GROUP BY expressions while preserving ordinary group ordering.
+  - Partial slice (2026-08-22): `having_raw` and `or_having_raw` support
+    parameterized aggregate HAVING expressions.
   - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305),
     `orWhereRaw` (1308–1310), `selectRaw` (356–366),
-    `orderByRaw` (3119–3126), and `groupByRaw` (2690–2703).
+    `orderByRaw` (3119–3126), `groupByRaw` (2690–2703),
+    `havingRaw` (2944–2968), and `orHavingRaw` (2978–2981).
   - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
     `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
     `orWhereNotIn` (1490–1492).
@@ -373,8 +376,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 82 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 203
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 83 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 204
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
