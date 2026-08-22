@@ -22,6 +22,14 @@ We mimic:
   caching, filesystems, error semantics, command organization, public APIs,
   contracts, edge cases, and lifecycle transitions.
 
+The port boundary is explicit:
+
+- `laravel/laravel` → `port/pyjinx/` application repository.
+- `laravel/framework` → `port/framework/` reusable framework repository.
+
+Both repositories are required deliverables. A complete framework port with a
+non-parity starter application is not project completion.
+
 ## Fidelity Rule
 
 Behavior, architecture, system design, structure, lifecycle, dependency

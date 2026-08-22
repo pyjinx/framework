@@ -16,6 +16,8 @@ class Model:
     fillable = []
     guarded = ["*"]
     hidden = []
+    visible = []
+    appends = []
     casts = {}
     _event_listeners = {}
 
@@ -24,7 +26,7 @@ class Model:
         self._exists = exists
         self._original = dict(self._attributes)
         self._relations = {}
-
+        self._appends = list(self.appends)
     @classmethod
     def _listeners(cls):
         if "_event_listeners" not in cls.__dict__:
@@ -355,12 +357,156 @@ class Model:
             return None
         return self.__class__.find(self._attributes[self.primary_key])
 
-    def to_dict(self):
-        return {
+    def get_arrayable_items(self, values):
+        if self.get_visible():
+            values = {
+                key: value
+                for key, value in values.items()
+                if key in self.get_visible()
+            }
+        if self.get_hidden():
+            values = {
+                key: value
+                for key, value in values.items()
+                if key not in self.get_hidden()
+            }
+        return values
+
+    def get_arrayable_attributes(self):
+        return self.get_arrayable_items(self._attributes)
+
+    def get_arrayable_appends(self):
+        if not self.get_appends():
+            return {}
+        return self.get_arrayable_items(
+            {attribute: attribute for attribute in self.get_appends()}
+        )
+
+    def get_arrayable_relations(self):
+        return self.get_arrayable_items(self._relations)
+
+    def attributes_to_dict(self):
+        attributes = {
             key: self._serialize_value(key, value)
-            for key, value in self._attributes.items()
-            if key not in self.hidden
+            for key, value in self.get_arrayable_attributes().items()
         }
+        for key in self.get_arrayable_appends():
+            attributes[key] = self._serialize_appended_value(key)
+        return attributes
+
+    def relations_to_dict(self):
+        attributes = {}
+        for key, value in self.get_arrayable_relations().items():
+            if value is None:
+                attributes[key] = None
+            elif isinstance(value, Model):
+                attributes[key] = value.to_dict()
+            elif isinstance(value, (list, tuple)) and all(
+                isinstance(item, Model) for item in value
+            ):
+                attributes[key] = [item.to_dict() for item in value]
+        return attributes
+
+    def to_dict(self):
+        return {**self.attributes_to_dict(), **self.relations_to_dict()}
+
+    def _serialize_appended_value(self, key):
+        raw_value = self._attributes.get(key)
+        definition = self._attribute_definition(key)
+        if definition is not None:
+            value = (
+                definition.get(raw_value, dict(self._attributes))
+                if definition.get is not None
+                else raw_value
+            )
+        else:
+            legacy_getter = getattr(self, f"get_{key}_attribute", None)
+            value = (
+                legacy_getter(raw_value)
+                if callable(legacy_getter)
+                else self._cast_value(key, raw_value)
+            )
+        return self._serialize_value(key, value)
+
+    def get_hidden(self):
+        return list(self.hidden)
+
+    def set_hidden(self, hidden):
+        self.hidden = list(hidden or [])
+        return self
+
+    def merge_hidden(self, hidden):
+        if hidden:
+            self.hidden = list(dict.fromkeys([*self.hidden, *hidden]))
+        return self
+
+    def get_visible(self):
+        return list(self.visible)
+
+    def set_visible(self, visible):
+        self.visible = list(visible or [])
+        return self
+
+    def merge_visible(self, visible):
+        if visible:
+            self.visible = list(dict.fromkeys([*self.visible, *visible]))
+        return self
+
+    def make_visible(self, attributes, *additional):
+        attributes = self._attribute_names(attributes, additional)
+        self.hidden = [attribute for attribute in self.hidden if attribute not in attributes]
+        if self.visible:
+            self.visible = list(dict.fromkeys([*self.visible, *attributes]))
+        return self
+
+    def make_visible_if(self, condition, attributes, *additional):
+        return (
+            self.make_visible(attributes, *additional)
+            if self._condition_value(condition)
+            else self
+        )
+
+    def make_hidden(self, attributes, *additional):
+        attributes = self._attribute_names(attributes, additional)
+        self.hidden = list(dict.fromkeys([*self.hidden, *attributes]))
+        return self
+
+    def make_hidden_if(self, condition, attributes, *additional):
+        return (
+            self.make_hidden(attributes, *additional)
+            if self._condition_value(condition)
+            else self
+        )
+
+    def append(self, attributes, *additional):
+        return self.merge_appends(self._attribute_names(attributes, additional))
+
+    def get_appends(self):
+        return list(self._appends)
+
+    def set_appends(self, appends):
+        self._appends = list(appends or [])
+        return self
+
+    def merge_appends(self, appends):
+        if appends:
+            self._appends = list(dict.fromkeys([*self._appends, *appends]))
+        return self
+
+    def has_appended(self, attribute):
+        return attribute in self.get_appends()
+
+    def without_appends(self):
+        return self.set_appends([])
+
+    @staticmethod
+    def _attribute_names(attributes, additional):
+        if isinstance(attributes, (list, tuple, set)):
+            return list(attributes)
+        return [attributes, *additional]
+
+    def _condition_value(self, condition):
+        return condition(self) if callable(condition) else condition
 
     def _storage_value(self, key, value):
         cast = self.casts.get(key)
@@ -466,6 +612,7 @@ class Model:
             "fillable",
             "guarded",
             "hidden",
+            "visible",
             "casts",
             "DELETED_AT",
             "incrementing",
