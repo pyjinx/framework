@@ -48,9 +48,9 @@ revalidated.
      `JsonSerializable` contract and `Application.handle_request` recursively
      normalizes model/list/dict responses through `ResponseFactory.serialize`;
      controllers can return model objects directly.
-   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-     tests/test_exception_handler.py tests/test_serve_command.py
-     tests/test_post_comments_api.py -q` — 9 focused checks; full suite:
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_exception_handler.py tests/test_serve_command.py
+    tests/test_post_comments_api.py -q` — 9 focused checks; full suite:
      `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
      Source mapping and residuals are in `IMPLEMENTATION_DECISIONS.md`.
    - Gaps: full Laravel bootstrap policy, maintenance mode, complete Laravel
@@ -237,7 +237,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::parseConnectionName` (177–182), `build` (113–125),
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_database.py -q` — 37 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 207 passed, 20 warnings.
   - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
@@ -276,7 +276,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::purge` (307–312),
     `DatabaseManager::reconnect` (333–344), and
     `Events\QueryExecuted` (5–79).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_database.py -q` — 37 passed; full PyJinx evidence:
     `uv run --no-sync python3 -m pytest tests/ -q` — 207 passed, 20 warnings.
   - Residual parity gaps: SQLAlchemy has no Laravel
@@ -397,7 +397,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     SQLite upsert grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert`
     (356) and lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock`
     (31).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_query_builder.py tests/test_eloquent_model.py -q` — 85 passed;
     full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 206
     passed, 20 warnings.
@@ -441,7 +441,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `ColumnDefinition` modifiers, `ForeignIdColumnDefinition::constrained`
     (37), `ForeignKeyDefinition` action helpers, and `Builder::create` (518) /
     `rename` (610).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_schema_builder.py -q` — 10 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 189 passed, 20 warnings.
   - Residual parity gaps: SQLite-only creation; remaining table alteration,
@@ -460,7 +460,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `ManagesTransactions`; Python implementation:
     `MigrationCommands.MigrateRollbackCommand` and
     `Foundation\Console\Command.parse_options`.
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_migration_commands.py -q` — 1 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 186 passed, 20 warnings.
   - Residual parity gaps: Alembic's version table has no Laravel
@@ -470,7 +470,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - [~] Complete Eloquent model metadata: table, connection, keys, UUID/ULID, incrementing, timestamps, date formats, guarded/fillable, hidden/visible, appends, and serialization.
   - Partial slice (2026-08-22): `Model.to_dict()` now serializes arrayable attributes and loaded model/list relations through a visible allow-list followed by hidden exclusion. It provides chainable snake-case counterparts for Laravel's hidden/visible controls (`get/set/merge_hidden`, `get/set/merge_visible`, `make_visible`, `make_hidden`, and conditional forms) and appends controls (`append`, `get/set/merge_appends`, `has_appended`, `without_appends`). Appended legacy getter and `Attribute` values serialize on demand; configured appends are instance-local. `get_table`/`set_table`, `get_connection_name`/`set_connection`, `qualify_column`, and `get_qualified_key_name` expose table/connection metadata. Models without an explicit table use a snake-case plural fallback; `created_at_column`/`updated_at_column`, timestamp accessors/setters, `get_date_format`/`set_date_format`, and `from_date_time` expose the current timestamp/date-format boundary. Null timestamp columns suppress corresponding writes, and existing dirty timestamp values are preserved.
   - Source mapping: `Model.php` `toArray` (2033–2038), `getConnectionName`/`setConnection` (2236–2251), `getTable`/`setTable` (2301–2318), and `qualifyColumn`/`getQualifiedKeyName` (736–749, 2347–2350); Laravel `Str::snake`/`Str::pluralStudly` default table derivation; `HasTimestamps.php` `updateTimestamps` (87–104), `getCreatedAtColumn`/`getUpdatedAtColumn` (167–180), `setCreatedAt`/`setUpdatedAt` (112–132); `HasAttributes.php` `getDateFormat`/`setDateFormat` (1674–1690), `fromDateTime` (1625–1630), attribute serialization (225–458), and append controls (2447–2515); `HidesAttributes.php` hidden/visible controls (42–173).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest tests/test_eloquent_model.py -q` — 19 passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 165 passed.
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest tests/test_eloquent_model.py -q` — 19 passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 165 passed.
   - Residual parity gaps: irregular pluralization beyond the conservative fallback, UUID/ULID behavior, resolver-backed connection access, integration of date formats into database serialization/casts, JSON serialization APIs, full cast/custom-cast and encrypted/hashed serialization, recursion prevention, Laravel's snake-case relation-key option and generic Arrayable collections, attribute-based route-key resolution, and broad relationship/eager-loading parity remain unported.
 - [~] Complete Eloquent attribute behavior: dirty tracking, original values, attribute accessors/mutators, casts, custom casts, encrypted casts, hashed casts, JSON casts, date casts, and mass-assignment exceptions.
   - Partial slice (2026-08-22): `Model.is_dirty`, `is_clean`, `get_dirty`,
@@ -490,7 +490,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `syncOriginalAttributes`/`syncChanges` (2166–2214),
     `getRawOriginal` (2118–2121), `castAttribute` (848–906),
     `asDecimal` (1536–1543), and `Casts\Attribute` setter contract (5–79).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 16 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 162 passed.
   - Residual parity gaps: cast-aware dirty comparison, original rewinding,
@@ -507,7 +507,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
     `Model::deleteQuietly` (1776–1779), and `Builder::forceCreate`
     (1256–1264).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
@@ -519,7 +519,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     across model classes, nest-safe, and restoration-safe.
   - Source mapping: Laravel `Model::newFromBuilder` (794–805), which fires
     `retrieved` after hydration, and `HasEvents::withoutEvents` (447–462).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 14 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 160 passed.
   - Residual parity gaps: boot/booted discovery, restoring/restored events,
@@ -536,7 +536,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `QueriesRelationships::whereHas` (170–173), and
     `withWhereHas` (186–190); existing create/force mappings remain in the
     implementation.
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_post_comments_api.py tests/test_eloquent_model.py -q` — 21
     passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q`
     — 167 passed.
@@ -558,7 +558,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     boundaries; application implementation is in `app/Models/Post.py`,
     `Comment.py`, `User.py`, `PostController.py`, and the posts/comments
     migration, seeder, and acceptance test.
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_post_comments_api.py -q` — 1 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
   - Residual parity gaps: through/polymorphic relations, touching, constrained
@@ -571,7 +571,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     when that column is null.
   - Source mapping: Laravel `HasTimestamps::updateTimestamps` (87–104) and
     `SoftDeletes::restore` lifecycle.
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_soft_deletes.py -q` — 10 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
   - Residual parity gaps: factories, pagination, JSON resources, model
@@ -608,7 +608,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `Auth\AuthenticationException` (8–82), `Auth\RequestGuard` (35–88),
     `Auth\EloquentUserProvider` (40–279), `Contracts\Auth\Authenticatable`,
     `Contracts\Auth\Guard`, and `Contracts\Auth\UserProvider`.
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_auth.py tests/test_auth_exception.py tests/test_request_guard.py
     tests/test_user_provider.py -q` — 8 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 177 passed, 20 warnings.
@@ -626,7 +626,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     persistence with expiration and atomic replacement.
   - Source mapping: Laravel `Session\Store` and
     `Session\FileSessionHandler` (10–127).
-  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_session_store.py tests/test_file_session_handler.py -q` — 2
     passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q`
     — 170 passed.

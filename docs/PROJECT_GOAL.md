@@ -24,9 +24,13 @@ We mimic:
 
 The port boundary is explicit:
 
-- `laravel/laravel` → `port/pyjinx/` application repository.
-- `laravel/framework` → `port/framework/` reusable framework repository.
+- `laravel/laravel` → `pyjinx/` application repository.
+- `laravel/framework` → `framework/` reusable framework repository.
+- `pyjinx/framework` → the application's pinned submodule checkout of
+  `framework/`; it is not a second framework source repository.
 
+The framework source of truth is `framework/`. Changes are made there, then
+the application submodule pointer is advanced to the verified framework commit.
 Both repositories are required deliverables. A complete framework port with a
 non-parity starter application is not project completion.
 

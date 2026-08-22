@@ -27,9 +27,9 @@ background execution.
 The loop keeps both copies synchronized:
 
 1. Canonical framework tracker:
-   `port/framework/docs/LARAVEL_FEATURE_PARITY_TODO.md`
+   `framework/docs/LARAVEL_FEATURE_PARITY_TODO.md`
 2. Runtime/application mirror:
-   `port/pyjinx/framework/docs/LARAVEL_FEATURE_PARITY_TODO.md`
+   `pyjinx/framework/docs/LARAVEL_FEATURE_PARITY_TODO.md`
 
 The canonical framework tracker is the source of truth. The runtime mirror MUST
 be updated in the same change and MUST remain byte-equivalent unless an
@@ -72,8 +72,8 @@ after one phase, one namespace, or one successful test run.
 7. Use strict TDD: failing behavioral test, implementation, green test,
    refactor, and regression verification.
 8. Do not mark a parity item complete from declarations or file presence.
-9. Keep framework source in `port/framework`; synchronize the runtime framework
-   checkout at `port/pyjinx/framework` after every framework change.
+9. Keep framework source in `framework`; synchronize the runtime framework
+   checkout at `pyjinx/framework` after every framework change.
 10. Do not port `laravel/framework/tests/` as the current implementation test
     substitute. That exhaustive suite is the final acceptance phase only after
     both parity trackers are complete and revalidated.
@@ -137,8 +137,8 @@ For the selected slice:
 
 ### 6. Synchronize the split repository
 
-- Copy/synchronize framework changes from `port/framework` to
-  `port/pyjinx/framework`.
+- Copy/synchronize framework changes from `framework` to
+  `pyjinx/framework`.
 - Clear stale `__pycache__` files before rerunning runtime checks.
 - Verify both framework copies resolve to the same source commit/content.
 - Update both parity tracker files and relevant docs together.
