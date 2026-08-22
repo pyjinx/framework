@@ -22,6 +22,30 @@ The canonical framework tracker is the source of truth. The runtime mirror MUST
 be updated in the same change and MUST remain byte-equivalent unless an
 explicit repository-layout decision records why it cannot be.
 
+## Complete backlog target
+
+The loop target is **every checklist item in both parity trackers**:
+
+- all 38 high-level Laravel feature categories;
+- every detailed Database/Eloquent task;
+- authentication, session, cookie, encryption, hashing, CSRF, and Sanctum;
+- routing, HTTP, middleware, validation, configuration, foundation, events,
+  container, support, logging, and views;
+- every Artisan/console, scheduling, process, and operational task;
+- cache, queues, mail, notifications, broadcasting, filesystem, Redis,
+  translation, pagination, resources, HTTP client, image, concurrency, and
+  extension namespaces;
+- every `Illuminate.Contracts.*` namespace and promoted public contract;
+- every acceptance, compatibility, deviation, and lifecycle evidence item.
+
+The deferred `laravel/framework/tests/` port is not a shortcut or an omitted
+backlog item. It is the final acceptance phase after all preceding tracker
+items are complete and revalidated.
+
+Execution is dependency-ordered because Laravel subsystems depend on one
+another, but dependency ordering MUST NOT be interpreted as permission to stop
+after one phase, one namespace, or one successful test run.
+
 ## Non-negotiable rules
 
 1. Follow `software-engineering-handbook` for every non-trivial slice.
@@ -40,6 +64,10 @@ explicit repository-layout decision records why it cannot be.
 10. Do not port `laravel/framework/tests/` as the current implementation test
     substitute. That exhaustive suite is the final acceptance phase only after
     both parity trackers are complete and revalidated.
+11. Do not stop at a phase boundary, successful component, or provisional
+    checklist update. Continue to the next dependency-ready item until the
+    final acceptance gate is reached or an explicit external blocker is
+    recorded.
 
 ## Loop
 
@@ -53,6 +81,8 @@ Repeat the following cycle until the exit gate is satisfied.
   or cross-component behavior slice.
 - Record the slice as a task before editing.
 - Do not skip a blocked prerequisite to work on a downstream feature.
+- If the next item is blocked, implement the earliest missing prerequisite or
+  record the exact external blocker; do not silently skip the item.
 
 ### 2. Establish the source contract
 
@@ -116,15 +146,19 @@ If the complete Laravel surface is not implemented, keep the tracker item
 partial or open. `[x]` means implementation presence only and is never release
 completion evidence by itself.
 
-### 8. Continue automatically
+### 8. Continue without stopping
 
 After closing a slice:
 
-- select the next dependency-ready incomplete item;
+- immediately select the next dependency-ready incomplete item;
 - repeat without restarting the project or redoing completed slices;
 - preserve the pinned baseline and prior green evidence;
+- never treat a clean checkpoint, commit, or green suite as overall completion;
 - stop only for a genuine external blocker, an authorized decision gate, or
   the final acceptance gate.
+
+An API execution window may end operationally, but the durable checkpoint MUST
+preserve the next action and the loop MUST resume there on the next invocation.
 
 ## Final acceptance gate
 
