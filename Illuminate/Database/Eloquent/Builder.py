@@ -25,6 +25,34 @@ class Builder:
         self.query.or_where(column, operator, value)
         return self
 
+    def where_exists(self, callback_or_query, boolean="and", not_exists=False):
+        self.query.where_exists(callback_or_query, boolean, not_exists)
+        return self
+
+    def or_where_exists(self, callback_or_query, not_exists=False):
+        return self.where_exists(callback_or_query, "or", not_exists)
+
+    def where_not_exists(self, callback_or_query, boolean="and"):
+        return self.where_exists(callback_or_query, boolean, True)
+
+    def or_where_not_exists(self, callback_or_query):
+        return self.where_exists(callback_or_query, "or", True)
+
+    def where_like(
+        self, column, value, case_sensitive=False, boolean="and", not_like=False
+    ):
+        self.query.where_like(column, value, case_sensitive, boolean, not_like)
+        return self
+
+    def or_where_like(self, column, value, case_sensitive=False):
+        return self.where_like(column, value, case_sensitive, "or")
+
+    def where_not_like(self, column, value, case_sensitive=False, boolean="and"):
+        return self.where_like(column, value, case_sensitive, boolean, True)
+
+    def or_where_not_like(self, column, value, case_sensitive=False):
+        return self.where_not_like(column, value, case_sensitive, "or")
+
     def where_all(self, columns, operator="=", value=None):
         self.query.where_all(columns, operator, value)
         return self
