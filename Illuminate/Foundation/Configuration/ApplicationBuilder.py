@@ -6,6 +6,11 @@ from Illuminate.Contracts.Http.Kernel import Kernel as HttpKernelContract
 from Illuminate.Foundation.Bootstrap.RegisterProviders import RegisterProviders
 from Illuminate.Foundation.Console.Kernel import Kernel as ConsoleKernel
 from Illuminate.Foundation.Http.Kernel import Kernel as HttpKernel
+from collections.abc import Callable
+
+from Illuminate.Exceptions.Handler import Handler
+from Illuminate.Foundation.Configuration.Exceptions import Exceptions
+
 
 
 class ApplicationBuilder:
@@ -18,7 +23,17 @@ class ApplicationBuilder:
     def with_middleware(self):
         return self
 
-    def with_exceptions(self):
+    def with_exceptions(
+        self, using: Callable[[Exceptions], object] | None = None
+    ) -> ApplicationBuilder:
+        self.__application.singleton("exception_handler", lambda app: Handler(app))
+
+        if using is not None:
+            self.__application.after_resolving(
+                "exception_handler",
+                lambda handler: using(Exceptions(handler)),
+            )
+
         return self
 
     def with_kernels(self):

@@ -36,9 +36,22 @@ revalidated.
 
 ## Coverage checklist
 
-1. [x] **Foundation lifecycle** (`Illuminate\Foundation`)
-   - `Foundation.Application`, bootstrap flow, providers, and HTTP/console kernel classes are present.
-   - Gaps: full Laravel application bootstrap policy, maintenance mode, exception rendering parity, and service registration lifecycle guarantees still incomplete.
+1. [~] **Foundation lifecycle** (`Illuminate\Foundation`)
+   - `Foundation.Application`, bootstrap flow, providers, HTTP/console kernel
+     classes, and a bounded HTTP exception boundary are present.
+   - Exception slice (2026-08-22): the HTTP kernel reports and renders
+     uncaught `Exception` values through `exception_handler`; the handler
+     offers deterministic report filtering, log-level/context configuration,
+     duplicate suppression, render/final-response callbacks, production-safe
+     HTML/JSON responses, and debug-gated escaped diagnostics.
+   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+     tests/test_exception_handler.py tests/test_serve_command.py -q` — 8
+     focused handler/configuration/kernel/WSGI checks; full suite:
+     `uv run --no-sync python3 -m pytest tests/ -q` — 150 passed.
+     Source mapping and residuals are in `IMPLEMENTATION_DECISIONS.md`.
+   - Gaps: full Laravel bootstrap policy, maintenance mode, complete Laravel
+     exception conversion/rendering, and service registration lifecycle
+     guarantees remain incomplete.
 
 2. [x] **Container / service resolver** (`Illuminate\Container`)
    - Binding API, singleton/scoped bindings, aliases, contextual resolution, constructor injection, extenders, tags, rebinding, parameter overrides, and structured resolution errors are present.
@@ -239,7 +252,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 ### Configuration, foundation, and support
 
-- [ ] Complete application builder parity: routing callbacks, middleware callbacks, exception callbacks, command loading, provider loading, and runtime separation.
+- [~] Application builder exception configuration: `with_exceptions(using)`
+  binds the core handler and forwards the bounded `Exceptions` configuration
+  facade on first resolution. Routing/middleware callbacks, command loading,
+  provider loading, and broader runtime separation remain unimplemented.
 - [ ] Complete environment/config loading, caching, clearing, merge behavior, typed values, missing keys, and config command behavior.
 - [ ] Complete service provider registration/boot/deferred provider/rebinding behavior and package discovery boundaries.
 - [~] Framework default provider ownership: `Application` now owns the current

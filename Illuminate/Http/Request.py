@@ -101,7 +101,14 @@ class Request(InteractsWithContentTypes):
         return data
 
     def header(self, key) -> Any:
-        return self.headers().get(key)
+        headers = self.headers()
+        if key in headers:
+            return headers[key]
+        lowered = key.lower()
+        return next(
+            (value for name, value in headers.items() if name.lower() == lowered),
+            None,
+        )
 
     def session(self, key) -> Any:
         return self.sessions().get(key)

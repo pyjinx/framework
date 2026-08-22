@@ -9,6 +9,20 @@ Checklist:
 3. Check `app.handle_request(...)` receives a request object captured by `Request.capture(app)` in WSGI/ASGI flow.
 4. Confirm exceptions are captured via host adapter and not swallowed.
 
+## Unhandled HTTP exceptions
+
+- `Foundation.Http.Kernel` reports an uncaught `Exception` and returns the core
+  `ExceptionResponse` rather than re-raising it from the request boundary.
+- Send `Accept: application/json` (or a `+json` media type as the first
+  preferred value) for a JSON error payload; otherwise the handler returns
+  HTML. `Exceptions.should_render_json_when(...)` can override this choice.
+- With `app.debug` disabled, a 500 response is limited to `Server Error`.
+  Debug mode includes escaped HTML traceback details or a JSON traceback for
+  local diagnosis only. It is not an Ignition replacement.
+- Configure report filtering, levels, context, callbacks, duplicate
+  suppression, rendering, and final response transformation through
+  `Application.configure(...).with_exceptions(lambda exceptions: ...).create()`.
+
 ## Route not found
 
 - Check HTTP method mapping (`GET` vs `POST`).

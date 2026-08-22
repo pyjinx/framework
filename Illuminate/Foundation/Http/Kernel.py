@@ -108,10 +108,12 @@ class Kernel:
             App.make("events").dispatch(RequestHandled(request, response))
 
             return response
-        except Exception as e:
-            App.make("events").dispatch(RequestHandled(request, Response()))
-
-            raise e
+        except Exception as exception:
+            handler = self.__app.make("exception_handler")
+            handler.report(exception)
+            response = handler.render(request, exception)
+            App.make("events").dispatch(RequestHandled(request, response))
+            return response
 
     def send_through_router(self, request: Request):
         try:

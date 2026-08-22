@@ -49,18 +49,37 @@
 - **Decision:** Port Laravel's core exception reporting/rendering lifecycle
   first, then provide an optional Veyra development renderer inspired by
   Spatie Laravel Ignition.
-- **Core contract:** report filtering, log levels, context, deduplication,
-  reportable/renderable callbacks, debug gating, HTTP conversion, HTML/JSON
-  negotiation, safe production responses, and testing fakes remain framework
-  behavior.
-- **Optional diagnostics:** stack frames, source context, solutions,
-  environment details, and interactive development pages remain optional and
-  must never replace the core handler.
-- **Dependency rule:** `exceptionite` is not source-verified as a maintained
-  dependency and must not be added by assumption. Evaluate any renderer for
-  maintenance, security, API, and replacement cost before adoption. Jinja2 and
-  Python traceback/inspect primitives may back an owned renderer.
-- **Status:** Future parity slice; current `Handler.py` remains incomplete.
+- **Implemented bounded core:** `Handler.report` now applies explicit ignore
+  classes, duplicate-instance suppression, configured log levels, exception
+  context callbacks, report callbacks, and a standard Python logger fallback.
+  `Handler.render` produces framework-owned `ExceptionResponse` values, uses
+  an explicit JSON override or the request's preferred `Accept` media type,
+  preserves declared `status_code` and mapping-like `headers`, and lets a
+  final response callback post-process the result. The HTTP kernel reports and
+  renders uncaught `Exception` values at its request boundary.
+- **Safe response policy:** production 500 responses contain only `Server
+  Error`; production declared HTTP-status responses retain their message.
+  Debug HTML escapes exception text and trace output; debug JSON contains the
+  message, Python exception class, and formatted traceback. Optional debug
+  detail generation is isolated in `Exceptions/Diagnostics.py`.
+- **Dependency rule:** no Ignition, Symfony renderer, or unverified
+  `exceptionite` dependency was added. `DevelopmentDiagnostics` uses only
+  Python `traceback` and `html`.
+- **Source mapping:** Laravel 13 `Foundation/Exceptions/Handler.php`
+  `report`/`shouldntReport` (425–545), `render`/response finalization
+  (694–750), `shouldReturnJson` (912–930), and JSON conversion
+  (1107–1134); `Foundation/Configuration/Exceptions.php` forwarding methods
+  (27–79, 118–150, 195–229); and
+  `Foundation/Configuration/ApplicationBuilder.php::withExceptions`
+  (394–408).
+- **Residual parity gaps:** Laravel exception mapping, `dontReportWhen`,
+  `stopIgnoring`, exception throttling, exception-provided reporting control,
+  validation/authentication/redirect conversion, Symfony HTTP exceptions and
+  error views, `Responsable`, console rendering, exact `expectsJson`
+  semantics, logger-channel/context parity, and full reportable-handler API
+  remain unported. `ExceptionResponse`, `status_code`/mapping `headers`, and
+  first-preferred-`Accept` JSON negotiation are explicit Python boundaries to
+  replace only with a verified shared HTTP response contract.
 
 ## 2026-08-22 — Python-only framework and documentation product
 

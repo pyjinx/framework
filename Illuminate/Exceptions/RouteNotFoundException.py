@@ -1,2 +1,2 @@
 class RouteNotFoundException(Exception):
-    pass
+    status_code = 404

@@ -6,7 +6,8 @@ class HandleExceptions:
     def bootstrap(self, app: Application) -> None:
         self.__app = app
 
-        def register_exception_handler(app: Application):
-            return Handler(app)
-
-        self.__app.singleton("exception_handler", register_exception_handler)
+        if "exception_handler" not in self.__app.get_bindings():
+            self.__app.singleton(
+                "exception_handler",
+                lambda application: Handler(application),
+            )
