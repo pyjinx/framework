@@ -49,6 +49,26 @@ class Builder:
         self.query.or_where_none(columns, operator, value)
         return self
 
+    def chunk(self, count: int, callback):
+        return self.query.chunk(
+            count,
+            lambda rows, page: callback(
+                [self.model_class(row, exists=True) for row in rows], page
+            ),
+        )
+
+    def each(self, callback, count: int = 1000):
+        return self.chunk(
+            count,
+            lambda rows, _page: all(
+                callback(user, index) is not False for index, user in enumerate(rows)
+            ),
+        )
+
+    def cursor(self):
+        for row in self.query.cursor():
+            yield self.model_class(row, exists=True)
+
     def with_(self, *relations: str | list[str]) -> Self:
         if len(relations) == 1 and isinstance(relations[0], (list, tuple)):
             relations = tuple(relations[0])

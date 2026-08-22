@@ -283,6 +283,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     item callback through chunking, and `cursor` returns a lazy Python
     generator over ordered result mappings. Missing order clauses and invalid
     chunk sizes fail deterministically.
+  - Partial slice (2026-08-22): Eloquent Builder wraps the same chunk and
+    cursor operations and hydrates each row into the configured model class.
   - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
@@ -299,14 +301,15 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `whereAll`/`orWhereAll` (2574–2599),
     `whereAny`/`orWhereAny` (2611–2636),
     `whereNone`/`orWhereNone` (2648–2663), `chunk` (39–79),
-    `each` (112–121), `cursor` (3786–3799), `lock` (3339),
-    `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447),
-    `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at
-    `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock behavior
-    at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
+    `each` (112–121), Eloquent Builder chunk/cursor forwarding, `cursor`
+    (3786–3799), `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365),
+    `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite upsert
+    grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
+    lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py -q` — 50 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 183 passed, 20 warnings.
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 71 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 184
+    passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
     SQL grammar abstraction, binding buckets/cleaning, before-query callbacks,
