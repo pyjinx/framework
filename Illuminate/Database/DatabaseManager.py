@@ -8,10 +8,14 @@ from weakref import WeakSet
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 from Illuminate.Database.Events.QueryExecuted import QueryExecuted
-
+from Illuminate.Database.QueryException import QueryException
+from Illuminate.Database.UniqueConstraintViolationException import (
+    UniqueConstraintViolationException,
+)
 
 class _TransactionCallbacks:
     def __init__(self) -> None:
@@ -353,24 +357,71 @@ class DatabaseManager:
 
     @contextmanager
     def _query_connection(self, name: str | None = None, write: bool = False):
-        name = name or self.get_default_connection()
-        sessions = (self._transaction_sessions.get() or {}).get(name, ())
-        if sessions:
-            yield sessions[-1].connection()
-            return
+        requested = name or self.get_default_connection()
+        database_name, _ = self.parse_connection_name(requested)
+        sessions = (self._transaction_sessions.get() or {}).get(database_name, ())
+        try:
+            if sessions:
+                yield sessions[-1].connection()
+                return
 
-        engine = self.connection(name)
-        if write:
-            with engine.begin() as connection:
-                yield connection
-        else:
-            with engine.connect() as connection:
-                yield connection
+            engine = self.connection(requested)
+            if write:
+                with engine.begin() as connection:
+                    yield connection
+            else:
+                with engine.connect() as connection:
+                    yield connection
+        except QueryException:
+            raise
+        except Exception as error:
+            raise self._wrap_query_exception(error, requested) from error
 
     def _query_bind(self, name: str | None = None):
         name = name or self.get_default_connection()
         sessions = (self._transaction_sessions.get() or {}).get(name, ())
         return sessions[-1].connection() if sessions else self.connection(name)
+
+    def _wrap_query_exception(self, error: Exception, name: str) -> QueryException:
+        statement = str(getattr(error, "statement", "") or "")
+        parameters = getattr(error, "params", ()) or ()
+        if isinstance(parameters, dict):
+            bindings = list(parameters.values())
+        elif isinstance(parameters, (tuple, list)):
+            bindings = list(parameters)
+        else:
+            bindings = [parameters]
+
+        database_name, read_write_type = self.parse_connection_name(name)
+        details = dict(self._configuration(database_name))
+        exception_type = (
+            UniqueConstraintViolationException
+            if self._is_unique_constraint_error(error)
+            else QueryException
+        )
+        return exception_type(
+            database_name,
+            statement,
+            bindings,
+            error,
+            details,
+            read_write_type,
+        )
+
+    @staticmethod
+    def _is_unique_constraint_error(error: Exception) -> bool:
+        current = error
+        seen = set()
+        while current is not None and id(current) not in seen:
+            seen.add(id(current))
+            if isinstance(current, IntegrityError):
+                return "unique" in str(current).lower()
+            if "unique constraint" in str(current).lower():
+                return True
+            current = getattr(current, "orig", None) or getattr(
+                current, "__cause__", None
+            )
+        return False
 
     def transaction(self, callback=None, attempts: int = 1, name: str | None = None):
         if callable(callback):

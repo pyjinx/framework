@@ -238,8 +238,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py tests/test_database_exceptions.py -q` — 40 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 210
+    tests/test_database.py tests/test_database_exceptions.py -q` — 41 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 211
     passed, 20 warnings.
   - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
     connector extensions/events, transaction manager semantics, retries,
@@ -285,8 +285,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `UniqueConstraintViolationException` (5–44),
     `DeadlockException` (5–10), and `Events\QueryExecuted` (5–79).
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py tests/test_database_exceptions.py -q` — 40 passed;
-    full PyJinx evidence: `uv run --no-sync python3 -m pytest tests/ -q` — 210
+    tests/test_database.py tests/test_database_exceptions.py -q` — 41 passed;
+    full PyJinx evidence: `uv run --no-sync python3 -m pytest tests/ -q` — 211
     passed, 20 warnings.
   - Residual parity gaps: SQLAlchemy has no Laravel
     `DatabaseTransactionsManager`, transaction lifecycle events, or
