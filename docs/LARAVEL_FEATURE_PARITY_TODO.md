@@ -333,6 +333,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `select_raw` supports parameterized raw
     expressions as the selected projection and automatically retains the base
     table as the FROM clause.
+  - Partial slice (2026-08-22): `select_sub` accepts a QueryBuilder or callback
+    subquery and hydrates the scalar result under the requested alias.
   - Partial slice (2026-08-22): `order_by_raw` supports parameterized raw
     ordering expressions while preserving existing fluent order clauses.
   - Partial slice (2026-08-22): `group_by_raw` supports parameterized raw
@@ -343,9 +345,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     SELECT, ORDER BY, GROUP BY, and HAVING methods with fluent model queries.
   - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305),
     `orWhereRaw` (1308–1310), `selectRaw` (356–366),
-    `orderByRaw` (3119–3126), `groupByRaw` (2690–2703),
-    `havingRaw` (2944–2968), and `orHavingRaw` (2978–2981);
-    Eloquent Builder forwarding; `Query\Builder::whereIn` (1422–1455),
+    `selectSub` (327–334), `orderByRaw` (3119–3126),
+    `groupByRaw` (2690–2703), `havingRaw` (2944–2968), and
+    `orHavingRaw` (2978–2981).
+  - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
     `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
     `orWhereNotIn` (1490–1492).
   - Source mapping: Laravel `Query\Builder::whereNot` (1139–1155),

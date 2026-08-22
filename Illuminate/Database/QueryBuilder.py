@@ -56,6 +56,19 @@ class QueryBuilder:
         self._columns = ()
         return self
 
+    def select_sub(self, query_or_callback, alias: str):
+        query = query_or_callback
+        if callable(query_or_callback):
+            query = QueryBuilder(self.manager, self.table_name, self.connection_name)
+            result = query_or_callback(query)
+            if isinstance(result, QueryBuilder):
+                query = result
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("A subselect projection requires a QueryBuilder.")
+        self._raw_selects.append(query._build_select().scalar_subquery().label(alias))
+        self._columns = ()
+        return self
+
     def from_(self, table_name: str):
         self.table_name = self.manager.prefixed_table_name(
             table_name, self.connection_name
