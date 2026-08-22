@@ -101,6 +101,33 @@ class QueryBuilder:
             operator = "="
         self._where_clauses.append(("column", "or", first, (operator, second)))
         return self
+    def where_between_columns(self, column, values):
+        low, high = values
+        self._where_clauses.append(
+            ("between_columns", "and", column, (low, high, False))
+        )
+        return self
+
+    def or_where_between_columns(self, column, values):
+        low, high = values
+        self._where_clauses.append(
+            ("between_columns", "or", column, (low, high, False))
+        )
+        return self
+
+    def where_not_between_columns(self, column, values):
+        low, high = values
+        self._where_clauses.append(
+            ("between_columns", "and", column, (low, high, True))
+        )
+        return self
+
+    def or_where_not_between_columns(self, column, values):
+        low, high = values
+        self._where_clauses.append(
+            ("between_columns", "or", column, (low, high, True))
+        )
+        return self
 
 
     def where_in(self, column, values):
@@ -437,6 +464,13 @@ class QueryBuilder:
                 expr = self._comparison(
                     col, operator, self._resolve_column(right_column)
                 )
+            elif kind == "between_columns":
+                low, high, not_between = val
+                expr = col.between(
+                    self._resolve_column(low), self._resolve_column(high)
+                )
+                if not_between:
+                    expr = ~expr
             elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
