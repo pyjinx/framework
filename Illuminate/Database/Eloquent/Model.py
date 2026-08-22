@@ -9,6 +9,7 @@ from Illuminate.Support.Facades.DB import DB
 
 class Model:
     table = None
+    connection = None
     primary_key = "id"
     key_type = "int"
     incrementing = True
@@ -143,6 +144,27 @@ class Model:
     def set_incrementing(self, value):
         self.incrementing = value
         return self
+    def get_table(self):
+        return self.table
+
+    def set_table(self, table):
+        self.table = table
+        return self
+
+    def get_connection_name(self):
+        return self.connection
+
+    def set_connection(self, name):
+        self.connection = name
+        return self
+
+    def qualify_column(self, column):
+        if "." in column:
+            return column
+        return f"{self.get_table()}.{column}"
+
+    def get_qualified_key_name(self):
+        return self.qualify_column(self.get_key_name())
 
     def get_key(self):
         return getattr(self, self.get_key_name(), None)
@@ -653,8 +675,10 @@ class Model:
     def __setattr__(self, name, value):
         if name.startswith("_") or name in (
             "table",
+            "connection",
             "primary_key",
             "key_type",
+            "route_key_name",
             "timestamps",
             "fillable",
             "guarded",
