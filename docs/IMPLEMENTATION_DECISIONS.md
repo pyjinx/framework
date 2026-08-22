@@ -74,3 +74,17 @@
   back the first owned renderer.
 - **Status:** Future parity slice; current `Handler.py` is not equivalent and
   must remain visibly incomplete in the tracker.
+
+## 2026-08-22 — Python-only framework and documentation product
+
+- **Decision:** Keep the Veyra framework core and contributor workflow
+  Python-only; Rust/PyO3 is not a required optimization or build path.
+- **Rationale:** One-language contribution improves readability,
+  maintainability, debuggability, packaging simplicity, and open-source
+  participation. Performance work remains measurement-driven and Python-first.
+- **Documentation:** Build a public website and Laravel-quality API reference
+  covering every promoted class, method, contract, lifecycle, command, and
+  compatibility boundary.
+- **Legal clarity:** The website must state that Veyra is highly inspired by
+  and behaviorally ported from Laravel where applicable, without implying
+  ownership, endorsement, or affiliation. Required upstream notices remain.

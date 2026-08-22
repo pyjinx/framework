@@ -14,7 +14,7 @@ in [`ECOSYSTEM_REVENUE_MODEL.md`](./ECOSYSTEM_REVENUE_MODEL.md).
 
 - **Initiation date:** 2026-08-19
 - **Phase:** Post-v1 expansion wave
-- **Candidate count (initial):** 6 deferred
+- **Candidate count (initial):** 10 deferred
 
 - Auth + API tokens / OAuth helpers (deferred)
 - Notification channels (deferred)

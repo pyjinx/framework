@@ -46,7 +46,7 @@ commitments before launch.
 | Laravel Breeze/Jetstream | Free/open-source starter kits | Veyra starter kits, premium templates, support, hosted onboarding | P1 | Core authentication remains free |
 | Horizon/Telescope/Pulse/Reverb | Primarily open-source packages/services | Hosted dashboards, enterprise support, managed infrastructure | P1 | Open contracts; optional hosted data plane |
 | Sanctum/Passport/Socialite/Cashier | Open-source integrations; provider fees external | Veyra equivalents plus optional managed auth/billing | P1 | Provider fees and compliance remain external |
-| Sail/Pint/Prompts/Dusk/Pest | Open-source developer tooling | Premium desktop/CI/team workflows where justified | P2 | Basic developer workflow remains free |
+| Laravel Sail | Free/open-source Docker development CLI and compose environment | **Veyra Sail**: Python runtime images, Compose services, database/Redis/search profiles, test/debug commands | P1 | Free developer tooling; not paid hosting |
 | Filament/Backpack/Orchid/admin ecosystem | Open-core/admin products and plugins | Veyra admin ecosystem and verified plugin marketplace | P2 | Marketplace governance required |
 | Spatie/community packages | Open-source packages and services | Veyra registry, verified plugins, support plans | P3 | Respect licenses; do not fork casually |
 
@@ -57,7 +57,8 @@ commitments before launch.
 - Veyra framework.
 - CLI and generators.
 - ORM, routing, validation, queues, auth, and testing contracts.
-- Basic Livewire/Inertia-compatible adapters.
+- Separate open-source Veyra Livewire/Inertia adapter packages, documented and
+  versioned independently from the framework core.
 - Local development and self-hosted deployment support.
 
 Commercial pressure MUST NOT weaken Laravel-compatible core behavior.

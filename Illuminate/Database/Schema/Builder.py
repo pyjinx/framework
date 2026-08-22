@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 from Illuminate.Database.Schema.Blueprint import Blueprint
-from sqlalchemy.schema import CreateTable, DropTable
+from sqlalchemy.schema import CreateIndex, CreateTable, DropTable
 
 
 class SchemaBuilder:
@@ -23,12 +23,16 @@ class SchemaBuilder:
 
         # Assemble the SQLAlchemy Table
         metadata = sa.MetaData()
-        table_args = blueprint.columns + blueprint.indexes
+        for foreign_key in blueprint.foreign_keys:
+            foreign_key.register_referenced_table(metadata)
+        table_args = blueprint.columns + blueprint.indexes + blueprint.constraints
         table = sa.Table(table_name, metadata, *table_args)
 
         # Execute creation
         with self._get_connection().begin() as conn:
             conn.execute(CreateTable(table))
+            for index in table.indexes:
+                conn.execute(CreateIndex(index))
 
     def drop(self, table_name):
         """Drop a table from the schema."""
@@ -45,8 +49,10 @@ class SchemaBuilder:
             conn.execute(DropTable(table, if_exists=True))
 
     def rename(self, _from, _to):
-        """Rename a table on the schema."""
-        # SQLite doesn't natively support simple ALTER TABLE RENAME cleanly in older versions
-        # but modern SQLAlchemy/Alembic handles it. We'll execute raw SQL for now as a fallback.
+        """Rename a table using quoted SQLite identifiers."""
+        if not _from or not _to or "\x00" in _from or "\x00" in _to:
+            raise ValueError("Table names must be non-empty and NUL-free.")
+        source = f'"{_from.replace(chr(34), chr(34) * 2)}"'
+        target = f'"{_to.replace(chr(34), chr(34) * 2)}"'
         with self._get_connection().begin() as conn:
-            conn.execute(sa.text(f"ALTER TABLE {_from} RENAME TO {_to}"))
+            conn.execute(sa.text(f"ALTER TABLE {source} RENAME TO {target}"))

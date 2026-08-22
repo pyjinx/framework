@@ -117,6 +117,49 @@ Future migration checklist:
 - Preserve import/CLI compatibility aliases for the documented migration
   window, then remove obsolete paths only after the clean cutover.
 
+## Python-Only Contribution Strategy
+
+The framework core remains Python-only. Rust/PyO3 is not a required runtime,
+build dependency, or contributor path. This keeps the implementation readable,
+maintainable, debuggable, and accessible to the widest open-source contributor
+base. Performance work remains Python-first and must be measured before any
+future architecture change.
+
+## Website and Documentation Deliverables
+
+The project will provide a public website and Laravel-quality API/developer
+documentation covering:
+
+- installation and project creation;
+- lifecycle and architecture;
+- routing, middleware, HTTP, validation, and exceptions;
+- database, Eloquent, migrations, queues, events, auth, and services;
+- CLI commands and Laravel-compatible options;
+- API reference for every promoted public class, method, and contract;
+- migration guides, compatibility policy, examples, and troubleshooting;
+- Veyra ecosystem products, pricing boundaries, and hosted-service policy.
+
+The website MUST clearly explain that Veyra is highly inspired by and
+behaviorally ported from Laravel where applicable, without implying Laravel
+ownership, endorsement, or affiliation. Required upstream license, copyright,
+and attribution notices MUST be preserved. Marketing credit beyond legal
+obligations is not a framework implementation requirement.
+
+## Future Open-Source Publication Boundary
+
+The current `pyjinx/framework` and `pyjinx/pyjinx` repositories are private
+until the Veyra migration and release audit are complete.
+
+Before public release:
+
+- do not publish internal roadmap, parity-audit, implementation-decision,
+  autonomous-loop, revenue-planning, or private operational documents by
+  default;
+- curate public website/API documentation separately;
+- audit the export for secrets, private notes, internal paths, unreleased
+  commercial plans, licenses, copyright, and attribution obligations;
+- explicitly approve the public file manifest and release repository layout.
+
 ## Engineering Process Requirement
 
 Every implementation, review, debugging, testing, and delivery slice MUST

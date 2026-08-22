@@ -1,6 +1,177 @@
 import sqlalchemy as sa
 
 
+def _index_name(table_name, columns, index_type):
+    return f"{table_name}_{'_'.join(columns)}_{index_type}".lower().replace("-", "_").replace(".", "_")
+
+def _apply_default(column, value):
+    column.default = value
+    if value is None:
+        column.server_default = None
+        return
+    if isinstance(value, str):
+        value = value.replace("'", "''")
+        text_value = sa.text(f"'{value}'")
+    else:
+        text_value = sa.text(str(value))
+    column.server_default = sa.DefaultClause(text_value)
+
+
+class ForeignKeyDefinition:
+    """Fluent definition of a SQLite foreign key constraint."""
+
+    def __init__(self, blueprint, columns, name=None):
+        self._blueprint = blueprint
+        self._columns = tuple(columns)
+        self._name = name or _index_name(blueprint.table_name, self._columns, "foreign")
+        self._references = None
+        self._table = None
+        self._on_delete = None
+        self._on_update = None
+
+    def references(self, columns):
+        self._references = (columns,) if isinstance(columns, str) else tuple(columns)
+        return self
+
+    def on(self, table):
+        self._table = table
+        return self
+
+    def register_referenced_table(self, metadata):
+        if self._table is None or self._references is None:
+            return
+
+        table = metadata.tables.get(self._table)
+        if table is None:
+            table = sa.Table(self._table, metadata)
+        for column in self._references:
+            if column not in table.c:
+                table.append_column(sa.Column(column))
+
+    def on_delete(self, action):
+        self._on_delete = action
+        return self
+
+    def on_update(self, action):
+        self._on_update = action
+        return self
+
+    def cascade_on_delete(self):
+        return self.on_delete("cascade")
+
+    def restrict_on_delete(self):
+        return self.on_delete("restrict")
+
+    def null_on_delete(self):
+        return self.on_delete("set null")
+
+    def no_action_on_delete(self):
+        return self.on_delete("no action")
+
+    def cascade_on_update(self):
+        return self.on_update("cascade")
+
+    def restrict_on_update(self):
+        return self.on_update("restrict")
+
+    def null_on_update(self):
+        return self.on_update("set null")
+
+    def no_action_on_update(self):
+        return self.on_update("no action")
+
+    def as_constraint(self):
+        if self._references is None or self._table is None:
+            raise ValueError(
+                "Foreign keys must specify both referenced columns and a referenced table."
+            )
+        if len(self._columns) != len(self._references):
+            raise ValueError(
+                "Foreign key columns and referenced columns must have equal length."
+            )
+
+        return sa.ForeignKeyConstraint(
+            self._columns,
+            tuple(f"{self._table}.{column}" for column in self._references),
+            name=self._name,
+            ondelete=self._on_delete,
+            onupdate=self._on_update,
+        )
+
+
+class ColumnDefinition:
+    """Fluent column modifier matching Laravel ColumnDefinition methods."""
+
+    def __init__(self, blueprint, column):
+        self._blueprint = blueprint
+        self._column = column
+
+    def _column_definition(self):
+        return next(
+            column
+            for column in self._blueprint.columns
+            if column.name == self._column
+        )
+
+    def nullable(self, is_nullable=True):
+        self._column_definition().nullable = is_nullable
+        return self
+
+    def default(self, value):
+        _apply_default(self._column_definition(), value)
+        return self
+
+    def _fluent_index_name(self, value):
+        if value is False:
+            return False
+        return None if value is True else value
+
+    def unique(self, index_name=None):
+        index_name = self._fluent_index_name(index_name)
+        if index_name is not False:
+            self._blueprint.unique(self._column, index_name)
+        return self
+
+    def index(self, index_name=None):
+        index_name = self._fluent_index_name(index_name)
+        if index_name is not False:
+            self._blueprint.index(self._column, index_name)
+        return self
+
+    def primary(self, index_name=None):
+        index_name = self._fluent_index_name(index_name)
+        if index_name is not False:
+            self._blueprint.primary(self._column, index_name)
+        return self
+
+    def __getattr__(self, name):
+        return getattr(self._blueprint, name)
+
+class ForeignIdColumnDefinition(ColumnDefinition):
+    """Fluent modifier for a foreign ID column."""
+
+    def __init__(self, blueprint, column):
+        super().__init__(blueprint, column)
+        self._column = column
+
+    def nullable(self, is_nullable=True):
+        return super().nullable(is_nullable)
+
+    def default(self, value):
+        return super().default(value)
+
+    def constrained(self, table=None, column=None, index_name=None):
+        column = column or "id"
+        if table is None:
+            base = self._column.removesuffix(f"_{column}")
+            table = f"{base}ies" if base.endswith("y") else f"{base}s"
+
+        return self.references(column, index_name).on(table)
+
+    def references(self, column, index_name=None):
+        return self._blueprint.foreign(self._column, index_name).references(column)
+
+
 class Blueprint:
     """Represents a database table schema blueprint."""
 
@@ -8,55 +179,60 @@ class Blueprint:
         self.table_name = table_name
         self.columns = []
         self.indexes = []
+        self.foreign_keys = []
+
+    @property
+    def constraints(self):
+        return [foreign_key.as_constraint() for foreign_key in self.foreign_keys]
 
     def id(self, column="id"):
-        """Create an auto-incrementing big integer (or standard integer for SQLite) primary key."""
+        """Create an auto-incrementing big integer primary key."""
         id_type = sa.BigInteger().with_variant(sa.Integer(), "sqlite")
-        col = sa.Column(column, id_type, primary_key=True, autoincrement=True)
-        self.columns.append(col)
-        return self
+        self.columns.append(
+            sa.Column(column, id_type, primary_key=True, autoincrement=True)
+        )
+        return ColumnDefinition(self, column)
 
     def string(self, column, length=255):
         """Create a string/varchar column."""
-        col = sa.Column(column, sa.String(length))
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.String(length)))
+        return ColumnDefinition(self, column)
 
     def text(self, column):
         """Create a text column."""
-        col = sa.Column(column, sa.Text())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.Text()))
+        return ColumnDefinition(self, column)
 
     def integer(self, column):
         """Create an integer column."""
-        col = sa.Column(column, sa.Integer())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.Integer()))
+        return ColumnDefinition(self, column)
 
     def big_integer(self, column):
         """Create a big integer column."""
-        col = sa.Column(column, sa.BigInteger())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.BigInteger()))
+        return ColumnDefinition(self, column)
 
     def boolean(self, column):
         """Create a boolean column."""
-        col = sa.Column(column, sa.Boolean())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.Boolean()))
+        return ColumnDefinition(self, column)
 
     def float(self, column):
         """Create a float column."""
-        col = sa.Column(column, sa.Float())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.Float()))
+        return ColumnDefinition(self, column)
 
     def timestamp(self, column):
         """Create a timestamp column."""
-        col = sa.Column(column, sa.DateTime())
-        self.columns.append(col)
-        return self
+        self.columns.append(sa.Column(column, sa.DateTime()))
+        return ColumnDefinition(self, column)
+
+    def foreign_id(self, column):
+        """Create a non-auto-incrementing integer column for a foreign key."""
+        foreign_id_type = sa.BigInteger().with_variant(sa.Integer(), "sqlite")
+        self.columns.append(sa.Column(column, foreign_id_type))
+        return ForeignIdColumnDefinition(self, column)
 
     def timestamps(self):
         """Add created_at and updated_at timestamp columns."""
@@ -65,11 +241,10 @@ class Blueprint:
         return self
 
     def remember_token(self):
-        """Add a remember_token string column."""
+        """Add a nullable remember_token string column."""
         self.string("remember_token", 100).nullable()
         return self
 
-    # Modifiers for the last added column
     def nullable(self, is_nullable=True):
         """Make the last added column nullable."""
         if self.columns:
@@ -77,30 +252,47 @@ class Blueprint:
         return self
 
     def default(self, value):
-        """Set a default value for the last added column."""
+        """Set a server default for the last added column."""
         if self.columns:
-            self.columns[-1].default = value
-            
-            text_val = sa.text(f"'{value}'") if isinstance(value, str) else sa.text(str(value))
-            self.columns[-1].server_default = sa.DefaultClause(text_val)
+            _apply_default(self.columns[-1], value)
         return self
 
-    def primary(self):
-        """Set the last added column as the primary key."""
-        if self.columns:
-            self.columns[-1].primary_key = True
-        return self
-    def unique(self, index_name=None):
-        """Add a unique constraint for the last added column."""
-        if self.columns:
-            col_name = self.columns[-1].name
-            idx_name = index_name or f"{self.table_name}_{col_name}_unique"
-            self.indexes.append(sa.UniqueConstraint(col_name, name=idx_name))
+    def primary(self, columns=None, index_name=None):
+        """Set the last column, or supplied columns, as the primary key."""
+        if columns is None:
+            if self.columns:
+                self.columns[-1].primary_key = True
+            return self
+
+        columns = (columns,) if isinstance(columns, str) else tuple(columns)
+        name = index_name or _index_name(self.table_name, columns, "primary")
+        self.indexes.append(sa.PrimaryKeyConstraint(*columns, name=name))
         return self
 
-    def foreign(self, column):
-        """Define a foreign key constraint for a given column (simplified).
-        In a full implementation, this returns a ForeignKeyDefinition to chain `.references().on()`.
-        For now, this requires manual setup or we build a full fluent chain.
-        """
-        # Placeholder for full foreign key fluent API
+    def unique(self, columns=None, index_name=None):
+        if columns is None:
+            if not self.columns:
+                return self
+            columns = (self.columns[-1].name,)
+        elif isinstance(columns, str):
+            columns = (columns,)
+        else:
+            columns = tuple(columns)
+
+        name = index_name or _index_name(self.table_name, columns, "unique")
+        self.indexes.append(sa.Index(name, *columns, unique=True))
+        return self
+
+    def index(self, columns, index_name=None):
+        """Create a non-unique index for one or more columns."""
+        columns = (columns,) if isinstance(columns, str) else tuple(columns)
+        name = index_name or _index_name(self.table_name, columns, "index")
+        self.indexes.append(sa.Index(name, *columns))
+        return self
+
+    def foreign(self, columns, index_name=None):
+        """Create a fluent foreign key definition for one or more columns."""
+        columns = (columns,) if isinstance(columns, str) else tuple(columns)
+        foreign_key = ForeignKeyDefinition(self, columns, index_name)
+        self.foreign_keys.append(foreign_key)
+        return foreign_key

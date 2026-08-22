@@ -214,9 +214,11 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ### Scope
 
-- Packaging, CI, docs, and release assets.
+- Packaging, CI, docs, website, and release assets.
 - Dependency policy and CVE update path.
-- Golden-path documentation and reproducible bootstrap.
+- Golden-path documentation, API reference, and reproducible bootstrap.
+- Public website explaining Veyra's Laravel inspiration, compatibility target,
+  legal notices, and non-affiliation clearly.
 
 ### Deliverables
 
