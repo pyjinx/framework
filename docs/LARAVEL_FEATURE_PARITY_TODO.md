@@ -44,10 +44,14 @@ revalidated.
      offers deterministic report filtering, log-level/context configuration,
      duplicate suppression, render/final-response callbacks, production-safe
      HTML/JSON responses, and debug-gated escaped diagnostics.
+   - Response boundary (2026-08-22): Eloquent models implement the
+     `JsonSerializable` contract and `Application.handle_request` recursively
+     normalizes model/list/dict responses through `ResponseFactory.serialize`;
+     controllers can return model objects directly.
    - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-     tests/test_exception_handler.py tests/test_serve_command.py -q` — 8
-     focused handler/configuration/kernel/WSGI checks; full suite:
-     `uv run --no-sync python3 -m pytest tests/ -q` — 150 passed.
+     tests/test_exception_handler.py tests/test_serve_command.py
+     tests/test_post_comments_api.py -q` — 9 focused checks; full suite:
+     `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
      Source mapping and residuals are in `IMPLEMENTATION_DECISIONS.md`.
    - Gaps: full Laravel bootstrap policy, maintenance mode, complete Laravel
      exception conversion/rendering, and service registration lifecycle

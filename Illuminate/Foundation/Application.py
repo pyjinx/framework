@@ -384,7 +384,7 @@ class Application(Container, ApplicationContract):
 
             kernel.terminate(request, response)
 
-            return response
+            return ResponseFactory.serialize(response)
         except Exception as e:
             kernel.terminate(request, None)
 

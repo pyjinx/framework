@@ -3,12 +3,13 @@ import json
 import re
 from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+from Illuminate.Contracts.Support.JsonSerializable import JsonSerializable
+
 from Illuminate.Database.Eloquent.Casts.Attribute import Attribute
 from Illuminate.Database.Eloquent.SoftDeletes import SoftDeletes
 from Illuminate.Support.Facades.DB import DB
 
-
-class Model:
+class Model(JsonSerializable):
     table = None
     connection = None
     primary_key = "id"
@@ -517,6 +518,9 @@ class Model:
 
     def to_dict(self):
         return {**self.attributes_to_dict(), **self.relations_to_dict()}
+
+    def json_serialize(self):
+        return self.to_dict()
 
     def _serialize_appended_value(self, key):
         raw_value = self._attributes.get(key)
