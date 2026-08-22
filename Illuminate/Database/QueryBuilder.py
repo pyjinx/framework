@@ -100,6 +100,13 @@ class QueryBuilder:
         self._conditions.append(("or", column, operator, value))
         return self
 
+    def where_null_safe_equals(self, column, value, boolean: str = "and"):
+        self._where_clauses.append(("null_safe_equals", boolean, column, value))
+        return self
+
+    def or_where_null_safe_equals(self, column, value):
+        return self.where_null_safe_equals(column, value, "or")
+
     def where_like(
         self,
         column,
@@ -804,6 +811,13 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "null_safe_equals":
+                expr = self._resolve_column(column).is_(val)
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "integer_raw":
                 values, not_in = val
                 col = self._resolve_column(column)

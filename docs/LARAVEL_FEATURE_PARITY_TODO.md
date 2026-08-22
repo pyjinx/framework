@@ -323,28 +323,31 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     predicates while preserving model hydration and fluent chaining.
   - Partial slice (2026-08-22): integer raw IN/NOT IN predicates normalize
     nested values to integer comparisons and provide `or_where_*` variants.
-  - Source mapping: Laravel `Query\Builder::whereExists` (2143–2162),
-    `orWhereExists` (2166–2172), `whereNotExists` (2178–2181),
-    `orWhereNotExists` (2189–2191), `whereLike` (1323–1336),
-    `orWhereLike` (1346–1349), `whereNotLike` (1360–1363),
-    `orWhereNotLike` (1373–1376), SQLite `SQLiteGrammar::whereLike` (54–62),
-    `prepareWhereLikeBinding` (71–78), `whereIntegerInRaw` (1504–1521),
-    `orWhereIntegerInRaw` (1530–1533), `whereIntegerNotInRaw` (1543–1545),
-    `orWhereIntegerNotInRaw` (1555–1558), Eloquent Builder forwarding,
-    `whereColumn` (1172–1205), `orWhereColumn` (1208–1211),
-    `whereBetweenColumns` (1640–1654), `orWhereBetweenColumns` (1673–1676),
-    `whereNotBetweenColumns` (1697–1700), `whereDate`/`orWhereDate`
-    (1801–1838), `whereTime`/`orWhereTime` (1849–1886),
-    `whereDay`/`orWhereDay` (1897–1938), `whereMonth`/`orWhereMonth`
-    (1949–1990), `whereYear`/`orWhereYear` (2001–2038),
-    `whereJsonContains`/`orWhereJsonContains` (2260–2282),
+  - Partial slice (2026-08-22): `where_null_safe_equals` and
+    `or_where_null_safe_equals` compile SQLite's null-safe `IS` comparison
+    for both NULL and non-NULL values.
+  - Source mapping: Laravel `Query\Builder::whereNullSafeEquals` (1386–1397),
+    `orWhereNullSafeEquals` (1406–1408), SQLite
+    `SQLiteGrammar::whereNullSafeEquals` (87–90),
+    `whereExists` (2143–2162), `orWhereExists` (2166–2172),
+    `whereNotExists` (2178–2181), `orWhereNotExists` (2189–2191),
+    `whereLike` (1323–1336), `orWhereLike` (1346–1349),
+    `whereNotLike` (1360–1363), `orWhereNotLike` (1373–1376),
+    `whereIntegerInRaw` (1504–1521), `orWhereIntegerInRaw` (1530–1533),
+    `whereIntegerNotInRaw` (1543–1545), `orWhereIntegerNotInRaw` (1555–1558),
+    Eloquent Builder forwarding, `whereColumn` (1172–1205),
+    `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
+    `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns` (1697–1700),
+    `whereDate`/`orWhereDate` (1801–1838), `whereTime`/`orWhereTime`
+    (1849–1886), `whereDay`/`orWhereDay` (1897–1938),
+    `whereMonth`/`orWhereMonth` (1949–1990), `whereYear`/`orWhereYear`
+    (2001–2038), `whereJsonContains`/`orWhereJsonContains` (2260–2282),
     `whereJsonDoesntContain`/`orWhereJsonDoesntContain` (2293–2308),
     `whereJsonContainsKey`/`orWhereJsonContainsKey` (2377–2395),
     `whereJsonDoesntContainKey`/`orWhereJsonDoesntContainKey` (2404–2418),
     `whereJsonLength`/`orWhereJsonLength` (2429–2468),
     `whereRowValues`/`orWhereRowValues` (2223–2248),
-    `whereAll`/`orWhereAll` (2574–2599),
-    `whereAny`/`orWhereAny` (2611–2636),
+    `whereAll`/`orWhereAll` (2574–2599), `whereAny`/`orWhereAny` (2611–2636),
     `whereNone`/`orWhereNone` (2648–2663), `chunk` (39–79),
     `each` (112–121), Eloquent Builder chunk/cursor forwarding, `cursor`
     (3786–3799), `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365),
@@ -352,8 +355,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 75 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 196
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 76 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 197
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
