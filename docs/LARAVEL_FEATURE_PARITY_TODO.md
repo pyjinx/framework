@@ -386,7 +386,18 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     constraints/loading, relation matching, collection behavior, N+1
     prevention, complete relation lifecycle events, and broad Laravel
     relationship API parity remain open.
-- [ ] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
+- [~] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
+  - Partial slice (2026-08-22): soft-delete restore now respects the model's
+    configurable updated timestamp column and suppresses the timestamp update
+    when that column is null.
+  - Source mapping: Laravel `HasTimestamps::updateTimestamps` (87–104) and
+    `SoftDeletes::restore` lifecycle.
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_eloquent_soft_deletes.py -q` — 10 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
+  - Residual parity gaps: factories, pagination, JSON resources, model
+    policies, route binding edge cases, and broad soft-delete lifecycle parity
+    remain open.
 
 ### Authentication, sessions, and security
 

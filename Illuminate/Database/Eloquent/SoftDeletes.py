@@ -29,7 +29,11 @@ class SoftDeletes:
 
         updates = {self.DELETED_AT: None}
         if self.timestamps:
-            updates["updated_at"] = datetime.now(timezone.utc).replace(tzinfo=None)
+            updated_at_column = self.get_updated_at_column()
+            if updated_at_column is not None:
+                updates[updated_at_column] = datetime.now(timezone.utc).replace(
+                    tzinfo=None
+                )
 
         identifier = self._attributes[self.primary_key]
         self._query_builder().where(self.primary_key, identifier).update(updates)
