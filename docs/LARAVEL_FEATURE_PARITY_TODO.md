@@ -434,14 +434,17 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     and attribute-backed user values. `AuthenticationException` carries
     checked guards and explicit or callback-generated redirect destinations.
     `RequestGuard` resolves and caches a callback user per request and exposes
-    check/guest/id/set-user/request operations.
+    check/guest/id/set-user/request operations. `EloquentUserProvider` now
+    retrieves users by identifier/credentials, validates passwords through an
+    injected hasher boundary, and updates remember tokens.
   - Source mapping: Laravel `Auth\GenericUser` (21–140),
     `Auth\AuthenticationException` (8–82), `Auth\RequestGuard` (35–88),
-    `Contracts\Auth\Authenticatable`, and `Contracts\Auth\Guard`.
+    `Auth\EloquentUserProvider` (40–273), `Contracts\Auth\Authenticatable`,
+    `Contracts\Auth\Guard`, and `Contracts\Auth\UserProvider`.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_auth.py tests/test_auth_exception.py tests/test_request_guard.py
-    -q` — 3 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 172 passed.
+    tests/test_user_provider.py -q` — 4 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 173 passed.
   - Source mapping: `references/framework/src/Illuminate/Auth`,
     `Illuminate/Contracts/Auth`, and `Illuminate/Auth/Middleware`.
   - Residual parity gaps: complete public-method inventory, session/cookie

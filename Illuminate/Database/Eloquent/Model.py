@@ -210,6 +210,28 @@ class Model(JsonSerializable):
     def get_key(self):
         return getattr(self, self.get_key_name(), None)
 
+    def get_auth_identifier_name(self):
+        return self.get_key_name()
+
+    def get_auth_identifier(self):
+        return self.get_key()
+
+    def get_auth_password_name(self):
+        return "password"
+
+    def get_auth_password(self):
+        return self._attributes.get(self.get_auth_password_name())
+
+    def get_remember_token_name(self):
+        return "remember_token"
+
+    def get_remember_token(self):
+        return self._attributes.get(self.get_remember_token_name())
+
+    def set_remember_token(self, value):
+        self._set_attribute_value(self.get_remember_token_name(), value)
+        return self
+
     def get_route_key(self):
         route_key_name = getattr(
             type(self), "route_key_name", self.get_key_name()
