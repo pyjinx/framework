@@ -442,7 +442,21 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     lifecycle, guards/providers, password hashing/reset, CSRF, Sanctum,
     authorization middleware, events/notifications, and all non-auth
     security services remain unimplemented.
-- [ ] Implement session stores, drivers, session middleware, lifecycle cleanup, regeneration, invalidation, and flash data.
+- [~] Implement session stores, drivers, session middleware, lifecycle cleanup, regeneration, invalidation, and flash data.
+  - Partial slice (2026-08-22): `Illuminate.Session.Store` provides an
+    in-memory session attribute bag with start, get/put, existence checks,
+    pull/push, counters, forget/flush, invalidate/regenerate, and CSRF token
+    primitives. `FileSessionHandler` provides open/close/read/write/destroy/gc
+    persistence with expiration and atomic replacement.
+  - Source mapping: Laravel `Session\Store` and
+    `Session\FileSessionHandler` (10–127).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_session_store.py tests/test_file_session_handler.py -q` — 2
+    passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q`
+    — 170 passed.
+  - Residual parity gaps: persistent handler integration, request middleware,
+    flash aging, dot-notation access, session cookies, concurrency/lifecycle
+    semantics, and complete session API.
 - [ ] Implement cookie creation, signing/encryption, SameSite/Secure/HttpOnly behavior, queues, and response integration.
 - [ ] Implement CSRF token generation, validation middleware, rotation, exemptions, and error behavior.
 - [ ] Implement web session guard, user providers, login/logout, remember-me, user resolution, and guest/auth middleware.
