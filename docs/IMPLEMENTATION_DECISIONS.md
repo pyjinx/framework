@@ -29,7 +29,7 @@
      - performance issues,
      - code smells,
      - memory leak risks,
-     and treat those counts as first-class blockers alongside feature gaps.
+     and treat these as first-class blockers alongside feature gaps.
    - Escalation is mandatory if any bucket is high risk or unbounded.
 
 - Canonical feature baseline: `https://api.laravel.com/docs/13.x/index.html`
@@ -88,3 +88,24 @@
 - **Legal clarity:** The website must state that Veyra is highly inspired by
   and behaviorally ported from Laravel where applicable, without implying
   ownership, endorsement, or affiliation. Required upstream notices remain.
+
+## 2026-08-22 — Laravel broadcasting and Veyra Reverb boundary
+
+- **Decision:** Port Laravel's broadcasting contracts and event lifecycle before
+  implementing a WebSocket server. Provide drivers behind an owned manager:
+  `log`, `null`, self-hosted Reverb-compatible WebSocket, Pusher, and Ably.
+- **Prerequisites:** Complete ASGI WebSocket lifecycle, events/listeners,
+  queues, channel authorization, HTTP authentication, and client protocol
+  contracts first. The current synchronous WSGI server is not a WebSocket
+  runtime.
+- **Boundary:** Core broadcasting owns event names/data, channel authorization,
+  public/private/presence channels, queue/transaction ordering, fakes, and
+  driver contracts. Provider SDKs and hosted transport details stay behind
+  thin adapters.
+- **Ecosystem:** A future open-source `veyra-broadcasting`/Reverb-compatible
+  package may provide self-hosting; a future paid Veyra Reverb/Cloud service
+  may provide managed WebSockets. Neither belongs in the core framework by
+  default.
+- **Reference:** Laravel 13 broadcasting supports Reverb, Pusher, Ably, log,
+  and null drivers plus queued events, channel authorization, presence,
+  model broadcasting, notifications, and client Echo integration.
