@@ -13,6 +13,8 @@ class Model:
     primary_key = "id"
     key_type = "int"
     incrementing = True
+    created_at_column = "created_at"
+    updated_at_column = "updated_at"
     timestamps = True
     fillable = []
     guarded = ["*"]
@@ -165,6 +167,11 @@ class Model:
 
     def get_qualified_key_name(self):
         return self.qualify_column(self.get_key_name())
+    def get_created_at_column(self):
+        return self.created_at_column
+
+    def get_updated_at_column(self):
+        return self.updated_at_column
 
     def get_key(self):
         return getattr(self, self.get_key_name(), None)
@@ -338,8 +345,8 @@ class Model:
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         if self.timestamps:
             if not self._exists:
-                self._attributes.setdefault("created_at", now)
-            self._attributes["updated_at"] = now
+                self._attributes.setdefault(self.get_created_at_column(), now)
+            self._attributes[self.get_updated_at_column()] = now
 
         if self._exists:
             if not self._fire_event("updating"):
@@ -687,6 +694,8 @@ class Model:
             "casts",
             "DELETED_AT",
             "incrementing",
+            "created_at_column",
+            "updated_at_column",
         ):
             super().__setattr__(name, value)
         else:
