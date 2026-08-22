@@ -167,6 +167,55 @@ class QueryBuilder:
             value = value.strftime("%H:%M:%S")
         self._where_clauses.append(("time", "or", column, (operator, value)))
         return self
+    @staticmethod
+    def _calendar_value(kind, value):
+        if isinstance(value, datetime | date):
+            formats = {"day": "%d", "month": "%m", "year": "%Y"}
+            return value.strftime(formats[kind])
+        if kind in {"day", "month"}:
+            return str(value).zfill(2)
+        return str(value)
+
+    def _where_calendar(self, kind, column, operator, value, boolean):
+        value = self._calendar_value(kind, value)
+        self._where_clauses.append((kind, boolean, column, (operator, value)))
+        return self
+
+    def where_day(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("day", column, operator, value, "and")
+
+    def or_where_day(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("day", column, operator, value, "or")
+
+    def where_month(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("month", column, operator, value, "and")
+
+    def or_where_month(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("month", column, operator, value, "or")
+
+    def where_year(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("year", column, operator, value, "and")
+
+    def or_where_year(self, column, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        return self._where_calendar("year", column, operator, value, "or")
 
 
     def where_in(self, column, values):
@@ -516,6 +565,15 @@ class QueryBuilder:
             elif kind == "time":
                 operator, value = val
                 expr = self._comparison(func.time(col), operator, value)
+            elif kind == "day":
+                operator, value = val
+                expr = self._comparison(func.strftime("%d", col), operator, value)
+            elif kind == "month":
+                operator, value = val
+                expr = self._comparison(func.strftime("%m", col), operator, value)
+            elif kind == "year":
+                operator, value = val
+                expr = self._comparison(func.strftime("%Y", col), operator, value)
             elif kind == "in":
                 expr = col.in_(val)
             elif kind == "not_in":
