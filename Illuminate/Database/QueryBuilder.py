@@ -24,6 +24,7 @@ class QueryBuilder:
         self.manager = manager
         self.connection_name = connection_name
         self.table_name = manager.prefixed_table_name(table_name, connection_name)
+        self._from_subquery = None
         self._columns = None
         self._conditions = []
         self._or_conditions = []
@@ -73,6 +74,22 @@ class QueryBuilder:
         self.table_name = self.manager.prefixed_table_name(
             table_name, self.connection_name
         )
+        self._from_subquery = None
+        self._loaded_tables = None
+        return self
+
+    def from_sub(self, query_or_callback, alias: str):
+        query = query_or_callback
+        if callable(query_or_callback):
+            query = QueryBuilder(self.manager, self.table_name, self.connection_name)
+            result = query_or_callback(query)
+            if isinstance(result, QueryBuilder):
+                query = result
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("A derived table source requires a QueryBuilder.")
+
+        self.table_name = alias
+        self._from_subquery = query._build_select().subquery(alias)
         self._loaded_tables = None
         return self
 
@@ -854,9 +871,14 @@ class QueryBuilder:
         if self._loaded_tables is None:
             metadata = MetaData()
             bind = self.manager._query_bind(self.connection_name)
-            tables = {
-                self.table_name: Table(self.table_name, metadata, autoload_with=bind)
-            }
+            if self._from_subquery is not None:
+                tables = {self.table_name: self._from_subquery}
+            else:
+                tables = {
+                    self.table_name: Table(
+                        self.table_name, metadata, autoload_with=bind
+                    )
+                }
             for _, join_table, _, _, _ in self._joins:
                 if join_table not in tables:
                     tables[join_table] = Table(join_table, metadata, autoload_with=bind)
@@ -870,10 +892,15 @@ class QueryBuilder:
         """Resolve a column reference, supporting table.column qualifiers."""
         if isinstance(column, str) and "." in column:
             table_name, column_name = column.split(".", 1)
-            table_name = self.manager.prefixed_table_name(
-                table_name, self.connection_name
+            tables = self._load_tables()
+            qualified_table_name = (
+                table_name
+                if table_name in tables
+                else self.manager.prefixed_table_name(
+                    table_name, self.connection_name
+                )
             )
-            return getattr(self._load_tables()[table_name].c, column_name)
+            return getattr(tables[qualified_table_name].c, column_name)
         return getattr(self._table().c, column)
 
     def _json_source(self, column):

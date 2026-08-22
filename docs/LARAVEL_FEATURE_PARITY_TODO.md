@@ -335,6 +335,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     table as the FROM clause.
   - Partial slice (2026-08-22): `select_sub` accepts a QueryBuilder or callback
     subquery and hydrates the scalar result under the requested alias.
+  - Partial slice (2026-08-22): `from_sub` accepts a QueryBuilder or callback,
+    compiles it as an aliased derived table, and exposes the derived columns to
+    outer selects and qualified predicates. Switching back through `from_`
+    clears the derived source.
   - Partial slice (2026-08-22): `order_by_raw` supports parameterized raw
     ordering expressions while preserving existing fluent order clauses.
   - Partial slice (2026-08-22): `group_by_raw` supports parameterized raw
@@ -345,7 +349,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     SELECT, ORDER BY, GROUP BY, and HAVING methods with fluent model queries.
   - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305),
     `orWhereRaw` (1308–1310), `selectRaw` (356–366),
-    `selectSub` (327–334), `orderByRaw` (3119–3126),
+    `selectSub` (327–334), `fromSub` (376–381),
+    `orderByRaw` (3119–3126),
     `groupByRaw` (2690–2703), `havingRaw` (2944–2968), and
     `orHavingRaw` (2978–2981).
   - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
@@ -377,12 +382,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `whereNone`/`orWhereNone` (2648–2663), `chunk` (39–79),
     `each` (112–121), Eloquent Builder chunk/cursor forwarding, `cursor`
     (3786–3799), `lock` (3339), `lockForUpdate` (3355), `sharedLock` (3365),
-    `toSql` (3447), `upsert` (4378), and `getBindings` (4625); SQLite upsert
-    grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
-    lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
+    `toSql` (3447), `fromSub` (376), `upsert` (4378), and `getBindings` (4625);
+    SQLite upsert grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert`
+    (356) and lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock`
+    (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 83 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 204
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 84 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 205
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
