@@ -91,6 +91,47 @@ class QueryBuilder:
         self._conditions.append(("or", column, operator, value))
         return self
 
+    def where_all(self, columns, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(
+            ("multi", "and", list(columns), ("all", operator, value, False))
+        )
+        return self
+
+    def or_where_all(self, columns, operator="=", value=None):
+        return self.where_all(columns, operator, value)._set_last_where_boolean("or")
+
+    def where_any(self, columns, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(
+            ("multi", "and", list(columns), ("any", operator, value, False))
+        )
+        return self
+
+    def or_where_any(self, columns, operator="=", value=None):
+        return self.where_any(columns, operator, value)._set_last_where_boolean("or")
+
+    def where_none(self, columns, operator="=", value=None):
+        if value is None:
+            value = operator
+            operator = "="
+        self._where_clauses.append(
+            ("multi", "and", list(columns), ("any", operator, value, True))
+        )
+        return self
+
+    def or_where_none(self, columns, operator="=", value=None):
+        return self.where_none(columns, operator, value)._set_last_where_boolean("or")
+
+    def _set_last_where_boolean(self, boolean):
+        kind, _, columns, value = self._where_clauses[-1]
+        self._where_clauses[-1] = (kind, boolean, columns, value)
+        return self
+
     def where_column(self, first, operator="=", second=None):
         if second is None:
             second = operator
@@ -628,6 +669,22 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "multi":
+                mode, operator, value, negate = val
+                expressions = [
+                    self._comparison(self._resolve_column(item), operator, value)
+                    for item in column
+                ]
+                if not expressions:
+                    continue
+                expr = and_(*expressions) if mode == "all" else or_(*expressions)
+                if negate:
+                    expr = ~expr
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             json_kind = kind in {"json_contains", "json_key", "json_length"}
             row_kind = kind == "row_values"
             base_column = column.split("->", 1)[0] if json_kind else column

@@ -274,6 +274,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `or_where_json_length` use SQLite `json_type` and `json_array_length`.
     `where_row_values` and `or_where_row_values` compare tuples of columns
     against bound tuples and reject mismatched column/value lengths.
+  - Partial slice (2026-08-22): `where_all`, `where_any`, and `where_none`
+    group equality/comparison predicates across multiple columns, with
+    `or_where_*` variants preserving the outer boolean. Raw and Eloquent
+    builders expose the same snake-case API.
   - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
@@ -286,14 +290,18 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `whereJsonContainsKey`/`orWhereJsonContainsKey` (2377–2395),
     `whereJsonDoesntContainKey`/`orWhereJsonDoesntContainKey` (2404–2418),
     `whereJsonLength`/`orWhereJsonLength` (2429–2468),
-    `whereRowValues`/`orWhereRowValues` (2223–2248), `lock` (3339),
+    `whereRowValues`/`orWhereRowValues` (2223–2248),
+    `whereAll`/`orWhereAll` (2574–2599),
+    `whereAny`/`orWhereAny` (2611–2636),
+    `whereNone`/`orWhereNone` (2648–2663), `lock` (3339),
     `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447),
     `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at
     `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock behavior
     at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py -q` — 47 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 159 passed.
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 68 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 181
+    passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
     SQL grammar abstraction, binding buckets/cleaning, before-query callbacks,

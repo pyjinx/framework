@@ -17,15 +17,38 @@ class Builder:
 
     # ---- Where clauses ----
 
-    def where(
-        self, column: str, operator: str | Any = "=", value: Any = None
-    ) -> Self:
+    def where(self, column: str, operator: str | Any = "=", value: Any = None) -> Self:
         self.query.where(column, operator, value)
         return self
 
     def or_where(self, column, operator="=", value=None):
         self.query.or_where(column, operator, value)
         return self
+
+    def where_all(self, columns, operator="=", value=None):
+        self.query.where_all(columns, operator, value)
+        return self
+
+    def or_where_all(self, columns, operator="=", value=None):
+        self.query.or_where_all(columns, operator, value)
+        return self
+
+    def where_any(self, columns, operator="=", value=None):
+        self.query.where_any(columns, operator, value)
+        return self
+
+    def or_where_any(self, columns, operator="=", value=None):
+        self.query.or_where_any(columns, operator, value)
+        return self
+
+    def where_none(self, columns, operator="=", value=None):
+        self.query.where_none(columns, operator, value)
+        return self
+
+    def or_where_none(self, columns, operator="=", value=None):
+        self.query.or_where_none(columns, operator, value)
+        return self
+
     def with_(self, *relations: str | list[str]) -> Self:
         if len(relations) == 1 and isinstance(relations[0], (list, tuple)):
             relations = tuple(relations[0])
@@ -123,6 +146,7 @@ class Builder:
     def for_page(self, page, per_page=15):
         self.query.for_page(page, per_page)
         return self
+
     def _relation_for(self, model, name):
         relation_method = getattr(model, name)
         return relation_method()
@@ -160,10 +184,7 @@ class Builder:
         relation = self._relation_for(models[0], relation_name)
         related_class = relation.query.model_class
         if hasattr(relation, "owner_key"):
-            keys = {
-                getattr(model, relation.foreign_key, None)
-                for model in models
-            }
+            keys = {getattr(model, relation.foreign_key, None) for model in models}
             related = related_class.query().where_in(relation.owner_key, keys).get()
             by_key = {getattr(item, relation.owner_key): item for item in related}
             related_models = []
@@ -173,14 +194,13 @@ class Builder:
                 if item is not None:
                     related_models.append(item)
         else:
-            keys = {
-                getattr(model, relation.local_key, None)
-                for model in models
-            }
+            keys = {getattr(model, relation.local_key, None) for model in models}
             related = related_class.query().where_in(relation.foreign_key, keys).get()
             grouped = {key: [] for key in keys}
             for item in related:
-                grouped.setdefault(getattr(item, relation.foreign_key, None), []).append(item)
+                grouped.setdefault(
+                    getattr(item, relation.foreign_key, None), []
+                ).append(item)
             related_models = []
             for model in models:
                 items = grouped.get(getattr(model, relation.local_key, None), [])
@@ -245,6 +265,7 @@ class Builder:
 
     def create(self, attributes):
         return self.model_class.create(attributes)
+
     def create_quietly(self, attributes):
         return self.model_class.create_quietly(attributes)
 
