@@ -39,6 +39,12 @@ class SchemaBuilder:
     def get_columns(self, table_name: str) -> list[dict]:
         return inspect(self._get_connection()).get_columns(table_name)
 
+    def get_indexes(self, table_name: str) -> list[dict]:
+        return inspect(self._get_connection()).get_indexes(table_name)
+
+    def get_foreign_keys(self, table_name: str) -> list[dict]:
+        return inspect(self._get_connection()).get_foreign_keys(table_name)
+
     def create(self, table_name: str, callback: Callable[[Blueprint], Any]) -> None:
         """Create a new table on the schema."""
         blueprint = Blueprint(table_name)

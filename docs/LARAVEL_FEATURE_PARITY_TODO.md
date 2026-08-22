@@ -334,11 +334,15 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `has_column`, `has_columns`, and `get_columns` expose SQLite schema
     introspection through SQLAlchemy's inspector with case-insensitive table
     column checks.
+  - Partial slice (2026-08-22): `get_indexes` and `get_foreign_keys`
+    expose SQLAlchemy inspector metadata for SQLite indexes and foreign-key
+    definitions.
   - Source mapping: Laravel `Schema\Builder::hasTable` (169–184),
-    `hasColumn` (270–277), `hasColumns` (284–295), and `getColumns` (393–409);
-    current creation mapping remains `Blueprint::unique` (662), `index` (675),
-    `foreign` (741), `foreignId` (1037), `indexCommand` (1772),
-    `createIndexName` (1815), `ColumnDefinition` modifiers,
+    `hasColumn` (270–277), `hasColumns` (284–295), `getColumns` (393–409),
+    `getIndexes` (412–481), and `getForeignKeys` (486–550); current creation
+    mapping remains `Blueprint::unique` (662), `index` (675), `foreign` (741),
+    `foreignId` (1037), `indexCommand` (1772), `createIndexName` (1815),
+    `ColumnDefinition` modifiers,
     `ForeignIdColumnDefinition::constrained` (37),
     `ForeignKeyDefinition` action helpers, and `Builder::create` (518) /
     `rename` (610).
