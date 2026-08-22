@@ -205,12 +205,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     boundaries. `get_pdo` returns a pooled DBAPI connection that callers must
     close; read/write routing is intentionally collapsed to the configured
     SQLite connection.
+  - Partial slice (2026-08-22): `build`, `connect_using`, and deterministic
+    `calculate_dynamic_connection_name` support Laravel-style dynamic SQLite
+    connections. Forced rebuilds purge the previous engine while retaining the
+    dynamic configuration for subsequent resolution.
   - Source mapping: Laravel `Connection::getPdo` (1292–1305),
     `getRawPdo` (1308–1311), `getReadPdo` (1318–1375),
-    `getName`/`getNameWithReadWriteType` (1479–1494).
+    `getName`/`getNameWithReadWriteType` (1479–1494);
+    `DatabaseManager::build` (113–125),
+    `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
+    `configuration` (219–231), and `purge` (301–312).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py -q` — 28 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 154 passed.
+    tests/test_database.py -q` — 31 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 185 passed, 20 warnings.
   - Residual parity gaps: Laravel read/write/direct variants, full URL
     parsing, prefixes, strict mode, non-SQLite drivers, connector
     extensions/events, transaction manager semantics, retries, normalized

@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from contextlib import contextmanager
 from contextvars import ContextVar
+import hashlib
 from pathlib import Path
 from time import perf_counter
 from weakref import WeakSet
@@ -46,6 +47,7 @@ class DatabaseManager:
         self.app = app
         self.config = config
         self._engines: dict[str, Engine] = {}
+        self._dynamic_connection_configurations: dict[str, dict] = {}
         self._engine_fingerprints: dict[str, tuple[str, bool]] = {}
         self._session_factories: dict[str, sessionmaker] = {}
         self._active_sessions: dict[str, WeakSet[Session]] = {}
@@ -100,6 +102,33 @@ class DatabaseManager:
         )
         self._active_sessions.setdefault(name, WeakSet())
         return engine
+
+    def build(self, config: dict) -> Engine:
+        """Build and cache a SQLite connection from dynamic configuration."""
+        config = dict(config)
+        name = config.get("name") or self.calculate_dynamic_connection_name(config)
+        return self.connect_using(name, config, force=True)
+
+    @staticmethod
+    def calculate_dynamic_connection_name(config: dict) -> str:
+        identity = "".join(
+            f"{key}{value}"
+            for key, value in config.items()
+            if isinstance(value, (str, int)) and not isinstance(value, bool)
+        )
+        return f"dynamic_{hashlib.md5(identity.encode()).hexdigest()}"
+
+    def connect_using(self, name: str, config: dict, force: bool = False) -> Engine:
+        if force:
+            self.purge(name)
+        elif name in self._engines:
+            raise RuntimeError(
+                f"Cannot establish connection [{name}] because another "
+                "connection with that name already exists."
+            )
+
+        self._dynamic_connection_configurations[name] = dict(config)
+        return self.connection(name)
 
     def listen(self, callback: Callable[[QueryExecuted], object]) -> None:
         self._query_listeners.append(callback)
@@ -509,10 +538,11 @@ class DatabaseManager:
                 except Exception as error:
                     cleanup_error = cleanup_error or error
         sessions.clear()
-        return cleanup_error
 
     def _configuration(self, name: str) -> dict:
-        connection = self.config.get(f"database.connections.{name}")
+        connection = self._dynamic_connection_configurations.get(name)
+        if connection is None:
+            connection = self.config.get(f"database.connections.{name}")
         if connection is None:
             raise ValueError(f"Database connection [{name}] is not configured.")
         return connection
