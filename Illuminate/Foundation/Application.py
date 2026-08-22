@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any, Self
 
-from Illuminate.Auth.AuthServiceProvider import AuthServiceProvider
 from Illuminate.Container.Container import Container
 from Illuminate.Contracts.Container.Container import Container as ContainerContract
 from Illuminate.Contracts.Foundation.Application import (
@@ -15,24 +14,19 @@ from Illuminate.Contracts.Routing.Router import Router as RouterContract
 from Illuminate.Contracts.Support.ServiceProvider import (
     ServiceProvider as ServiceProviderContract,
 )
-from Illuminate.Database.DatabaseServiceProvider import DatabaseServiceProvider
 from Illuminate.Events.Dispatcher import Dispatcher
-from Illuminate.Events.EventServiceProvider import EventServiceProvider
 from Illuminate.Foundation.Configuration.ApplicationBuilder import ApplicationBuilder
+from Illuminate.Support.DefaultProviders import DefaultProviders
 from Illuminate.Foundation.Console.Input.ArgvInput import ArgvInput
 from Illuminate.Foundation.Console.Output.ConsoleOutput import ConsoleOutput
 from Illuminate.Foundation.Http.Events.RequestReceived import RequestReceived
-from Illuminate.Foundation.Providers.CommanderServiceProvider import (
-    CommanderServiceProvider,
-)
 from Illuminate.Helpers.Util import Util
 from Illuminate.Http.Request import Request
 from Illuminate.Routing.ResponseFactory import ResponseFactory
 from Illuminate.Routing.Router import Router
-from Illuminate.Routing.RoutingServiceProvider import RoutingServiceProvider
 from Illuminate.Support.Facades.Config import Config
 from Illuminate.Validation.Factory import Factory as ValidationFactory
-from Illuminate.Validation.ValidationServiceProvider import ValidationServiceProvider
+
 
 
 class Application(Container, ApplicationContract):
@@ -273,14 +267,9 @@ class Application(Container, ApplicationContract):
     def _register_base_bindings(self):
         self.instance("app", self)
         self.instance(Container, self)
-
     def _register_base_providers(self):
-        self.register(AuthServiceProvider)
-        self.register(EventServiceProvider)
-        self.register(DatabaseServiceProvider)
-        self.register(RoutingServiceProvider)
-        self.register(ValidationServiceProvider)
-        self.register(CommanderServiceProvider)
+        for provider in DefaultProviders().to_array():
+            self.register(provider)
 
     def register_configured_providers(self) -> Any:
         providers = Config.get("app.providers", [])
@@ -314,11 +303,8 @@ class Application(Container, ApplicationContract):
             return registered
 
         provider = provider_class(self)
-
-        self.__service_providers[provider_class] = provider
-
         provider.register()
-
+        self.__service_providers[provider_class] = provider
         self.__mark_as_registered(provider_class)
 
         if self.is_booted():

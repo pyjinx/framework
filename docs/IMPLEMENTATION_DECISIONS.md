@@ -11,26 +11,17 @@
 1. **No partial completion by declaration**
    - No backlog item is complete solely from declaration or file presence.
    - Every promoted item requires behavioral evidence.
-
 2. **Strict TDD for all new/changed behavior**
    - Write a failing test first, implement to green, then refactor.
-   - For this codebase, use the `software-engineering-handbook` guidance as the process contract.
-
+   - `software-engineering-handbook` is the process contract.
 3. **Revalidation before release**
-   - For every component currently `[x]` or `[~]` in `LARAVEL_FEATURE_PARITY_TODO.md`, rerun implementation/rewrite if behavior is incomplete for the acceptance target.
-   - Add/retain tests that cover the promoted contract before release.
-
+   - Revalidate every `[x]` or `[~]` component before release.
+   - Add or retain tests covering the promoted contract.
 4. **Evidence-first gates**
-   - No capability is marked complete without evidence in acceptance notes.
-   - Behavioral checks must be attached to the relevant roadmap and implementation slices.
-
-5. **Quality-risk accounting (performance/code smell/memory)**
-   - At each planning checkpoint, count and document:
-     - performance issues,
-     - code smells,
-     - memory leak risks,
-     and treat these as first-class blockers alongside feature gaps.
-   - Escalation is mandatory if any bucket is high risk or unbounded.
+   - No capability is complete without acceptance evidence.
+5. **Quality-risk accounting**
+   - Track performance issues, code smells, and memory-leak risks at every
+     planning checkpoint; high or unbounded risk blocks promotion.
 
 - Canonical feature baseline: `https://api.laravel.com/docs/13.x/index.html`
 - Laravel ecosystem candidates: `./LARAVEL_ECOSYSTEM_CANDIDATES.md`
@@ -43,37 +34,33 @@
 - **Decision:** Use `prompt_toolkit` for interactive prompt behavior and
   `Rich` for terminal presentation behind a PyJinx-owned console prompt
   boundary.
-- **Rationale:** Laravel Prompts provides interactive text, textarea, number,
-  password, confirm, select, multiselect, suggest, search, pause, forms,
-  tables, spinners, progress, and task output. `prompt_toolkit` supplies the
-  input/editing/validation/navigation primitives; `Rich` supplies tables,
+- **Rationale:** Laravel Prompts provides text, textarea, number, password,
+  confirm, select, multiselect, suggest, search, pause, forms, tables,
+  spinners, progress, and task output. `prompt_toolkit` supplies input,
+  editing, validation, navigation, and completion; `Rich` supplies tables,
   styled output, progress, spinners, and live task presentation.
-- **Boundary:** Commands MUST depend on PyJinx prompt/output APIs, not directly
-  on either third-party library. Non-interactive and CI fallback behavior,
-  validation, cancellation, and testing fakes remain PyJinx-owned contracts
-  ported from Laravel Prompts.
-- **Status:** Decision only; implementation remains in the Laravel console
-  parity queue. No dependency is added until its focused parity slice begins.
+- **Boundary:** Commands depend on PyJinx prompt/output APIs, not directly on
+  either third-party library. Non-interactive fallback, validation,
+  cancellation, testing fakes, and output contracts remain PyJinx-owned.
+- **Status:** Decision only; implementation remains in the console parity queue.
 
 ## 2026-08-22 — Laravel error handling and Ignition-compatible diagnostics
 
 - **Decision:** Port Laravel's core exception reporting/rendering lifecycle
-  first, then provide an optional Veyra development error renderer inspired by
+  first, then provide an optional Veyra development renderer inspired by
   Spatie Laravel Ignition.
 - **Core contract:** report filtering, log levels, context, deduplication,
-  reportable/renderable callbacks, debug gating, HTTP exception conversion,
-  HTML/JSON negotiation, safe production responses, and testing fakes remain
-  framework-owned behavior.
+  reportable/renderable callbacks, debug gating, HTTP conversion, HTML/JSON
+  negotiation, safe production responses, and testing fakes remain framework
+  behavior.
 - **Optional diagnostics:** stack frames, source context, solutions,
-  environment details, and interactive development pages belong behind an
-  optional package boundary; they must never replace the core handler.
-- **Dependency rule:** `exceptionite` is not currently source-verified as a
-  maintained dependency and must not be added by assumption. Evaluate any
-  Python renderer against maintenance, security, API, and replacement-cost
-  criteria before adoption. Jinja2 and Python traceback/inspect primitives may
-  back the first owned renderer.
-- **Status:** Future parity slice; current `Handler.py` is not equivalent and
-  must remain visibly incomplete in the tracker.
+  environment details, and interactive development pages remain optional and
+  must never replace the core handler.
+- **Dependency rule:** `exceptionite` is not source-verified as a maintained
+  dependency and must not be added by assumption. Evaluate any renderer for
+  maintenance, security, API, and replacement cost before adoption. Jinja2 and
+  Python traceback/inspect primitives may back an owned renderer.
+- **Status:** Future parity slice; current `Handler.py` remains incomplete.
 
 ## 2026-08-22 — Python-only framework and documentation product
 
@@ -91,21 +78,30 @@
 
 ## 2026-08-22 — Laravel broadcasting and Veyra Reverb boundary
 
-- **Decision:** Port Laravel's broadcasting contracts and event lifecycle before
-  implementing a WebSocket server. Provide drivers behind an owned manager:
-  `log`, `null`, self-hosted Reverb-compatible WebSocket, Pusher, and Ably.
+- **Decision:** Port Laravel broadcasting contracts and event lifecycle before
+  implementing a WebSocket server. Provide `log`, `null`, self-hosted
+  Reverb-compatible, Pusher, and Ably drivers behind an owned manager.
 - **Prerequisites:** Complete ASGI WebSocket lifecycle, events/listeners,
   queues, channel authorization, HTTP authentication, and client protocol
-  contracts first. The current synchronous WSGI server is not a WebSocket
-  runtime.
+  contracts first. The synchronous WSGI server is not a WebSocket runtime.
 - **Boundary:** Core broadcasting owns event names/data, channel authorization,
   public/private/presence channels, queue/transaction ordering, fakes, and
-  driver contracts. Provider SDKs and hosted transport details stay behind
-  thin adapters.
-- **Ecosystem:** A future open-source `veyra-broadcasting`/Reverb-compatible
-  package may provide self-hosting; a future paid Veyra Reverb/Cloud service
-  may provide managed WebSockets. Neither belongs in the core framework by
-  default.
-- **Reference:** Laravel 13 broadcasting supports Reverb, Pusher, Ably, log,
-  and null drivers plus queued events, channel authorization, presence,
-  model broadcasting, notifications, and client Echo integration.
+  driver contracts. Provider SDKs and hosted transport stay behind adapters.
+- **Ecosystem:** Future open-source `veyra-broadcasting`/Reverb-compatible
+  self-hosting and a paid managed WebSocket service remain optional products.
+
+## 2026-08-22 — Laravel provider ownership and package auto-discovery
+
+- **Decision:** Mirror Laravel provider ownership: `port/pyjinx/` supplies
+  application providers; `port/framework/` supplies framework default and
+  framework command providers.
+- **Auto-discovery:** Port the Composer equivalent for package provider
+  metadata, merge discovered providers with configured providers, and support
+  eager/deferred loading with a cached provider manifest.
+- **Application boundary:** `AppServiceProvider` contains only
+  application-specific bindings and boot behavior. It must not be a catch-all
+  for framework database, view, routing, console, or migration services.
+- **Commands:** Framework commands belong to framework console providers;
+  application commands belong to the application console registration path.
+- **Status:** Current PyJinx has partial manual provider loading; this remains
+  a source-faithful parity slice.

@@ -5,27 +5,23 @@ class RegisterProviders:
     _merge: list = []
 
     def bootstrap(self, app: Application) -> None:
-        self.__app = app
+        self._merge_additional_providers(app)
+        app.register_configured_providers()
 
-        self._merge_additional_providers(self.__app)
-
-        self.__app.register_configured_providers()
-
-    def _merge_additional_providers(self, app):
+    def _merge_additional_providers(self, app: Application) -> None:
         config = app.make("config")
+        configured = list(config.get("app.providers", []) or [])
+        additional = list(type(self)._merge)
+        type(self)._merge = []
 
-        providers = config.get("app.providers", [])
-
-        for provider in providers:
-            if provider not in self._merge:
-                self._merge.append(provider)
-
-        config.set("app.providers", self._merge)
-
-        self._merge = []
+        providers = []
+        for provider in [*configured, *additional]:
+            if provider not in providers:
+                providers.append(provider)
+        config.set("app.providers", providers)
 
     @classmethod
-    def merge(cls, providers):
+    def merge(cls, providers) -> None:
         for provider in providers:
-            if providers not in cls._merge:
+            if provider not in cls._merge:
                 cls._merge.append(provider)

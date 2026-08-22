@@ -242,6 +242,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - [ ] Complete application builder parity: routing callbacks, middleware callbacks, exception callbacks, command loading, provider loading, and runtime separation.
 - [ ] Complete environment/config loading, caching, clearing, merge behavior, typed values, missing keys, and config command behavior.
 - [ ] Complete service provider registration/boot/deferred provider/rebinding behavior and package discovery boundaries.
+- [~] Framework default provider ownership: `Application` now owns the current
+  framework default-provider collection and `config/app.py` lists application
+  providers only. Provider merge ordering/deduplication and failed-registration
+  state handling are covered. Laravel's 24-provider default collection,
+  ProviderRepository/PackageManifest ordering, configured-provider string or
+  instance resolution, cache/bootstrap-provider-path handling, flush-state
+  behavior, Composer-equivalent discovery, deferred loading, cached manifests,
+  and ApplicationBuilder route-provider configuration remain unimplemented.
 - [ ] Complete events/listeners/subscribers, wildcard listeners, queued behavior boundaries, and event dispatch error semantics.
 - [ ] Complete container attributes, method bindings, scoped lifecycle integration, extenders, tags, contextual edge cases, and all resolution errors.
 - [ ] Complete support utilities, collections, fluent helpers, facades, macros, string/array helpers, and PHP-to-Python behavior mappings.
