@@ -156,6 +156,14 @@ class Builder:
 
     def create(self, attributes):
         return self.model_class.create(attributes)
+    def create_quietly(self, attributes):
+        return self.model_class.create_quietly(attributes)
+
+    def force_create(self, attributes):
+        return self.model_class.force_create(attributes)
+
+    def force_create_quietly(self, attributes):
+        return self.model_class.force_create_quietly(attributes)
 
     def increment(self, column, amount=1, extra=None):
         return self.query.increment(column, amount, extra)

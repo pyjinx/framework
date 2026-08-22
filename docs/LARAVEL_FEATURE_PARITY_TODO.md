@@ -226,9 +226,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - [~] Complete Eloquent CRUD semantics: find, find-or-fail, first, first-or-fail, create, force-create, save, update, delete, restore, touch, increment, decrement, upsert, and quiet variants.
   - Partial slice (2026-08-22): `Model.without_events` suppresses model callbacks
     across nested operations with restoration in `finally`; `create_quietly`,
-    `force_fill`, `force_create`, `force_create_quietly`, `update_quietly`,
-    `save`-compatible event suppression, and `delete_quietly` now mirror the
-    corresponding Laravel quiet/unguarded boundaries.
+    `force_fill`, `force_create`, `force_create_quietly`, `save_quietly`,
+    `update_quietly`, and `delete_quietly` now mirror the corresponding
+    Laravel quiet/unguarded boundaries.
   - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
     `Model::deleteQuietly` (1776–1779), and `Builder::forceCreate`
@@ -236,9 +236,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py -q` — 12 passed; full PyJinx suite:
     `uv run --no-sync python3 -m pytest tests/ -q` — 151 passed.
-  - Residual parity gaps: builder quiet/force-create variants, update-or-fail,
-    save-or-fail, save-or-ignore, touch, upsert, full dirty/original
-    synchronization, and complete CRUD option/error semantics remain open.
+  - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
+    upsert, full dirty/original synchronization, and complete CRUD
+    option/error semantics remain open.
 - [~] Complete Eloquent model events: boot/booted, retrieved, saving/saved, creating/created, updating/updated, deleting/deleted, restoring/restored, observers, dispatch suppression, and event ordering.
   - Partial slice (2026-08-22): callback dispatch suppression is shared across
     model classes, nest-safe, and restoration-safe; quiet CRUD regression
@@ -246,7 +246,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Residual parity gaps: boot/booted discovery, retrieved/restoring/restored
     events, observers, dispatcher contracts, event faking, and full Laravel
     event ordering remain open.
-- [ ] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
+- [~] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
+  - Partial slice (2026-08-22): Eloquent builders now expose `create_quietly`,
+    `force_create`, and `force_create_quietly` through the model's guarded and
+    event-suppression boundaries.
+  - Source mapping: Laravel `Builder::createQuietly` (1245–1250),
+    `Builder::forceCreate` (1256–1264), and
+    `Builder::forceCreateQuietly` (1269–1272).
+  - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
+    tests/test_eloquent_model.py -q` — 12 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 151 passed.
+  - Residual parity gaps: scopes, macros, collections, lazy collections,
+    chunk/cursor, eager/lazy loading, N+1 controls, and the remainder of the
+    builder API remain open.
 - [ ] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
 - [ ] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
 
