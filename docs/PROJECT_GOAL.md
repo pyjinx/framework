@@ -115,6 +115,12 @@ follow the repository's `software-engineering-handbook` skill:
 - Treat the complete `laravel/framework/tests/` port as a future acceptance
   requirement; current focused tests are not full Laravel coverage.
 
+The continuous execution protocol is
+[`AUTONOMOUS_PARITY_LOOP.md`](./AUTONOMOUS_PARITY_LOOP.md). It continues
+dependency-ready parity slices until both trackers are complete and
+revalidated; only then does the exhaustive Laravel framework test-suite port
+begin.
+
 ## Verification Policy
 
 - Strict TDD: failing test → implement → green → refactor.

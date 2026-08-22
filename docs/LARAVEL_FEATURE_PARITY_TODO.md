@@ -17,6 +17,17 @@ Source reference:
 - **Source of truth:** This file is the tracked feature coverage backlog used by roadmap and planning updates.
 - **Provisional status:** This backlog reflects a starting PoC baseline. Marking an area `[x]` or `[~]` is not a release completion signal; it only indicates current implementation presence that must be revalidated.
 
+## Autonomous execution loop
+
+The continuous source-first implementation process is defined in
+[`AUTONOMOUS_PARITY_LOOP.md`](./AUTONOMOUS_PARITY_LOOP.md). It governs slice
+selection, Laravel source comparison, strict TDD, framework/runtime syncing,
+evidence updates, and the final acceptance gate.
+
+The complete `laravel/framework/tests/` port is intentionally deferred until
+every item in this tracker and its runtime mirror is implemented and
+revalidated.
+
 ## Legend
 
 - **[x]** = implementation exists in current codebase only; production completion requires revalidation and evidence.
