@@ -344,9 +344,16 @@ class Model:
 
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         if self.timestamps:
-            if not self._exists:
-                self._attributes.setdefault(self.get_created_at_column(), now)
-            self._attributes[self.get_updated_at_column()] = now
+            updated_at_column = self.get_updated_at_column()
+            if updated_at_column is not None and not self.is_dirty(updated_at_column):
+                self._attributes[updated_at_column] = now
+            created_at_column = self.get_created_at_column()
+            if (
+                not self._exists
+                and created_at_column is not None
+                and not self.is_dirty(created_at_column)
+            ):
+                self._attributes.setdefault(created_at_column, now)
 
         if self._exists:
             if not self._fire_event("updating"):
