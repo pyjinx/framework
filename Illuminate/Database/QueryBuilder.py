@@ -394,6 +394,30 @@ class QueryBuilder:
         self._where_clauses.append(("not_in", "or", column, list(values)))
         return self
 
+    def where_integer_in_raw(
+        self, column, values, boolean: str = "and", not_in: bool = False
+    ):
+        flattened = []
+        for value in values:
+            if isinstance(value, (list, tuple, set, frozenset)):
+                flattened.extend(value)
+            else:
+                flattened.append(value)
+        normalized = [int(value) for value in flattened]
+        self._where_clauses.append(
+            ("integer_raw", boolean, column, (normalized, not_in))
+        )
+        return self
+
+    def or_where_integer_in_raw(self, column, values):
+        return self.where_integer_in_raw(column, values, "or")
+
+    def where_integer_not_in_raw(self, column, values, boolean: str = "and"):
+        return self.where_integer_in_raw(column, values, boolean, True)
+
+    def or_where_integer_not_in_raw(self, column, values):
+        return self.where_integer_not_in_raw(column, values, "or")
+
     def where_null(self, column):
         self._where_clauses.append(("null", "and", column, None))
         return self
@@ -780,6 +804,15 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "integer_raw":
+                values, not_in = val
+                col = self._resolve_column(column)
+                expr = col.notin_(values) if not_in else col.in_(values)
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "like":
                 value, case_sensitive, negate = val
                 col = self._resolve_column(column)

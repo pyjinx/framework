@@ -321,12 +321,16 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     case-sensitive GLOB pattern conversion.
   - Partial slice (2026-08-22): Eloquent Builder forwards exists and like
     predicates while preserving model hydration and fluent chaining.
+  - Partial slice (2026-08-22): integer raw IN/NOT IN predicates normalize
+    nested values to integer comparisons and provide `or_where_*` variants.
   - Source mapping: Laravel `Query\Builder::whereExists` (2143–2162),
     `orWhereExists` (2166–2172), `whereNotExists` (2178–2181),
     `orWhereNotExists` (2189–2191), `whereLike` (1323–1336),
     `orWhereLike` (1346–1349), `whereNotLike` (1360–1363),
     `orWhereNotLike` (1373–1376), SQLite `SQLiteGrammar::whereLike` (54–62),
-    `prepareWhereLikeBinding` (71–78), Eloquent Builder forwarding,
+    `prepareWhereLikeBinding` (71–78), `whereIntegerInRaw` (1504–1521),
+    `orWhereIntegerInRaw` (1530–1533), `whereIntegerNotInRaw` (1543–1545),
+    `orWhereIntegerNotInRaw` (1555–1558), Eloquent Builder forwarding,
     `whereColumn` (1172–1205), `orWhereColumn` (1208–1211),
     `whereBetweenColumns` (1640–1654), `orWhereBetweenColumns` (1673–1676),
     `whereNotBetweenColumns` (1697–1700), `whereDate`/`orWhereDate`
@@ -348,8 +352,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 74 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 195
+    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 75 passed;
+    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 196
     passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
