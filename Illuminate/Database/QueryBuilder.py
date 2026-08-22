@@ -44,6 +44,13 @@ class QueryBuilder:
         self._columns = columns or ("*",)
         return self
 
+    def from_(self, table_name: str):
+        self.table_name = self.manager.prefixed_table_name(
+            table_name, self.connection_name
+        )
+        self._loaded_tables = None
+        return self
+
     def add_select(self, *columns):
         """Add columns to the current select, mirroring addSelect()."""
         if not self._columns or self._columns == ("*",):
@@ -92,6 +99,27 @@ class QueryBuilder:
             operator = "="
         self._conditions.append(("or", column, operator, value))
         return self
+
+    def where_exists(self, callback_or_query, boolean: str = "and", not_exists=False):
+        query = callback_or_query
+        if callable(callback_or_query):
+            query = QueryBuilder(self.manager, self.table_name, self.connection_name)
+            result = callback_or_query(query)
+            if isinstance(result, QueryBuilder):
+                query = result
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("An exists predicate requires a QueryBuilder.")
+        self._where_clauses.append(("exists", boolean, query, not_exists))
+        return self
+
+    def or_where_exists(self, callback_or_query, not_exists=False):
+        return self.where_exists(callback_or_query, "or", not_exists)
+
+    def where_not_exists(self, callback_or_query, boolean: str = "and"):
+        return self.where_exists(callback_or_query, boolean, True)
+
+    def or_where_not_exists(self, callback_or_query):
+        return self.where_exists(callback_or_query, "or", True)
 
     def where_all(self, columns, operator="=", value=None):
         if value is None:
@@ -728,6 +756,15 @@ class QueryBuilder:
                 and_clauses.append(expr)
 
         for kind, boolean, column, val in self._where_clauses:
+            if kind == "exists":
+                expr = exists(column._build_select())
+                if val:
+                    expr = ~expr
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "multi":
                 mode, operator, value, negate = val
                 expressions = [

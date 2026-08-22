@@ -312,7 +312,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     chunk sizes fail deterministically.
   - Partial slice (2026-08-22): Eloquent Builder wraps the same chunk and
     cursor operations and hydrates each row into the configured model class.
-  - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
+  - Partial slice (2026-08-22): `where_exists`, `where_not_exists`, and
+    `or_where_*` variants accept subquery builders or callback-configured
+    subqueries, including `from_` table selection, and compile SQLite EXISTS
+    predicates.
+  - Source mapping: Laravel `Query\Builder::whereExists` (2143–2162),
+    `orWhereExists` (2166–2172), `whereNotExists` (2178–2181),
+    `orWhereNotExists` (2189–2191), `whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
     (1697–1700), `whereDate`/`orWhereDate` (1801–1838),
@@ -334,9 +340,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar at `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and
     lock behavior at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py tests/test_eloquent_model.py -q` — 71 passed;
-    full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q` — 184
-    passed, 20 warnings.
+    tests/test_query_builder.py -q` — 51 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 193 passed, 20 warnings.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
     SQL grammar abstraction, binding buckets/cleaning, before-query callbacks,
