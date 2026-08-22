@@ -254,6 +254,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `or_where_json_contains_key`, `where_json_doesnt_contain_key`,
     `or_where_json_doesnt_contain_key`, `where_json_length`, and
     `or_where_json_length` use SQLite `json_type` and `json_array_length`.
+    `where_row_values` and `or_where_row_values` compare tuples of columns
+    against bound tuples and reject mismatched column/value lengths.
   - Source mapping: Laravel `Query\Builder::whereColumn` (1172–1205),
     `orWhereColumn` (1208–1211), `whereBetweenColumns` (1640–1654),
     `orWhereBetweenColumns` (1673–1676), `whereNotBetweenColumns`
@@ -265,14 +267,15 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `whereJsonDoesntContain`/`orWhereJsonDoesntContain` (2293–2308),
     `whereJsonContainsKey`/`orWhereJsonContainsKey` (2377–2395),
     `whereJsonDoesntContainKey`/`orWhereJsonDoesntContainKey` (2404–2418),
-    `whereJsonLength`/`orWhereJsonLength` (2429–2468), `lock` (3339),
-    `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447), `upsert`
-    (4378), and `getBindings` (4625); SQLite upsert grammar at
+    `whereJsonLength`/`orWhereJsonLength` (2429–2468),
+    `whereRowValues`/`orWhereRowValues` (2223–2248), `lock` (3339),
+    `lockForUpdate` (3355), `sharedLock` (3365), `toSql` (3447),
+    `upsert` (4378), and `getBindings` (4625); SQLite upsert grammar at
     `Query/Grammars/SQLiteGrammar.php::compileUpsert` (356) and lock behavior
     at `Query/Grammars/SQLiteGrammar.php::compileLock` (31).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_query_builder.py -q` — 46 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 158 passed.
+    tests/test_query_builder.py -q` — 47 passed; full PyJinx suite:
+    `uv run --no-sync python3 -m pytest tests/ -q` — 159 passed.
   - Residual parity gaps: this is SQLite-only (`DatabaseManager` currently
     supports SQLite); JSON object/complex-array containment, overlaps,
     SQL grammar abstraction, binding buckets/cleaning, before-query callbacks,

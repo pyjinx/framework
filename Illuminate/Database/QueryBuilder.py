@@ -12,6 +12,7 @@ from sqlalchemy import (
     or_,
     select,
     text,
+    tuple_,
     update,
 )
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
@@ -260,6 +261,25 @@ class QueryBuilder:
             value = operator
             operator = "="
         self._where_clauses.append(("json_length", "or", column, (operator, value)))
+        return self
+    def where_row_values(self, columns, operator, values):
+        columns = list(columns)
+        values = list(values)
+        if len(columns) != len(values):
+            raise ValueError("The number of columns must match the number of values")
+        self._where_clauses.append(
+            ("row_values", "and", columns, (operator, values))
+        )
+        return self
+
+    def or_where_row_values(self, columns, operator, values):
+        columns = list(columns)
+        values = list(values)
+        if len(columns) != len(values):
+            raise ValueError("The number of columns must match the number of values")
+        self._where_clauses.append(
+            ("row_values", "or", columns, (operator, values))
+        )
         return self
 
 
@@ -598,8 +618,9 @@ class QueryBuilder:
 
         for kind, boolean, column, val in self._where_clauses:
             json_kind = kind in {"json_contains", "json_key", "json_length"}
+            row_kind = kind == "row_values"
             base_column = column.split("->", 1)[0] if json_kind else column
-            col = self._resolve_column(base_column)
+            col = None if row_kind else self._resolve_column(base_column)
             if kind == "column":
                 operator, right_column = val
                 expr = self._comparison(
@@ -650,6 +671,13 @@ class QueryBuilder:
                     func.json_array_length(self._json_source(column)),
                     operator,
                     value,
+                )
+            elif kind == "row_values":
+                operator, values = val
+                expr = self._comparison(
+                    tuple_(*(self._resolve_column(item) for item in column)),
+                    operator,
+                    tuple(values),
                 )
             elif kind == "in":
                 expr = col.in_(val)
