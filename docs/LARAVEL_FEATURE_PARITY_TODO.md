@@ -356,36 +356,45 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     observers, dispatcher contracts, event faking, and full Laravel event
     ordering remain open.
 - [~] Complete Eloquent builders and collections: scopes, macros, collection transformations, lazy collections, chunk/cursor, eager loading, lazy loading, and N+1 controls.
-  - Partial slice (2026-08-22): Eloquent builders now expose `create_quietly`,
-    `force_create`, and `force_create_quietly` through the model's guarded and
-    event-suppression boundaries.
-  - Source mapping: Laravel `Builder::createQuietly` (1245–1250),
-    `Builder::forceCreate` (1256–1264), and
-    `Builder::forceCreateQuietly` (1269–1272).
+  - Partial slice (2026-08-22): Eloquent builders now expose
+    `create_quietly`, `force_create`, and `force_create_quietly` through the
+    model's guarded and event-suppression boundaries, plus `with_` nested
+    eager-loading and `where_has` relation filtering. Eager loading batches
+    has-many and belongs-to related records instead of issuing one query per
+    child.
+  - Source mapping: Laravel `Builder::with` (1742–1758),
+    `QueriesRelationships::whereHas` (170–173), and
+    `withWhereHas` (186–190); existing create/force mappings remain in the
+    implementation.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_eloquent_model.py -q` — 12 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 151 passed.
+    tests/test_post_comments_api.py tests/test_eloquent_model.py -q` — 21
+    passed; full PyJinx suite: `uv run --no-sync python3 -m pytest tests/ -q`
+    — 167 passed.
   - Residual parity gaps: scopes, macros, collections, lazy collections,
-    chunk/cursor, eager/lazy loading, N+1 controls, and the remainder of the
-    builder API remain open.
+    chunk/cursor, constrained eager loading, morph relations, relation
+    matching, N+1 controls beyond the implemented batch loader, and the
+    remainder of the builder API remain open.
 - [~] Complete Eloquent relationships: belongs-to, has-one, has-many, many-to-many, pivot records, through relations, polymorphic relations, touching, eager constraints, and relationship serialization.
   - Partial slice (2026-08-22): the application now has `Post`/`Comment`
     models, `User.posts`/`User.comments`, `Post.user`/`Post.comments`, and
     `Comment.post`/`Comment.user` relationships. A deterministic seeder
-    creates multiple posts and varied comments across users; `GET
-    /api/posts/{post}?comment_email=...` returns only comments authored by the
-    requested email.
-  - Source mapping: Laravel `Model::hasMany`/`belongsTo` relationship
-    contracts and `HasOneOrMany`/`BelongsTo` relation boundaries; application
-    implementation is in `app/Models/Post.py`, `Comment.py`, `User.py`,
-    `PostController.py`, and the posts/comments migration and seeder.
+    creates multiple posts and varied comments across users. The ORM endpoint
+    `GET /api/posts?email=...` uses `where_has("user", ...)` and
+    `with_(["user", "comments.user"])` to return all posts owned by the user
+    with all comments and their authors; the acceptance test compares the
+    response against ORM-derived expected relationships.
+  - Source mapping: Laravel `Model::hasMany`/`belongsTo`, Eloquent
+    `Builder::with`/`whereHas`, and `HasOneOrMany`/`BelongsTo` relation
+    boundaries; application implementation is in `app/Models/Post.py`,
+    `Comment.py`, `User.py`, `PostController.py`, and the posts/comments
+    migration, seeder, and acceptance test.
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_post_comments_api.py -q` — 1 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 166 passed.
-  - Residual parity gaps: through/polymorphic relations, touching, eager
-    constraints/loading, relation matching, collection behavior, N+1
-    prevention, complete relation lifecycle events, and broad Laravel
-    relationship API parity remain open.
+    `uv run --no-sync python3 -m pytest tests/ -q` — 167 passed.
+  - Residual parity gaps: through/polymorphic relations, touching, constrained
+    eager loading beyond nested paths, relation matching for arbitrary model
+    graphs, collection behavior, complete relation lifecycle events, and
+    broad Laravel relationship API parity remain open.
 - [~] Complete soft deletes, factories, seeders, pagination, JSON resources, model policies, and model route binding.
   - Partial slice (2026-08-22): soft-delete restore now respects the model's
     configurable updated timestamp column and suppresses the timestamp update

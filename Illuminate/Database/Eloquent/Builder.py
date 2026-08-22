@@ -8,6 +8,8 @@ class Builder:
         self.model_class = model_class
         self.query = model_class._query_builder()
         self._default_scope_applied = False
+        self._with_relations: list[str] = []
+        self._where_has_relations = []
         if issubclass(model_class, SoftDeletes):
             self.query.where_null(model_class.DELETED_AT)
             self._default_scope_applied = True
@@ -20,6 +22,15 @@ class Builder:
 
     def or_where(self, column, operator="=", value=None):
         self.query.or_where(column, operator, value)
+        return self
+    def with_(self, *relations):
+        if len(relations) == 1 and isinstance(relations[0], (list, tuple)):
+            relations = tuple(relations[0])
+        self._with_relations.extend(str(relation) for relation in relations)
+        return self
+
+    def where_has(self, relation, callback=None):
+        self._where_has_relations.append((relation, callback))
         return self
 
     # ---- Select and joins ----
@@ -105,11 +116,82 @@ class Builder:
     def for_page(self, page, per_page=15):
         self.query.for_page(page, per_page)
         return self
+    def _relation_for(self, model, name):
+        relation_method = getattr(model, name)
+        return relation_method()
+
+    def _apply_where_has(self, models):
+        for relation_name, callback in self._where_has_relations:
+            prototype = self.model_class({}, exists=False)
+            relation = self._relation_for(prototype, relation_name)
+            related_builder = relation.query.model_class.query()
+            if callback is not None:
+                callback(related_builder)
+            matching = related_builder.get()
+            if hasattr(relation, "owner_key"):
+                allowed = {getattr(item, relation.owner_key) for item in matching}
+                models = [
+                    model
+                    for model in models
+                    if getattr(model, relation.foreign_key, None) in allowed
+                ]
+            else:
+                allowed = {
+                    getattr(item, relation.foreign_key, None) for item in matching
+                }
+                models = [
+                    model
+                    for model in models
+                    if getattr(model, relation.local_key, None) in allowed
+                ]
+        return models
+
+    def _eager_load_path(self, models, path):
+        if not models or not path:
+            return
+        relation_name = path[0]
+        relation = self._relation_for(models[0], relation_name)
+        related_class = relation.query.model_class
+        if hasattr(relation, "owner_key"):
+            keys = {
+                getattr(model, relation.foreign_key, None)
+                for model in models
+            }
+            related = related_class.query().where_in(relation.owner_key, keys).get()
+            by_key = {getattr(item, relation.owner_key): item for item in related}
+            related_models = []
+            for model in models:
+                item = by_key.get(getattr(model, relation.foreign_key, None))
+                model._relations[relation_name] = item
+                if item is not None:
+                    related_models.append(item)
+        else:
+            keys = {
+                getattr(model, relation.local_key, None)
+                for model in models
+            }
+            related = related_class.query().where_in(relation.foreign_key, keys).get()
+            grouped = {key: [] for key in keys}
+            for item in related:
+                grouped.setdefault(getattr(item, relation.foreign_key, None), []).append(item)
+            related_models = []
+            for model in models:
+                items = grouped.get(getattr(model, relation.local_key, None), [])
+                model._relations[relation_name] = items
+                related_models.extend(items)
+        self._eager_load_path(related_models, path[1:])
+
+    def _eager_load(self, models):
+        for relation in self._with_relations:
+            self._eager_load_path(models, relation.split("."))
 
     # ---- Read operations ----
 
     def get(self):
-        return [self.model_class(record, exists=True) for record in self.query.get()]
+        models = [self.model_class(record, exists=True) for record in self.query.get()]
+        models = self._apply_where_has(models)
+        self._eager_load(models)
+        return models
 
     def first(self):
         record = self.query.first()
