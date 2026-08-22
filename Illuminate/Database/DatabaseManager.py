@@ -48,6 +48,7 @@ class DatabaseManager:
         self.config = config
         self._engines: dict[str, Engine] = {}
         self._dynamic_connection_configurations: dict[str, dict] = {}
+        self._extensions: dict[str, Callable] = {}
         self._engine_fingerprints: dict[str, tuple[str, bool]] = {}
         self._session_factories: dict[str, sessionmaker] = {}
         self._active_sessions: dict[str, WeakSet[Session]] = {}
@@ -78,8 +79,15 @@ class DatabaseManager:
             return self._engines[database_name]
 
         connection = self._configuration(database_name)
+        resolver = self._extensions.get(database_name) or self._extensions.get(
+            connection.get("driver")
+        )
         url = self._url(connection)
-        engine = create_engine(url, future=True)
+        engine = (
+            resolver(connection, database_name)
+            if resolver is not None
+            else create_engine(url, future=True)
+        )
         event.listen(engine, "before_cursor_execute", self._before_cursor_execute)
         event.listen(
             engine,
@@ -142,6 +150,12 @@ class DatabaseManager:
 
     def listen(self, callback: Callable[[QueryExecuted], object]) -> None:
         self._query_listeners.append(callback)
+
+    def extend(self, name: str, resolver: Callable) -> None:
+        self._extensions[name] = resolver
+
+    def forget_extension(self, name: str) -> None:
+        self._extensions.pop(name, None)
 
     @staticmethod
     def _before_cursor_execute(

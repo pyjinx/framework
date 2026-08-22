@@ -223,8 +223,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `supported_drivers` reports Laravel's
     declared MySQL/MariaDB/PostgreSQL/SQLite/SQL Server driver set, while
     `available_drivers` reports the currently implemented SQLite backend.
+  - Partial slice (2026-08-22): named and driver-keyed extension resolvers
+    support custom Engine construction through `extend` and
+    `forget_extension`, while preserving manager-owned listeners, sessions,
+    and cached-engine lifecycle.
   - Source mapping: Laravel `DatabaseManager::supportedDrivers` (414–417),
-    `availableDrivers` (424–430), `Connection::getConfig` (1502–1517),
+    `availableDrivers` (424–430), `extend` (439–443),
+    `forgetExtension` (450–453), `Connection::getConfig` (1502–1517),
     `getDriverName` (1535–1538), `getDatabaseName` (1766–1770),
     `getPdo` (1292–1305), `getRawPdo` (1308–1311),
     `getReadPdo` (1318–1375), `getName`/`getNameWithReadWriteType` (1479–1494),
@@ -234,7 +239,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `configuration` (219–231), and `purge` (301–312).
   - Evidence: `cd port/pyjinx && uv run --no-sync python3 -m pytest
     tests/test_database.py -q` — 36 passed; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 191 passed, 20 warnings.
+    `uv run --no-sync python3 -m pytest tests/ -q` — 192 passed, 20 warnings.
   - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
     connector extensions/events, transaction manager semantics, retries,
     normalized exceptions, and complete connection API remain open.
