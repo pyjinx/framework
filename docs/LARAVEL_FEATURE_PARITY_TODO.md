@@ -339,11 +339,13 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     GROUP BY expressions while preserving ordinary group ordering.
   - Partial slice (2026-08-22): `having_raw` and `or_having_raw` support
     parameterized aggregate HAVING expressions.
+  - Partial slice (2026-08-22): Eloquent Builder forwards raw WHERE,
+    SELECT, ORDER BY, GROUP BY, and HAVING methods with fluent model queries.
   - Source mapping: Laravel `Query\Builder::whereRaw` (1292–1305),
     `orWhereRaw` (1308–1310), `selectRaw` (356–366),
     `orderByRaw` (3119–3126), `groupByRaw` (2690–2703),
-    `havingRaw` (2944–2968), and `orHavingRaw` (2978–2981).
-  - Source mapping: Laravel `Query\Builder::whereIn` (1422–1455),
+    `havingRaw` (2944–2968), and `orHavingRaw` (2978–2981);
+    Eloquent Builder forwarding; `Query\Builder::whereIn` (1422–1455),
     `orWhereIn` (1465–1467), `whereNotIn` (1478–1481), and
     `orWhereNotIn` (1490–1492).
   - Source mapping: Laravel `Query\Builder::whereNot` (1139–1155),
