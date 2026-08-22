@@ -52,6 +52,11 @@ revalidated.
      installation exposes the `pyjinx` console entry point; `pyjinx --version`,
      `pyjinx serve --help`, and the real serve request path now load
      `ApplicationBuilder` successfully under the moved project layout.
+   - Packaging slice (2026-08-22): both manifests use PEP 621 metadata and
+     uv-managed dependencies. The application maps the local framework
+     submodule through `tool.uv.sources` for development, while
+     `uv sync --no-sources` resolves the published `pyjinx` package for
+     production-like installation.
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_exception_handler.py tests/test_serve_command.py
     tests/test_post_comments_api.py -q` plus direct
