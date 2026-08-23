@@ -236,15 +236,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-23): `ConnectionResolver` now mirrors Laravel's
     registered connection lookup, default connection selection, registration,
     and presence checks.
-  - Evidence: URL/parser, resolver, and focused database configuration tests —
-    55 passed; warning-as-error full suite — 196 passed.
+  - Partial slice (2026-08-23): SQLite `read` and `write` configuration
+    overrides create distinct suffixed engines while preserving the shared
+    base connection when no overrides are configured.
+  - Source mapping: Laravel `ConnectionFactory::createReadWriteConnection`,
+    `getReadConfig`, `getWriteConfig`, and `mergeReadWriteConfig`.
+  - Evidence: URL/parser, resolver, read/write, and focused database
+    configuration tests — 56 passed; warning-as-error full suite — 197 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and
     `get_name_with_read_write_type` as explicit SQLAlchemy resource/name
     boundaries. `get_pdo` returns a pooled DBAPI connection that callers must
-    close; read/write routing is intentionally collapsed to the configured
-    SQLite connection.
+    close; SQLite read/write suffixes now select configured overrides and
+    otherwise collapse to the configured base engine.
   - Partial slice (2026-08-22): `build`, `connect_using`, and deterministic
     `calculate_dynamic_connection_name` support Laravel-style dynamic SQLite
     connections. Forced rebuilds purge the previous engine while retaining the
