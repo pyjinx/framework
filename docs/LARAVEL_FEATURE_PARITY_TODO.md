@@ -292,14 +292,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     reconnect, disconnect, purge, and engine-resource methods. DatabaseManager
     returns adapters while query/schema callers bind the underlying SQLAlchemy
     engine explicitly.
-  - Current evidence: connection, adapter, resolver, URL, and lifecycle tests —
-    61 focused tests; warning-as-error full suite: 202 passed.
+  - Current evidence: connection, adapter, resolver, URL, lifecycle, and
+    reconnector tests — 62 focused tests; warning-as-error full suite:
+    203 passed.
   - Residual parity gaps: complete Laravel `Connection`/PDO public-method
-    coverage, manager-level `setReconnector` integration, connector events,
-    complete connection lifecycle integration, and remaining normalized
-    exception semantics remain partial or intentionally blocked. Strict mode
-    and non-SQLite connectors/drivers remain outside the implemented SQLite
-    backend.
+    coverage, connector events, complete connection lifecycle integration, and
+    remaining normalized exception semantics remain partial or intentionally
+    blocked. Strict mode and non-SQLite connectors/drivers remain outside the
+    implemented SQLite backend.
 - [ ] Complete database manager/resolver parity: connection switching,
   transactions, nested transactions, retries, query listeners, and normalized
   exceptions.
