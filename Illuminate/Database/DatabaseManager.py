@@ -209,6 +209,11 @@ class DatabaseManager:
         )
         for callback in tuple(self._query_listeners):
             callback(query)
+        adapter = self._engines.get(name) or self._engines.get(
+            self._engine_cache_name(name)
+        )
+        if adapter is not None:
+            adapter._dispatch_query(query)
 
     @staticmethod
     def _query_bindings(parameters, executemany: bool) -> list:

@@ -23,11 +23,20 @@ class Connection:
         self._read_pdo_config: dict = {}
         self._direct_pdo_config: dict = {}
         self.reconnector: Callable[[Connection], object] | None = None
+        self._listeners: list[Callable[[object], object]] = []
 
     @property
     def url(self):
         return self.engine.url
 
+
+    def listen(self, callback: Callable[[object], object]) -> Connection:
+        self._listeners.append(callback)
+        return self
+
+    def _dispatch_query(self, event) -> None:
+        for callback in tuple(self._listeners):
+            callback(event)
     def __getattr__(self, name: str):
         return getattr(self.engine, name)
 
