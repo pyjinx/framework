@@ -233,9 +233,10 @@
   SQLite backend. Strict-mode and driver-specific connector behavior remain
   partial and must not be invented without an implemented backend.
 - **Residuals:** Complete Laravel `Connection`/PDO semantics,
-  `setReconnector`, nested URL query arrays, connector events, and full
-  normalized exception/lifecycle behavior remain open or intentionally
-  blocked.
-- **Evidence:** focused connection/parser/resolver/read-write/transaction-mode/
-  session tests passed (58 total in the connection regression group);
-  warning-as-error full starter suite passed (199 tests).
+  `setReconnector`, connector events, full normalized exception/lifecycle
+  behavior, and remaining Connection API methods remain open or intentionally
+  blocked. Strict mode and non-SQLite connector behavior are outside the
+  implemented SQLite backend.
+- **Evidence:** focused connection/parser/resolver/nested-query/read-write/
+  transaction-mode/session tests passed (59 total in the connection regression
+  group); warning-as-error full starter suite passed (200 tests).

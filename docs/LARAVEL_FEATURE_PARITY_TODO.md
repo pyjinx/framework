@@ -245,9 +245,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-23): session factories and active-session cleanup
     normalize `::read`/`::write` suffixes to their engine resource keys when
     no distinct read/write override exists.
-  - Evidence: URL/parser, resolver, transaction-mode, read/write, session
-    suffix, and focused database configuration tests — 58 passed;
-    warning-as-error full suite — 199 passed.
+  - Evidence: URL/parser, resolver, nested-query, transaction-mode, read/write,
+    session suffix, and focused database configuration tests — 59 passed;
+    warning-as-error full suite — 200 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and
@@ -290,14 +290,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Current evidence: `cd starter && uv run python -m pytest
     tests/test_database.py tests/test_database_exceptions.py
     tests/test_lost_connection_detector.py tests/test_configuration_url_parser.py
-    tests/test_connection_resolver.py -q` — 56 passed; warning-as-error full
+    tests/test_connection_resolver.py -q` — 59 passed; warning-as-error full
     suite: `uv run python -m pytest -W error::DeprecationWarning tests/ -q` —
-    197 passed.
+    200 passed.
   - Residual parity gaps: Laravel's full `Connection`/PDO contract,
-    `setReconnector`, transaction-mode configuration, nested URL query arrays,
-    strict mode, non-SQLite connectors/drivers, connector events, complete
-    connection lifecycle integration, and remaining normalized exception
-    semantics remain partial or intentionally blocked.
+    `setReconnector`, connector events, complete connection lifecycle
+    integration, and remaining normalized exception semantics remain partial
+    or intentionally blocked. Strict mode and non-SQLite connectors/drivers
+    remain outside the implemented SQLite backend.
 - [ ] Complete database manager/resolver parity: connection switching,
   transactions, nested transactions, retries, query listeners, and normalized
   exceptions.
