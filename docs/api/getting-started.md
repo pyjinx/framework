@@ -1,10 +1,8 @@
 # Getting Started with PyJinx
 
-This guide shows how to boot a PyJinx application from your package and start handling requests.
-
-> Status note
->
-> PyJinx currently exposes core runtime components and route/DI/validation/CLI scaffolding. This guide reflects the intended public API for stable development.
+This guide creates a PyJinx project, defines one web route, and renders the
+first response in a browser. It follows the Laravel-style command boundary:
+`pyjinx` creates projects; `loom` runs inside a project.
 
 ## 1) Install the CLI and create an application
 
@@ -31,82 +29,42 @@ PowerShell, activate it with:
 .venv\Scripts\Activate.ps1
 ```
 
-The development server is available at `http://localhost:8000`.
+The development server is available at <http://localhost:8000>.
 
-## 2) Application bootstrap
+## 2) Define the web route
 
-Create or customize `bootstrap/app.py`:
+The generated starter keeps the route file explicit:
 
 ```python
-from pathlib import Path
-from Illuminate.Foundation.Application import Application
+# routes/web.py
+from Illuminate.Support.Facades.Route import Route
 
-app = (
-    Application.configure(base_path=Path(__file__).resolve().parent.parent)
-    .with_routing()
-    .with_middleware()
-    .with_exceptions()
-    .create()
-)
+from app.Http.Controllers.HomeController import HomeController
+
+
+Route.get("/", [HomeController, "index"]).name("home").middleware("web")
 ```
 
-`Application.configure(...).create()` returns the central `Application` instance.
+## 3) Add the controller
 
-## 3) Register routes
-
-Use the application router service:
+The controller returns the starter welcome view:
 
 ```python
-from Illuminate.Foundation.Application import Application
-from your_app.controllers.HomeController import HomeController
-
-# from your bootstrap
-router = app.make("router")
-
-router.get("/", [HomeController, "index"])  # controller@method style
-router.post("/users", [UserController, "store"])
-router.get("/health", lambda request: {"status": "ok"})
-```
-
-## 4) Serve a request
-
-PyJinx currently runs through the HTTP kernel in WSGI compatibility flow:
-
-```python
-from Illuminate.Http.WSGIServer import WSGIServer
+# app/Http/Controllers/HomeController.py
 from Illuminate.Http.Request import Request
+from Illuminate.Support.Facades.View import View
+from Illuminate.controller import Controller
 
 
-def wsgi_app(environ, start_response):
-    # create compatibility server object for this request
-    WSGIServer.create_server(environ, start_response)
-
-    # capture framework request object
-    request = Request.capture(app)
-
-    response = app.handle_request(request)
-
-    start_response(response.get_status_code(), response.get_headers())
-    return [response.get_content().encode("utf-8")]
+class HomeController(Controller):
+    def index(self, request: Request):
+        return View.make("welcome")
 ```
 
-## 5) Project-local CLI
+## 4) View the response in your browser
 
-The CLI command is `loom`. See [CLI docs](./cli.md).
+With `loom serve` running, open <http://localhost:8000/>. The browser renders
+the starter welcome page titled **“PyJinx — Laravel-shaped Python framework”**.
+Customize the response in `resources/views/welcome.html`.
 
-## 6) Starter workflow for first success path
-
-1. Configure routes
-2. Register request/response handlers
-3. Add validation to inputs
-4. Add migrations and run DB commands via CLI
-5. Add functional test for route + response
-
-For the required command set, see [CLI reference](../CLI_REFERENCE.md).
-
-## 7) Next
-
-- [Application bootstrap and lifecycle](./application.md)
-- [Routing details](./routing.md)
-- [Validation](./validation.md)
-- [CLI reference](../CLI_REFERENCE.md)
+For project-local command contracts, see the [CLI reference](../CLI_REFERENCE.md).
