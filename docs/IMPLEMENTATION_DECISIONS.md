@@ -132,9 +132,8 @@
   support, HTTP assertions, model factories, seeders, fakes, and controlled
   date/time fixtures.
 - **Commands:** `uv run pytest` is the authoritative application test runner;
-  the future `pyjinx-installer` distribution will expose the global
-  `pyjinx new hello-world` project creator and may add a test convenience
-  wrapper that delegates to pytest rather than creating a second test system.
+  the `loom new hello-world` project creator may add a test convenience wrapper
+  that delegates to pytest rather than creating a second test system.
 - **Test boundary:** Generated application tests validate application behavior;
   framework parity tests remain in the framework repository. The exhaustive
   Laravel framework test-suite port begins only after parity completion.
@@ -179,14 +178,13 @@
 
 ## 2026-08-23 — Framework CLI and global installer identities
 
-- **Decision:** Use `loom` as the project-local framework CLI, analogous to
-  Laravel's Artisan. Commands will be `loom serve`, `loom migrate`, and
-  `loom test`.
-- **Installer boundary:** The future `pyjinx-installer` distribution exposes
-  the global `pyjinx new hello-world` command. It is not the framework CLI.
-- **Migration:** After the Veyra rename, the installer becomes
-  `veyra-installer` and the project creator becomes `veyra new hello-world`;
-  the project-local framework CLI remains `loom`.
-- **Compatibility:** Do not retain a `pyjinx` alias for the project-local
-  framework CLI. The current starter `pyjinx` script is transitional and must
-  be replaced when the CLI migration slice is implemented.
+- **Decision:** Use `loom` as the single executable for both PyJinx and Veyra.
+  Global project creation uses `loom new hello-world`; project-local commands
+  use `loom serve`, `loom migrate`, and `loom test`.
+- **Installer boundary:** The `pyjinx-installer` distribution exposes the
+  global `loom` executable. The executable name is intentionally independent
+  of the temporary PyJinx and future Veyra distribution names.
+- **Migration:** After the Veyra rename, the installer distribution becomes
+  `veyra-installer`, but the global command remains `loom`.
+- **Compatibility:** Do not retain `pyjinx` or `veyra` executable aliases.
+  The current starter `pyjinx` script is replaced by `loom`.

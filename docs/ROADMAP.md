@@ -97,14 +97,14 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Scope
 
 - Add executable entrypoint:
-  - `pyjinx` (global or local project command).
+  - `loom` (global or local project command).
   - stable `--help`, `--version`, global options.
 - Command groups:
-  - `pyjinx new`, `pyjinx serve`, `pyjinx tinker`, `pyjinx about`.
-  - `pyjinx make:model|controller|middleware|command|migration|request|factory`.
-  - `pyjinx route:list`.
-  - `pyjinx migrate|migrate:status|migrate:rollback|db:seed`.
-  - `pyjinx queue:work|queue:retry|queue:failed`.
+  - `loom new`, `loom serve`, `loom tinker`, `loom about`.
+  - `loom make:model|controller|middleware|command|migration|request|factory`.
+  - `loom route:list`.
+  - `loom migrate|migrate:status|migrate:rollback|db:seed`.
+  - `loom queue:work|queue:retry|queue:failed`.
 - Stubs and generation:
   - deterministic stubs, overwrite policy, dry-run mode, and namespace/path inference.
 - Command test harness with snapshot/integration tests.
@@ -117,10 +117,10 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ### Acceptance
 
-- `pyjinx --help` enumerates available commands and groups.
-- `pyjinx serve` launches ASGI app with clear startup/stop behavior.
-- `pyjinx make:controller` writes deterministic skeleton.
-- `pyjinx route:list` reports route table from loaded bootstrap routes.
+- `loom --help` enumerates available commands and groups.
+- `loom serve` launches ASGI app with clear startup/stop behavior.
+- `loom make:controller` writes deterministic skeleton.
+- `loom route:list` reports route table from loaded bootstrap routes.
 
 ---
 
@@ -134,7 +134,7 @@ Version bands are placeholders and should be adjusted against release policy.
   - `app/`, `routes/`, `config/`, `resources/views/`, `database/migrations/`, `tests/`, `.env.example`.
 - Add `pyproject.toml` dependency on framework package semver-compatible.
 - Include first-class boot entrypoints:
-  - `pyjinx serve` delegating to ASGI app.
+  - `loom serve` delegating to ASGI app.
 - Add baseline modules:
   - sample controller,
   - sample route definitions,
@@ -153,7 +153,7 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Acceptance
 
 - New app can be created from framework command and boot without manual edits.
-- `pyjinx new` + `pyjinx serve` and one protected route test pass.
+- `loom new` + `loom serve` and one protected route test pass.
 
 ---
 

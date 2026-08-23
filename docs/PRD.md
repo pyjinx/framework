@@ -4,7 +4,7 @@
 
 PyJinx currently has a compact internal core in `Illuminate/`, but it does not yet deliver a production-grade Laravel-style developer framework. The v1.0 target is to build a Python-native, ASGI-first framework package (`pyjinx/framework`) plus a thin starter application (`pyjinx/starter`) with deterministic behavior, explicit contracts, strong typing, and high-fidelity DX.
 
-Primary acceptance target: a Laravel-inspired but non-trivial framework slice where a developer can create a real app with `pyjinx new`, run HTTP routes, apply validation, use database models/migrations, serve via ASGI, generate assets via CLI, and validate the app via functional tests.
+Primary acceptance target: a Laravel-inspired but non-trivial framework slice where a developer can create a real app with `loom new`, run HTTP routes, apply validation, use database models/migrations, serve via ASGI, generate assets via CLI, and validate the app via functional tests.
 
 ---
 
@@ -163,20 +163,20 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 ### 5.8 CLI and scaffolding parity (Laravel-style)
 
 - **FR-19 CLI entrypoint**
-  - Global command is `pyjinx` (and local `python -m pyjinx` fallback).
+  - Global and project-local command executable is `loom`.
   - Root command groups follow `make:*`, `queue:*`, `migrate:*`, `config:*`, `route:*` conventions.
 
 - **FR-20 Required command surface for v1.0**
 
   | Category | Laravel analog | PyJinx minimum command | Contract |
   |---|---|---|---|
-  | App lifecycle | `serve`, `up`, `down` | `pyjinx serve`, `pyjinx up`, `pyjinx down` | Start/stop dev runtime and optional maintenance mode |
-  | Scaffold | `make:model`, `make:controller`, `make:migration`, `make:middleware`, `make:command` | `pyjinx make:model`, `pyjinx make:controller`, `pyjinx make:migration`, `pyjinx make:middleware`, `pyjinx make:command` | Files generated from deterministic stubs + overwrite policy |
-  | Routing | `route:list` | `pyjinx route:list` | Deterministic route discovery output |
-  | Database | `migrate`, `migrate:status`, `migrate:rollback`, `db:seed` | `pyjinx migrate`, `pyjinx migrate:status`, `pyjinx migrate:rollback`, `pyjinx db:seed` | Alembic-backed execution + exit status contracts |
-  | Queue | `queue:work`, `queue:retry`, `queue:failed` | `pyjinx queue:work`, `pyjinx queue:retry`, `pyjinx queue:failed` | Queue contract execution and monitoring hooks |
-  | Cache/config | `config:cache`, `config:clear`, `cache:clear` | `pyjinx config:cache`, `pyjinx config:clear`, `pyjinx cache:clear` | Idempotent file cache with safe invalidation |
-  | Diagnostics | `tinker`, `route:list`, `about` | `pyjinx tinker`, `pyjinx about` | Safe shell/repl and summary commands |
+  | App lifecycle | `serve`, `up`, `down` | `loom serve`, `loom up`, `loom down` | Start/stop dev runtime and optional maintenance mode |
+  | Scaffold | `make:model`, `make:controller`, `make:migration`, `make:middleware`, `make:command` | `loom make:model`, `loom make:controller`, `loom make:migration`, `loom make:middleware`, `loom make:command` | Files generated from deterministic stubs + overwrite policy |
+  | Routing | `route:list` | `loom route:list` | Deterministic route discovery output |
+  | Database | `migrate`, `migrate:status`, `migrate:rollback`, `db:seed` | `loom migrate`, `loom migrate:status`, `loom migrate:rollback`, `loom db:seed` | Alembic-backed execution + exit status contracts |
+  | Queue | `queue:work`, `queue:retry`, `queue:failed` | `loom queue:work`, `loom queue:retry`, `loom queue:failed` | Queue contract execution and monitoring hooks |
+  | Cache/config | `config:cache`, `config:clear`, `cache:clear` | `loom config:cache`, `loom config:clear`, `loom cache:clear` | Idempotent file cache with safe invalidation |
+  | Diagnostics | `tinker`, `route:list`, `about` | `loom tinker`, `loom about` | Safe shell/repl and summary commands |
 
 - **FR-21 CLI behavior requirements**
   - `--help`, `--quiet`, `--version` supported consistently.
@@ -257,7 +257,7 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 ## 9) Acceptance gates (v1.0 candidate)
 
-1. Run `pyjinx new` then scaffold app bootstraps.
+1. Run `loom new` then scaffold app bootstraps.
 2. Define and serve at least one route via ASGI.
 3. Validate payload with rule DSL from request class.
 4. Run migration create + migrate + rollback on starter db.

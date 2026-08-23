@@ -128,7 +128,7 @@ Use short, shippable milestones:
 4. Preserve existing minimal list/help semantics while migrating internals.
 
 **Acceptance:**
-- Running `pyjinx --help` prints consistent root help with command groups.
+- Running `loom --help` prints consistent root help with command groups.
 - `list`/`help` behavior remains backward-compatible.
 
 ### 2.2 Command set for v1.0
@@ -144,20 +144,20 @@ Use short, shippable milestones:
 
 **Tasks:**
 1. Implement command parser and routing for:
-   - `pyjinx new`
-   - `pyjinx serve`
-   - `pyjinx make:model`
-   - `pyjinx make:controller`
-   - `pyjinx make:middleware`
-   - `pyjinx make:command`
-   - `pyjinx route:list`
-   - `pyjinx migrate`
-   - `pyjinx migrate:status`
-   - `pyjinx migrate:rollback`
-   - `pyjinx db:seed`
-   - `pyjinx queue:work`
-   - `pyjinx queue:retry`
-   - `pyjinx queue:failed`
+   - `loom new`
+   - `loom serve`
+   - `loom make:model`
+   - `loom make:controller`
+   - `loom make:middleware`
+   - `loom make:command`
+   - `loom route:list`
+   - `loom migrate`
+   - `loom migrate:status`
+   - `loom migrate:rollback`
+   - `loom db:seed`
+   - `loom queue:work`
+   - `loom queue:retry`
+   - `loom queue:failed`
 2. Add stub loading + overwrite/collision guard.
 3. Provide command metadata for help text and grouped listing.
 4. Add command integration tests (smoke + golden for help output).
@@ -199,7 +199,7 @@ Use short, shippable milestones:
 5. Add test suite scaffold with at least one functional flow.
 
 **Acceptance:**
-- `pyjinx new` produces a runnable skeleton that boots and serves a smoke route.
+- `loom new` produces a runnable skeleton that boots and serves a smoke route.
 
 ### 3.2 Vertical slice contract in starter
 
@@ -292,12 +292,12 @@ Use short, shippable milestones:
 
 ### Functional
 - Serve one request -> middleware -> controller -> JSON response.
-- `pyjinx` command operations.
+- `loom` command operations.
 - Bootstrap and startup lifecycle in both HTTP and CLI entry paths.
 
 ### Smoke checks for each release candidate
 - Fresh project scaffold.
-- `pyjinx serve` + route/list.
+- `loom serve` + route/list.
 - CLI command list/help.
 - Simple migration + rollback.
 

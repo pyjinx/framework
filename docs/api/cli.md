@@ -1,66 +1,66 @@
-# CLI API (`pyjinx`)
+# CLI API (`loom`)
 
-PyJinx CLI uses a single command surface with Laravel-style grouped commands.
+PyJinx CLI uses a single `loom` command surface with Laravel-style grouped
+commands. The same executable is used by PyJinx and the future Veyra line.
 
 ## Global behavior
 
-- Command root: `pyjinx`
-- Help: `pyjinx --help`
-- Version: `pyjinx --version`
-- Quiet mode: `pyjinx --quiet`
+- Command root: `loom`
+- Help: `loom --help`
+- Version: `loom --version`
+- Quiet mode: `loom --quiet`
 
 ## Command groups and examples
 
 ### App lifecycle
 
 ```bash
-pyjinx serve             # run application server (ASGI-first target)
-pyjinx up
-pyjinx down
-pyjinx tinker
-pyjinx about
-```
+loom serve             # run application server (ASGI-first target)
+loom up
+loom down
+loom tinker
+loom about
 
 ### Scaffolding
 
 ```bash
-pyjinx make:model User
-pyjinx make:controller AuthController
-pyjinx make:middleware VerifyCsrf
-pyjinx make:command PurgeCache
-pyjinx make:migration create_users_table
-pyjinx make:request CreateUserRequest
-pyjinx make:factory UserFactory
+loom make:model User
+loom make:controller AuthController
+loom make:middleware VerifyCsrf
+loom make:command PurgeCache
+loom make:migration create_users_table
+loom make:request CreateUserRequest
+loom make:factory UserFactory
 ```
 
 ### Routing
 
 ```bash
-pyjinx route:list
+loom route:list
 ```
 
 ### Project initialization
 
 ```bash
-pyjinx new my-project
+loom new my-project
 ```
 
 ### Database commands
 
 ```bash
-pyjinx migrate
-pyjinx migrate:status
-pyjinx migrate:status --pending
-pyjinx migrate:rollback
-pyjinx db:seed
+loom migrate
+loom migrate:status
+loom migrate:status --pending
+loom migrate:rollback
+loom db:seed
 ```
 
 ### Queue commands
 
 ```bash
-pyjinx queue:work
-pyjinx queue:retry
-pyjinx queue:failed
+loom queue:work
+loom queue:retry
+loom queue:failed
 ```
 
 ## Console kernel behavior

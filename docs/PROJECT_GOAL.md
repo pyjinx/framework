@@ -42,13 +42,12 @@ intended to be copied into production projects.
 
 Distribution names are transitional until the dedicated Veyra migration:
 `pyjinx` is the current framework package, `pyjinx-starter` is the current
-skeleton package, and `pyjinx-installer` will provide the global `pyjinx`
-command. Users should run `pyjinx new hello-world`; the generated project's
-local framework command, analogous to Laravel Artisan, is `loom` with no
-`pyjinx` compatibility alias. The final names are planned as `veyra`,
-`veyra-starter`, and `veyra-installer`; the installer command becomes
-`veyra new hello-world`, while the project-local framework command remains
-`loom`. Do not create a separate `pyjinx_core` or `pyjinx_framework` package.
+skeleton package, and `pyjinx-installer` provides the global `loom` command.
+Users should run `loom new hello-world`; generated projects use the same
+`loom` executable for `loom serve`, `loom migrate`, and `loom test`. The final
+distribution names are planned as `veyra`, `veyra-starter`, and
+`veyra-installer`; the executable remains `loom`. Do not create a separate
+`pyjinx_core` or `pyjinx_framework` package.
 
 ## Fidelity Rule
 

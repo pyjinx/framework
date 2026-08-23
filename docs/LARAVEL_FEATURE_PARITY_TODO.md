@@ -49,8 +49,8 @@ revalidated.
      normalizes model/list/dict responses through `ResponseFactory.serialize`;
      controllers can return model objects directly.
    - CLI runtime slice (2026-08-22): the editable application/framework
-     installation exposes the `pyjinx` console entry point; `pyjinx --version`,
-     `pyjinx serve --help`, and the real serve request path now load
+     installation exposes the `loom` console entry point; `loom --version`,
+     `loom serve --help`, and the real serve request path now load
      `ApplicationBuilder` successfully under the moved project layout.
    - Packaging slice (2026-08-22): both manifests use PEP 621 metadata and
      uv-managed dependencies. The application maps the local framework

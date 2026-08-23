@@ -8,10 +8,10 @@ This guide shows how to boot a PyJinx application from your package and start ha
 
 ## 1) Install and initialize the framework
 
-Install dependencies (Poetry):
+Install dependencies with uv:
 
 ```bash
-poetry install
+uv sync
 ```
 
 Create an application bootstrap file (example: `bootstrap/app.py`):
@@ -71,7 +71,7 @@ def wsgi_app(environ, start_response):
 
 ## 4) CLI entrypoint
 
-The intended CLI command is `pyjinx` (or `python -m pyjinx` fallback). See [CLI docs](./cli.md).
+The CLI command is `loom`. See [CLI docs](./cli.md).
 
 ## 5) Starter workflow for first success path
 
