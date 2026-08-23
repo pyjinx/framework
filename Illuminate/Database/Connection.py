@@ -24,6 +24,7 @@ class Connection:
         self._direct_pdo_config: dict = {}
         self.reconnector: Callable[[Connection], object] | None = None
         self._listeners: list[Callable[[object], object]] = []
+        self._before_callbacks: list[Callable[[str, object], object]] = []
 
     @property
     def url(self):
@@ -33,6 +34,16 @@ class Connection:
     def listen(self, callback: Callable[[object], object]) -> Connection:
         self._listeners.append(callback)
         return self
+
+    def before_executing(
+        self, callback: Callable[[str, object], object]
+    ) -> Connection:
+        self._before_callbacks.append(callback)
+        return self
+
+    def _dispatch_before(self, query: str, bindings) -> None:
+        for callback in tuple(self._before_callbacks):
+            callback(query, bindings)
 
     def _dispatch_query(self, event) -> None:
         for callback in tuple(self._listeners):
@@ -52,7 +63,7 @@ class Connection:
     def get_pdo(self):
         return self.raw_connection()
     def select(self, query: str, bindings=(), use_read_pdo: bool = True) -> list[dict]:
-        del use_read_pdo
+        self._dispatch_before(query, bindings)
         with self.engine.connect() as connection:
             return [
                 dict(row)
@@ -64,7 +75,7 @@ class Connection:
         return rows[0] if rows else None
 
     def scalar(self, query: str, bindings=(), use_read_pdo: bool = True):
-        del use_read_pdo
+        self._dispatch_before(query, bindings)
         with self.engine.connect() as connection:
             return connection.exec_driver_sql(query, bindings).scalar()
 
@@ -81,11 +92,13 @@ class Connection:
         return self.affecting_statement(query, bindings)
 
     def statement(self, query: str, bindings=()) -> bool:
+        self._dispatch_before(query, bindings)
         with self.engine.begin() as connection:
             connection.exec_driver_sql(query, bindings)
         return True
 
     def affecting_statement(self, query: str, bindings=()) -> int:
+        self._dispatch_before(query, bindings)
         with self.engine.begin() as connection:
             return connection.exec_driver_sql(query, bindings).rowcount
 
