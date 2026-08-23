@@ -156,3 +156,23 @@
   explicit SQLAlchemy/SQLite datetime binding and hydration strategy. Warning
   filters or blanket suppression are prohibited; the deprecated implicit
   sqlite3 datetime adapter must be eliminated with round-trip evidence.
+
+## 2026-08-23 — Next.js website and documentation platform
+
+- **Decision:** Build the public website with Next.js App Router and use
+  Fumadocs (`fumadocs-mdx`, `fumadocs-core`, `fumadocs-ui`,
+  `fumadocs-openapi`, and Shiki) for documentation.
+- **Routes:** The main marketing site owns `/`; handwritten Markdown/MDX
+  documentation lives under `/docs`; generated API reference pages live under
+  `/docs/api` or versioned `/docs/api/v1` routes.
+- **Source boundary:** Narrative docs remain hand-authored MDX. API pages are
+  generated from OpenAPI JSON/YAML produced from the Python framework/API
+  contract, avoiding duplicated endpoint definitions.
+- **Search/versioning:** Start with Fumadocs' Orama-based search and explicit
+  version folders/routes. Move released versions to immutable deployments or
+  subdomains when release freezing is required.
+- **Alternatives:** Nextra is weaker for integrated OpenAPI; Docusaurus is
+  mature but not Next.js; Mintlify has managed-hosting lock-in. Scalar may be
+  added later only for a standalone API explorer.
+- **Status:** Research-approved architecture; website implementation remains
+  a separate workspace and delivery stream.
