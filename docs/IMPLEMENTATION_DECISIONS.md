@@ -242,11 +242,12 @@
   `affecting_statement`, and `unprepared` operations, plus read/direct PDO
   metadata and driver/title/server-version accessors.
 - **Implemented:** adapter listeners receive manager `QueryExecuted` events
+  and before-executing callbacks receive SQL/bindings before adapter operations,
   while the underlying SQLAlchemy engine remains the execution boundary.
 - **Residuals:** Complete Laravel `Connection`/PDO method coverage, connector
-  events beyond query listeners, full normalized exception/lifecycle behavior,
-  strict mode, and non-SQLite connector behavior remain open or intentionally
-  blocked.
+  events beyond adapter query/before callbacks, full normalized exception/
+  lifecycle behavior, strict mode, and non-SQLite connector behavior remain
+  open or intentionally blocked.
 - **Evidence:** focused connection/adapter metadata/parser/resolver/read-write/
-  session/transaction/reconnector/SQL-operation/event tests passed (65 total);
-  warning-as-error full starter suite passed (206 tests).
+  session/transaction/reconnector/SQL-operation/event tests passed (66 total);
+  warning-as-error full starter suite passed (207 tests).

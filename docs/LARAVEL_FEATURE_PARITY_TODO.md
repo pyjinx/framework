@@ -296,17 +296,17 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `select`, `select_one`, `scalar`, `insert`, `update`, `delete`, `statement`,
     `affecting_statement`, and `unprepared` operations over SQLite, plus
     read/direct PDO metadata and driver/title/server-version accessors.
-  - Partial slice (2026-08-23): adapter listeners receive the manager's
-    `QueryExecuted` events while preserving the underlying SQLAlchemy engine
-    event boundary.
+  - Partial slice (2026-08-23): adapter listeners receive manager
+    `QueryExecuted` events and before-executing callbacks receive SQL/bindings
+    before adapter operations.
   - Current evidence: connection, adapter metadata/SQL/events, resolver, URL,
-    lifecycle, and reconnector tests — 65 focused tests; warning-as-error full
-    suite: 206 passed.
+    lifecycle, and reconnector tests — 66 focused tests; warning-as-error full
+    suite: 207 passed.
   - Residual parity gaps: complete Laravel `Connection`/PDO public-method
-    coverage, connector events beyond query listeners, complete connection
-    lifecycle integration, and remaining normalized exception semantics remain
-    partial or intentionally blocked. Strict mode and non-SQLite connectors/
-    drivers remain outside the implemented SQLite backend.
+    coverage, connector events beyond adapter query/before callbacks, complete
+    connection lifecycle integration, and remaining normalized exception
+    semantics remain partial or intentionally blocked. Strict mode and
+    non-SQLite connectors/drivers remain outside the implemented SQLite backend.
 - [ ] Complete database manager/resolver parity: connection switching,
   transactions, nested transactions, retries, query listeners, and normalized
   exceptions.
