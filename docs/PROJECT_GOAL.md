@@ -41,11 +41,13 @@ only for local framework development and parity verification; it is not
 intended to be copied into production projects.
 
 Distribution names are transitional until the dedicated Veyra migration:
-`pyjinx` is the current framework package and `pyjinx-starter` is the current
-skeleton package. The final names are planned as `veyra`, `veyra-starter`, and
-future global installer `veyra-manager` with the console command
-`veyra_manager new hello-world`. Do not create a separate `pyjinx_core` or
-`pyjinx_framework` package.
+`pyjinx` is the current framework package, `pyjinx-starter` is the current
+skeleton package, and `pyjinx-installer` will provide the global `pyjinx`
+command. Users should run `pyjinx new hello-world`; the generated project's
+local environment may expose the same command for `serve`, `migrate`, and
+other application commands. The final names are planned as `veyra`,
+`veyra-starter`, and `veyra-installer`. Do not create a separate
+`pyjinx_core` or `pyjinx_framework` package.
 
 ## Fidelity Rule
 

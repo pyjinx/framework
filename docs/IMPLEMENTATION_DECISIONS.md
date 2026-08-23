@@ -132,16 +132,16 @@
   support, HTTP assertions, model factories, seeders, fakes, and controlled
   date/time fixtures.
 - **Commands:** `uv run pytest` is the authoritative application test runner;
-  a future `veyra_manager new` project creator may add a test convenience
-  wrapper, but it must delegate to pytest rather than create a second test
-  system.
+  the future `pyjinx-installer` distribution will expose the global
+  `pyjinx new hello-world` project creator and may add a test convenience
+  wrapper that delegates to pytest rather than creating a second test system.
 - **Test boundary:** Generated application tests validate application behavior;
   framework parity tests remain in the framework repository. The exhaustive
   Laravel framework test-suite port begins only after parity completion.
-- **Current naming:** `pyjinx` is the temporary framework distribution and
-  `pyjinx-starter` is the temporary skeleton distribution. The dedicated
-  Veyra migration will use `veyra`, `veyra-starter`, and future
-  `veyra-manager`/`veyra_manager`.
+- **Current naming:** `pyjinx` is the temporary framework distribution,
+  `pyjinx-starter` is the temporary skeleton distribution, and
+  `pyjinx-installer` is the future installer distribution. The dedicated Veyra
+  migration will use `veyra`, `veyra-starter`, and `veyra-installer`.
 
 ## 2026-08-22 — Carbon-equivalent date and time boundary
 
