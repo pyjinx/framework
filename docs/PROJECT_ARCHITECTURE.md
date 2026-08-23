@@ -29,53 +29,23 @@ implementation and is not copied into generated production projects.
 
 ## End-to-end architecture
 
-```mermaid
-flowchart LR
-    subgraph GitHub[GitHub repositories]
-        FW[pyjinx/framework\nframework source]
-        SK[pyjinx/pyjinx\nstarter skeleton]
-        SITE[pyjinx/website\nwebsite and docs]
-        INST[future pyjinx-installer\nproject creator]
-    end
+```text
+GitHub repositories             Local checkouts                 Published/runtime
+────────────────────            ───────────────                 ────────────────
+pyjinx/framework  ───────────▶  framework/  ────────────────▶  PyPI: pyjinx
+  framework source                   │                          framework package
+                                     │ editable submodule
+pyjinx/pyjinx  ───────────────▶  pyjinx/ + framework/ ───────▶  pyjinx-starter
+  starter skeleton                   │                          optional template
+                                     │
+pyjinx/website  ───────────────▶  website/ ─────────────────▶  Vercel: website
+  marketing and docs                                            /, /docs, /docs/api
 
-    subgraph Dev[Local development]
-        FWC[framework/\ncanonical checkout]
-        SKC[pyjinx/\napplication checkout]
-        SUB[pyjinx/framework/\neditable submodule]
-        SITEC[website/\nNext.js checkout]
-    end
+future pyjinx-installer ────────────────────────────────────▶  global command
+                                                               pyjinx new hello-world
 
-    subgraph Packages[Package indexes]
-        PYPIFW[PyPI: pyjinx\nframework package]
-        PYPIST[PyPI: pyjinx-starter\noptional skeleton package]
-        PYPIINST[future PyPI: pyjinx-installer\nprovides pyjinx command]
-    end
-
-    subgraph Generated[Generated application]
-        APP[hello-world/\ncreated from starter]
-        ENV[uv environment\npyjinx from PyPI]
-    end
-
-    subgraph Hosting[Deployment]
-        VERCEL[Vercel\nwebsite deployment]
-        DOMAIN[Future public domain\nveyraframework.com]
-    end
-
-    FW --> FWC
-    SK --> SKC
-    FWC -. development submodule .-> SUB
-    SITE --> SITEC
-    INST --> PYPIINST
-
-    FWC -->|publish wheel/sdist| PYPIFW
-    SKC -->|template/release| PYPIST
-    SITEC -->|Vercel build| VERCEL
-    VERCEL --> DOMAIN
-
-    PYPIINST -->|pyjinx new hello-world| APP
-    SKC -->|template source| APP
-    APP -->|uv sync --no-sources| ENV
-    PYPIFW --> ENV
+future installer ─────▶ copy starter skeleton ─────▶ hello-world/
+hello-world/ ──────────▶ uv sync --no-sources ──────▶ PyPI: pyjinx
 ```
 
 ## Identity map
@@ -106,38 +76,43 @@ framework package already owns that PyPI name. Its distribution is
 
 ## Development dependency flow
 
-```mermaid
-sequenceDiagram
-    participant Developer
-    participant Starter as pyjinx/pyjinx
-    participant Submodule as pyjinx/framework
-    participant Framework as sibling framework/
-    participant UV as uv
+```text
+Development dependency flow
 
-    Developer->>Starter: git submodule update --init
-    Starter->>Submodule: checkout pinned framework commit
-    Developer->>Starter: uv sync
-    UV->>Starter: read pyproject.toml
-    UV->>Submodule: resolve tool.uv.sources path
-    UV->>Submodule: install editable pyjinx package
-    Developer->>Starter: uv run pytest
-    Starter->>Submodule: import Illuminate.*
-    Developer->>Framework: make framework changes only here
-    Framework-->>Submodule: advance submodule to verified commit
+Developer
+   │
+   ├─ git submodule update --init
+   │       │
+   │       └─ pyjinx/framework checks out the pinned framework commit
+   │
+   ├─ uv sync
+   │       │
+   │       └─ tool.uv.sources resolves framework/ as an editable pyjinx package
+   │
+   ├─ uv run pytest
+   │       │
+   │       └─ application tests import Illuminate.*
+   │
+   └─ edit only sibling framework/ ──▶ verify ──▶ advance submodule pointer
 ```
-
 ## Generated project dependency flow
 
 Generated applications must not contain the development submodule:
 
-```mermaid
-flowchart TD
-    M[pyjinx new hello-world] --> COPY[Copy starter skeleton]
-    COPY --> PROJECT[hello-world/pyproject.toml]
-    PROJECT --> DEP[dependency = pyjinx]
-    DEP --> SYNC[uv sync --no-sources]
-    SYNC --> PACKAGE[PyPI pyjinx wheel]
-    PACKAGE --> IMPORT[Application imports Illuminate.*]
+```text
+pyjinx new hello-world
+          │
+          ▼
+Copy starter skeleton without the development submodule
+          │
+          ▼
+hello-world/pyproject.toml: dependency = "pyjinx"
+          │
+          ▼
+uv sync --no-sources
+          │
+          ▼
+PyPI pyjinx wheel ──▶ application imports Illuminate.*
 ```
 
 Development uses the local path source:
@@ -154,17 +129,22 @@ uv sync --no-sources
 
 ## Website and API documentation flow
 
-```mermaid
-flowchart LR
-    PY[Python framework/API contract] --> SPEC[OpenAPI JSON/YAML]
-    SPEC --> DOCS[Fumadocs OpenAPI]
-    MDX[Handwritten MDX] --> FUMADOCS[Fumadocs MDX]
-    FUMADOCS --> NEXT[Next.js App Router]
-    DOCS --> NEXT
-    NEXT --> VERCEL[Vercel]
-    VERCEL --> ROOT[/]
-    VERCEL --> DOCROUTE[/docs]
-    VERCEL --> APIROUTE[/docs/api]
+```text
+Python framework/API contract ──▶ OpenAPI JSON/YAML
+                                      │
+                                      ▼
+                              Fumadocs OpenAPI
+                                      │
+Handwritten Markdown/MDX ─────▶ Fumadocs MDX
+                                      │
+                                      ▼
+                              Next.js App Router
+                                │      │      │
+                                ▼      ▼      ▼
+                               /     /docs  /docs/api
+                                │
+                                ▼
+                              Vercel
 ```
 
 The website repository is independent from the Python repositories. Its
