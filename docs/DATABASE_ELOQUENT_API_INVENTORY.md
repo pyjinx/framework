@@ -8,7 +8,7 @@ Generated inventory for the PyJinx parity goal.
 - PyJinx source: `framework/Illuminate/Database/`.
 - Public API reference: Laravel 13 API index and namespace pages.
 - Each Laravel PHP file, class, and public method is listed below.
-- Method rows inherit the provisional status of their containing class; they are a complete comparison checklist, not an exact-parity claim.
+- Method rows are provisional status checklists, not exact-parity claims.
 
 ## Inventory totals
 
@@ -34,12 +34,13 @@ Laravel has a substantially larger surface. No area is exact parity until every 
 | `Schema` | 23 | 25 | 391 | 2 | 5 | 60 | `partial` |
 | `__root__` | 32 | 34 | 218 | 9 | 11 | 167 | `partial` |
 
-Status meanings: `implemented` means a named PyJinx counterpart exists but still needs parity evidence; `partial` means only a subset or behavior slice exists; `missing` means no counterpart; `blocked` is reserved for contracts intentionally deferred by the pinned Laravel/SQLite source.
+Status meanings: `implemented` means a named PyJinx counterpart exists but still needs evidence; `partial` means only a subset or behavior slice exists; `missing` means no counterpart; `blocked` is reserved for contracts intentionally deferred by the pinned Laravel/SQLite source.
 
 ## Laravel file/class/method checklist
 
 ### `Capsule/Manager.php` — `missing`
 - **class `Manager`** — `missing`
+  - `__construct()` — `missing`
   - `connection()` — `missing`
   - `table()` — `missing`
   - `schema()` — `missing`
@@ -54,6 +55,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `ClassMorphViolationException.php` — `partial`
 - **class `ClassMorphViolationException`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Concerns/BuildsQueries.php` — `missing`
 - **class `BuildsQueries`** — `missing`
@@ -123,6 +125,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Connection.php` — `partial`
 - **class `Connection`** — `partial`
+  - `__construct()` — `partial`
   - `useDefaultQueryGrammar()` — `partial`
   - `useDefaultSchemaGrammar()` — `partial`
   - `useDefaultPostProcessor()` — `partial`
@@ -237,6 +240,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `ConnectionResolver.php` — `partial`
 - **class `ConnectionResolver`** — `partial`
+  - `__construct()` — `partial`
   - `connection()` — `partial`
   - `addConnection()` — `partial`
   - `hasConnection()` — `partial`
@@ -254,6 +258,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Connectors/ConnectionFactory.php` — `missing`
 - **class `ConnectionFactory`** — `missing`
+  - `__construct()` — `missing`
   - `make()` — `missing`
   - `createConnector()` — `missing`
 
@@ -316,42 +321,45 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Console/Migrations/FreshCommand.php` — `missing`
 - **class `FreshCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 - **class `name`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Migrations/InstallCommand.php` — `missing`
 - **class `InstallCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 
 ### `Console/Migrations/MigrateCommand.php` — `missing`
 - **class `MigrateCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 - **class `name`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Migrations/MigrateMakeCommand.php` — `missing`
 - **class `MigrateMakeCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 - **class `loaders`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Migrations/RefreshCommand.php` — `missing`
 - **class `RefreshCommand`** — `missing`
   - `handle()` — `missing`
 - **class `name`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Migrations/ResetCommand.php` — `missing`
 - **class `ResetCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 
 ### `Console/Migrations/RollbackCommand.php` — `missing`
 - **class `RollbackCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 
 ### `Console/Migrations/StatusCommand.php` — `missing`
 - **class `StatusCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 
 ### `Console/Migrations/TableGuesser.php` — `missing`
@@ -360,6 +368,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Console/MonitorCommand.php` — `missing`
 - **class `MonitorCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 
 ### `Console/PruneCommand.php` — `missing`
@@ -368,19 +377,16 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Console/Seeds/SeedCommand.php` — `missing`
 - **class `SeedCommand`** — `missing`
+  - `__construct()` — `missing`
   - `handle()` — `missing`
 - **class `name`** — `missing`
-  - `handle()` — `missing`
 - **class `name`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Seeds/SeederMakeCommand.php` — `missing`
 - **class `SeederMakeCommand`** — `missing`
   - `handle()` — `missing`
 - **class `being`** — `missing`
-  - `handle()` — `missing`
 - **class `path`** — `missing`
-  - `handle()` — `missing`
 
 ### `Console/Seeds/WithoutModelEvents.php` — `missing`
 - **class `WithoutModelEvents`** — `missing`
@@ -405,6 +411,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `DatabaseManager.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/DatabaseManager.py`.
 - **class `DatabaseManager`** — `partial`
+  - `__construct()` — `partial`
   - `connection()` — `partial`
   - `build()` — `partial`
   - `calculateDynamicConnectionName()` — `partial`
@@ -430,11 +437,10 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `boot()` — `partial`
   - `register()` — `partial`
 - **class `which`** — `partial`
-  - `boot()` — `partial`
-  - `register()` — `partial`
 
 ### `DatabaseTransactionRecord.php` — `partial`
 - **class `DatabaseTransactionRecord`** — `partial`
+  - `__construct()` — `partial`
   - `addCallback()` — `partial`
   - `addCallbackForRollback()` — `partial`
   - `executeCallbacks()` — `partial`
@@ -444,6 +450,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `DatabaseTransactionsManager.php` — `partial`
 - **class `DatabaseTransactionsManager`** — `partial`
+  - `__construct()` — `partial`
   - `begin()` — `partial`
   - `commit()` — `partial`
   - `stageTransactions()` — `partial`
@@ -467,78 +474,100 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/Attributes/Appends.php` — `partial`
 - **class `Appends`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Boot.php` — `partial`
 - **class `Boot`** — `partial`
 
 ### `Eloquent/Attributes/CollectedBy.php` — `partial`
 - **class `CollectedBy`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Connection.php` — `partial`
 - **class `Connection`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/DateFormat.php` — `partial`
 - **class `DateFormat`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Fillable.php` — `partial`
 - **class `Fillable`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Guarded.php` — `partial`
 - **class `Guarded`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Hidden.php` — `partial`
 - **class `Hidden`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Initialize.php` — `partial`
 - **class `Initialize`** — `partial`
 
 ### `Eloquent/Attributes/ObservedBy.php` — `partial`
 - **class `ObservedBy`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/RouteKey.php` — `partial`
 - **class `RouteKey`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Scope.php` — `partial`
 - **class `Scope`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/ScopedBy.php` — `partial`
 - **class `ScopedBy`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Table.php` — `partial`
 - **class `Table`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Touches.php` — `partial`
 - **class `Touches`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Unguarded.php` — `partial`
 - **class `Unguarded`** — `partial`
 
 ### `Eloquent/Attributes/UseEloquentBuilder.php` — `partial`
 - **class `UseEloquentBuilder`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/UseFactory.php` — `partial`
 - **class `UseFactory`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/UsePolicy.php` — `partial`
 - **class `UsePolicy`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/UseResource.php` — `partial`
 - **class `UseResource`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/UseResourceCollection.php` — `partial`
 - **class `UseResourceCollection`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/Visible.php` — `partial`
 - **class `Visible`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/WithoutIncrementing.php` — `partial`
 - **class `WithoutIncrementing`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Attributes/WithoutTimestamps.php` — `partial`
 - **class `WithoutTimestamps`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/BroadcastableModelEventOccurred.php` — `partial`
 - **class `BroadcastableModelEventOccurred`** — `partial`
+  - `__construct()` — `partial`
   - `broadcastOn()` — `partial`
   - `broadcastAs()` — `partial`
   - `broadcastWith()` — `partial`
@@ -567,6 +596,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Eloquent/Builder.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Builder.py`.
 - **class `Builder`** — `partial`
+  - `__construct()` — `partial`
   - `make()` — `partial`
   - `withGlobalScope()` — `partial`
   - `withoutGlobalScope()` — `partial`
@@ -609,62 +639,62 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `get()` — `partial`
   - `getModels()` — `partial`
   - `eagerLoadRelations()` — `partial`
-  - `getRelation()` — `partial`
-  - `afterQuery()` — `partial`
-  - `applyAfterQueryCallbacks()` — `partial`
-  - `cursor()` — `partial`
-  - `pluck()` — `partial`
-  - `modelKeys()` — `partial`
-  - `paginate()` — `partial`
-  - `simplePaginate()` — `partial`
-  - `cursorPaginate()` — `partial`
-  - `create()` — `partial`
-  - `createQuietly()` — `partial`
-  - `forceCreate()` — `partial`
-  - `forceCreateQuietly()` — `partial`
-  - `update()` — `partial`
-  - `upsert()` — `partial`
-  - `touch()` — `partial`
-  - `increment()` — `partial`
-  - `decrement()` — `partial`
-  - `incrementEach()` — `partial`
-  - `decrementEach()` — `partial`
-  - `delete()` — `partial`
-  - `forceDelete()` — `partial`
-  - `onDelete()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `scopes()` — `partial`
-  - `applyScopes()` — `partial`
-  - `with()` — `partial`
-  - `without()` — `partial`
-  - `withOnly()` — `partial`
-  - `newModelInstance()` — `partial`
-  - `withAttributes()` — `partial`
-  - `withCasts()` — `partial`
-  - `withSavepointIfNeeded()` — `partial`
-  - `getQuery()` — `partial`
-  - `setQuery()` — `partial`
-  - `toBase()` — `partial`
-  - `getEagerLoads()` — `partial`
-  - `setEagerLoads()` — `partial`
-  - `withoutEagerLoad()` — `partial`
-  - `withoutEagerLoads()` — `partial`
-  - `getLimit()` — `partial`
-  - `getOffset()` — `partial`
-  - `getModel()` — `partial`
-  - `setModel()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `getMacro()` — `partial`
-  - `hasMacro()` — `partial`
-  - `getGlobalMacro()` — `partial`
-  - `hasGlobalMacro()` — `partial`
-  - `__get()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `clone()` — `partial`
-  - `onClone()` — `partial`
-  - `__clone()` — `partial`
+- **public method `getRelation()`** — `partial`
+- **public method `afterQuery()`** — `partial`
+- **public method `applyAfterQueryCallbacks()`** — `partial`
+- **public method `cursor()`** — `partial`
+- **public method `pluck()`** — `partial`
+- **public method `modelKeys()`** — `partial`
+- **public method `paginate()`** — `partial`
+- **public method `simplePaginate()`** — `partial`
+- **public method `cursorPaginate()`** — `partial`
+- **public method `create()`** — `partial`
+- **public method `createQuietly()`** — `partial`
+- **public method `forceCreate()`** — `partial`
+- **public method `forceCreateQuietly()`** — `partial`
+- **public method `update()`** — `partial`
+- **public method `upsert()`** — `partial`
+- **public method `touch()`** — `partial`
+- **public method `increment()`** — `partial`
+- **public method `decrement()`** — `partial`
+- **public method `incrementEach()`** — `partial`
+- **public method `decrementEach()`** — `partial`
+- **public method `delete()`** — `partial`
+- **public method `forceDelete()`** — `partial`
+- **public method `onDelete()`** — `partial`
+- **public method `hasNamedScope()`** — `partial`
+- **public method `scopes()`** — `partial`
+- **public method `applyScopes()`** — `partial`
+- **public method `with()`** — `partial`
+- **public method `without()`** — `partial`
+- **public method `withOnly()`** — `partial`
+- **public method `newModelInstance()`** — `partial`
+- **public method `withAttributes()`** — `partial`
+- **public method `withCasts()`** — `partial`
+- **public method `withSavepointIfNeeded()`** — `partial`
+- **public method `getQuery()`** — `partial`
+- **public method `setQuery()`** — `partial`
+- **public method `toBase()`** — `partial`
+- **public method `getEagerLoads()`** — `partial`
+- **public method `setEagerLoads()`** — `partial`
+- **public method `withoutEagerLoad()`** — `partial`
+- **public method `withoutEagerLoads()`** — `partial`
+- **public method `getLimit()`** — `partial`
+- **public method `getOffset()`** — `partial`
+- **public method `getModel()`** — `partial`
+- **public method `setModel()`** — `partial`
+- **public method `qualifyColumn()`** — `partial`
+- **public method `qualifyColumns()`** — `partial`
+- **public method `getMacro()`** — `partial`
+- **public method `hasMacro()`** — `partial`
+- **public method `getGlobalMacro()`** — `partial`
+- **public method `hasGlobalMacro()`** — `partial`
+- **public method `__get()`** — `partial`
+- **public method `__call()`** — `partial`
+- **public method `__callStatic()`** — `partial`
+- **public method `clone()`** — `partial`
+- **public method `onClone()`** — `partial`
+- **public method `__clone()`** — `partial`
 
 ### `Eloquent/Casts/ArrayObject.php` — `partial`
 - **class `ArrayObject`** — `partial`
@@ -679,51 +709,29 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `set()` — `partial`
   - `serialize()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
 
 ### `Eloquent/Casts/AsBinary.php` — `partial`
 - **class `AsBinary`** — `partial`
   - `castUsing()` — `partial`
+  - `__construct()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
   - `uuid()` — `partial`
   - `ulid()` — `partial`
   - `of()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `uuid()` — `partial`
-  - `ulid()` — `partial`
-  - `of()` — `partial`
 
 ### `Eloquent/Casts/AsCollection.php` — `partial`
 - **class `AsCollection`** — `partial`
   - `castUsing()` — `partial`
+  - `__construct()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
   - `of()` — `partial`
   - `using()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `of()` — `partial`
-  - `using()` — `partial`
 - **class `must`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `of()` — `partial`
-  - `using()` — `partial`
 
 ### `Eloquent/Casts/AsEncryptedArrayObject.php` — `partial`
 - **class `AsEncryptedArrayObject`** — `partial`
@@ -732,63 +740,38 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `set()` — `partial`
   - `serialize()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
 
 ### `Eloquent/Casts/AsEncryptedCollection.php` — `partial`
 - **class `AsEncryptedCollection`** — `partial`
   - `castUsing()` — `partial`
+  - `__construct()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
   - `of()` — `partial`
   - `using()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `of()` — `partial`
-  - `using()` — `partial`
 - **class `must`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `of()` — `partial`
-  - `using()` — `partial`
 
 ### `Eloquent/Casts/AsEnumArrayObject.php` — `partial`
 - **class `AsEnumArrayObject`** — `partial`
   - `castUsing()` — `partial`
+  - `__construct()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
   - `serialize()` — `partial`
   - `of()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
-  - `of()` — `partial`
 
 ### `Eloquent/Casts/AsEnumCollection.php` — `partial`
 - **class `AsEnumCollection`** — `partial`
   - `castUsing()` — `partial`
+  - `__construct()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
   - `serialize()` — `partial`
   - `of()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
-  - `serialize()` — `partial`
-  - `of()` — `partial`
 
 ### `Eloquent/Casts/AsFluent.php` — `partial`
 - **class `AsFluent`** — `partial`
@@ -796,13 +779,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `get()` — `partial`
   - `set()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 
 ### `Eloquent/Casts/AsHtmlString.php` — `partial`
 - **class `AsHtmlString`** — `partial`
@@ -810,13 +787,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `get()` — `partial`
   - `set()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 
 ### `Eloquent/Casts/AsStringable.php` — `partial`
 - **class `AsStringable`** — `partial`
@@ -824,13 +795,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `get()` — `partial`
   - `set()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 
 ### `Eloquent/Casts/AsUri.php` — `partial`
 - **class `AsUri`** — `partial`
@@ -838,17 +803,12 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `get()` — `partial`
   - `set()` — `partial`
 - **class `to`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 - **class `implements`** — `partial`
-  - `castUsing()` — `partial`
-  - `get()` — `partial`
-  - `set()` — `partial`
 
 ### `Eloquent/Casts/Attribute.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Casts/Attribute.py`.
 - **class `Attribute`** — `partial`
+  - `__construct()` — `partial`
   - `make()` — `partial`
   - `get()` — `partial`
   - `set()` — `partial`
@@ -916,57 +876,6 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getQueueableConnection()` — `partial`
   - `toQuery()` — `partial`
 - **class `name`** — `partial`
-  - `find()` — `partial`
-  - `findOrFail()` — `partial`
-  - `load()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadMissingRelationshipChain()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `contains()` — `partial`
-  - `doesntContain()` — `partial`
-  - `modelKeys()` — `partial`
-  - `merge()` — `partial`
-  - `map()` — `partial`
-  - `mapWithKeys()` — `partial`
-  - `fresh()` — `partial`
-  - `diff()` — `partial`
-  - `intersect()` — `partial`
-  - `unique()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `makeHidden()` — `partial`
-  - `mergeHidden()` — `partial`
-  - `setHidden()` — `partial`
-  - `makeVisible()` — `partial`
-  - `mergeVisible()` — `partial`
-  - `setVisible()` — `partial`
-  - `append()` — `partial`
-  - `setAppends()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getDictionary()` — `partial`
-  - `countBy()` — `partial`
-  - `collapse()` — `partial`
-  - `flatten()` — `partial`
-  - `flip()` — `partial`
-  - `keys()` — `partial`
-  - `pad()` — `partial`
-  - `partition()` — `partial`
-  - `pluck()` — `partial`
-  - `zip()` — `partial`
-  - `withRelationshipAutoloading()` — `partial`
-  - `getQueueableClass()` — `partial`
-  - `getQueueableIds()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `toQuery()` — `partial`
 
 ### `Eloquent/Concerns/GuardsAttributes.php` — `partial`
 - **class `GuardsAttributes`** — `partial`
@@ -982,8 +891,8 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `isUnguarded()` — `partial`
   - `unguarded()` — `partial`
   - `isFillable()` — `partial`
-  - `isGuarded()` — `partial`
-  - `totallyGuarded()` — `partial`
+- **public method `isGuarded()`** — `partial`
+- **public method `totallyGuarded()`** — `partial`
 
 ### `Eloquent/Concerns/HasAttributes.php` — `partial`
 - **class `HasAttributes`** — `partial`
@@ -1041,653 +950,17 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getMutatedAttributes()` — `partial`
   - `cacheMutatedAttributes()` — `partial`
 - **class `we`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `itself`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `castable`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `and`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `for`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `and`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `and`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `attributes`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `attribute`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `attributes`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `attribute`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 - **class `caster`** — `partial`
-  - `attributesToArray()` — `partial`
-  - `relationsToArray()` — `partial`
-  - `hasAttribute()` — `partial`
-  - `getAttribute()` — `partial`
-  - `getAttributeValue()` — `partial`
-  - `getRelationValue()` — `partial`
-  - `isRelation()` — `partial`
-  - `hasGetMutator()` — `partial`
-  - `hasAttributeMutator()` — `partial`
-  - `hasAttributeGetMutator()` — `partial`
-  - `hasAnyGetMutator()` — `partial`
-  - `mergeCasts()` — `partial`
-  - `setAttribute()` — `partial`
-  - `hasSetMutator()` — `partial`
-  - `hasAttributeSetMutator()` — `partial`
-  - `fillJsonAttribute()` — `partial`
-  - `fromJson()` — `partial`
-  - `fromEncryptedString()` — `partial`
-  - `encryptUsing()` — `partial`
-  - `currentEncrypter()` — `partial`
-  - `fromFloat()` — `partial`
-  - `fromDateTime()` — `partial`
-  - `getDates()` — `partial`
-  - `getDateFormat()` — `partial`
-  - `setDateFormat()` — `partial`
-  - `hasCast()` — `partial`
-  - `getCasts()` — `partial`
-  - `getAttributes()` — `partial`
-  - `setRawAttributes()` — `partial`
-  - `getOriginal()` — `partial`
-  - `getRawOriginal()` — `partial`
-  - `only()` — `partial`
-  - `except()` — `partial`
-  - `syncOriginal()` — `partial`
-  - `syncOriginalAttribute()` — `partial`
-  - `syncOriginalAttributes()` — `partial`
-  - `syncChanges()` — `partial`
-  - `isDirty()` — `partial`
-  - `isClean()` — `partial`
-  - `discardChanges()` — `partial`
-  - `wasChanged()` — `partial`
-  - `getDirty()` — `partial`
-  - `getChanges()` — `partial`
-  - `getPrevious()` — `partial`
-  - `originalIsEquivalent()` — `partial`
-  - `append()` — `partial`
-  - `getAppends()` — `partial`
-  - `setAppends()` — `partial`
-  - `mergeAppends()` — `partial`
-  - `hasAppended()` — `partial`
-  - `withoutAppends()` — `partial`
-  - `getMutatedAttributes()` — `partial`
-  - `cacheMutatedAttributes()` — `partial`
 
 ### `Eloquent/Concerns/HasEvents.php` — `partial`
 - **class `HasEvents`** — `partial`
@@ -1715,77 +988,8 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `unsetEventDispatcher()` — `partial`
   - `withoutEvents()` — `partial`
 - **class `for`** — `partial`
-  - `bootHasEvents()` — `partial`
-  - `resolveObserveAttributes()` — `partial`
-  - `observe()` — `partial`
-  - `getObservableEvents()` — `partial`
-  - `setObservableEvents()` — `partial`
-  - `addObservableEvents()` — `partial`
-  - `removeObservableEvents()` — `partial`
-  - `retrieved()` — `partial`
-  - `saving()` — `partial`
-  - `saved()` — `partial`
-  - `updating()` — `partial`
-  - `updated()` — `partial`
-  - `creating()` — `partial`
-  - `created()` — `partial`
-  - `replicating()` — `partial`
-  - `deleting()` — `partial`
-  - `deleted()` — `partial`
-  - `flushEventListeners()` — `partial`
-  - `dispatchesEvents()` — `partial`
-  - `getEventDispatcher()` — `partial`
-  - `setEventDispatcher()` — `partial`
-  - `unsetEventDispatcher()` — `partial`
-  - `withoutEvents()` — `partial`
 - **class `names`** — `partial`
-  - `bootHasEvents()` — `partial`
-  - `resolveObserveAttributes()` — `partial`
-  - `observe()` — `partial`
-  - `getObservableEvents()` — `partial`
-  - `setObservableEvents()` — `partial`
-  - `addObservableEvents()` — `partial`
-  - `removeObservableEvents()` — `partial`
-  - `retrieved()` — `partial`
-  - `saving()` — `partial`
-  - `saved()` — `partial`
-  - `updating()` — `partial`
-  - `updated()` — `partial`
-  - `creating()` — `partial`
-  - `created()` — `partial`
-  - `replicating()` — `partial`
-  - `deleting()` — `partial`
-  - `deleted()` — `partial`
-  - `flushEventListeners()` — `partial`
-  - `dispatchesEvents()` — `partial`
-  - `getEventDispatcher()` — `partial`
-  - `setEventDispatcher()` — `partial`
-  - `unsetEventDispatcher()` — `partial`
-  - `withoutEvents()` — `partial`
 - **class `name`** — `partial`
-  - `bootHasEvents()` — `partial`
-  - `resolveObserveAttributes()` — `partial`
-  - `observe()` — `partial`
-  - `getObservableEvents()` — `partial`
-  - `setObservableEvents()` — `partial`
-  - `addObservableEvents()` — `partial`
-  - `removeObservableEvents()` — `partial`
-  - `retrieved()` — `partial`
-  - `saving()` — `partial`
-  - `saved()` — `partial`
-  - `updating()` — `partial`
-  - `updated()` — `partial`
-  - `creating()` — `partial`
-  - `created()` — `partial`
-  - `replicating()` — `partial`
-  - `deleting()` — `partial`
-  - `deleted()` — `partial`
-  - `flushEventListeners()` — `partial`
-  - `dispatchesEvents()` — `partial`
-  - `getEventDispatcher()` — `partial`
-  - `setEventDispatcher()` — `partial`
-  - `unsetEventDispatcher()` — `partial`
-  - `withoutEvents()` — `partial`
 
 ### `Eloquent/Concerns/HasGlobalScopes.php` — `partial`
 - **class `HasGlobalScopes`** — `partial`
@@ -1799,55 +1003,10 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `setAllGlobalScopes()` — `partial`
   - `getGlobalScopes()` — `partial`
 - **class `for`** — `partial`
-  - `bootHasGlobalScopes()` — `partial`
-  - `resolveGlobalScopeAttributes()` — `partial`
-  - `addGlobalScope()` — `partial`
-  - `addGlobalScopes()` — `partial`
-  - `hasGlobalScope()` — `partial`
-  - `getGlobalScope()` — `partial`
-  - `getAllGlobalScopes()` — `partial`
-  - `setAllGlobalScopes()` — `partial`
-  - `getGlobalScopes()` — `partial`
 - **class `names`** — `partial`
-  - `bootHasGlobalScopes()` — `partial`
-  - `resolveGlobalScopeAttributes()` — `partial`
-  - `addGlobalScope()` — `partial`
-  - `addGlobalScopes()` — `partial`
-  - `hasGlobalScope()` — `partial`
-  - `getGlobalScope()` — `partial`
-  - `getAllGlobalScopes()` — `partial`
-  - `setAllGlobalScopes()` — `partial`
-  - `getGlobalScopes()` — `partial`
 - **class `name`** — `partial`
-  - `bootHasGlobalScopes()` — `partial`
-  - `resolveGlobalScopeAttributes()` — `partial`
-  - `addGlobalScope()` — `partial`
-  - `addGlobalScopes()` — `partial`
-  - `hasGlobalScope()` — `partial`
-  - `getGlobalScope()` — `partial`
-  - `getAllGlobalScopes()` — `partial`
-  - `setAllGlobalScopes()` — `partial`
-  - `getGlobalScopes()` — `partial`
 - **class `extending`** — `partial`
-  - `bootHasGlobalScopes()` — `partial`
-  - `resolveGlobalScopeAttributes()` — `partial`
-  - `addGlobalScope()` — `partial`
-  - `addGlobalScopes()` — `partial`
-  - `hasGlobalScope()` — `partial`
-  - `getGlobalScope()` — `partial`
-  - `getAllGlobalScopes()` — `partial`
-  - `setAllGlobalScopes()` — `partial`
-  - `getGlobalScopes()` — `partial`
 - **class `instance`** — `partial`
-  - `bootHasGlobalScopes()` — `partial`
-  - `resolveGlobalScopeAttributes()` — `partial`
-  - `addGlobalScope()` — `partial`
-  - `addGlobalScopes()` — `partial`
-  - `hasGlobalScope()` — `partial`
-  - `getGlobalScope()` — `partial`
-  - `getAllGlobalScopes()` — `partial`
-  - `setAllGlobalScopes()` — `partial`
-  - `getGlobalScopes()` — `partial`
 
 ### `Eloquent/Concerns/HasRelationships.php` — `partial`
 - **class `HasRelationships`** — `partial`
@@ -1887,113 +1046,8 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getTouchedRelations()` — `partial`
   - `setTouchedRelations()` — `partial`
 - **class `and`** — `partial`
-  - `initializeHasRelationships()` — `partial`
-  - `relationResolver()` — `partial`
-  - `resolveRelationUsing()` — `partial`
-  - `hasRelationAutoloadCallback()` — `partial`
-  - `autoloadRelationsUsing()` — `partial`
-  - `hasOne()` — `partial`
-  - `hasOneThrough()` — `partial`
-  - `morphOne()` — `partial`
-  - `belongsTo()` — `partial`
-  - `morphTo()` — `partial`
-  - `getActualClassNameForMorph()` — `partial`
-  - `through()` — `partial`
-  - `hasMany()` — `partial`
-  - `hasManyThrough()` — `partial`
-  - `morphMany()` — `partial`
-  - `belongsToMany()` — `partial`
-  - `morphToMany()` — `partial`
-  - `morphedByMany()` — `partial`
-  - `joiningTable()` — `partial`
-  - `joiningTableSegment()` — `partial`
-  - `touches()` — `partial`
-  - `touchOwners()` — `partial`
-  - `getMorphClass()` — `partial`
-  - `getRelations()` — `partial`
-  - `getRelation()` — `partial`
-  - `relationLoaded()` — `partial`
-  - `setRelation()` — `partial`
-  - `unsetRelation()` — `partial`
-  - `setRelations()` — `partial`
-  - `withRelationshipAutoloading()` — `partial`
-  - `withoutRelations()` — `partial`
-  - `withoutRelation()` — `partial`
-  - `unsetRelations()` — `partial`
-  - `getTouchedRelations()` — `partial`
-  - `setTouchedRelations()` — `partial`
 - **class `name`** — `partial`
-  - `initializeHasRelationships()` — `partial`
-  - `relationResolver()` — `partial`
-  - `resolveRelationUsing()` — `partial`
-  - `hasRelationAutoloadCallback()` — `partial`
-  - `autoloadRelationsUsing()` — `partial`
-  - `hasOne()` — `partial`
-  - `hasOneThrough()` — `partial`
-  - `morphOne()` — `partial`
-  - `belongsTo()` — `partial`
-  - `morphTo()` — `partial`
-  - `getActualClassNameForMorph()` — `partial`
-  - `through()` — `partial`
-  - `hasMany()` — `partial`
-  - `hasManyThrough()` — `partial`
-  - `morphMany()` — `partial`
-  - `belongsToMany()` — `partial`
-  - `morphToMany()` — `partial`
-  - `morphedByMany()` — `partial`
-  - `joiningTable()` — `partial`
-  - `joiningTableSegment()` — `partial`
-  - `touches()` — `partial`
-  - `touchOwners()` — `partial`
-  - `getMorphClass()` — `partial`
-  - `getRelations()` — `partial`
-  - `getRelation()` — `partial`
-  - `relationLoaded()` — `partial`
-  - `setRelation()` — `partial`
-  - `unsetRelation()` — `partial`
-  - `setRelations()` — `partial`
-  - `withRelationshipAutoloading()` — `partial`
-  - `withoutRelations()` — `partial`
-  - `withoutRelation()` — `partial`
-  - `unsetRelations()` — `partial`
-  - `getTouchedRelations()` — `partial`
-  - `setTouchedRelations()` — `partial`
 - **class `name`** — `partial`
-  - `initializeHasRelationships()` — `partial`
-  - `relationResolver()` — `partial`
-  - `resolveRelationUsing()` — `partial`
-  - `hasRelationAutoloadCallback()` — `partial`
-  - `autoloadRelationsUsing()` — `partial`
-  - `hasOne()` — `partial`
-  - `hasOneThrough()` — `partial`
-  - `morphOne()` — `partial`
-  - `belongsTo()` — `partial`
-  - `morphTo()` — `partial`
-  - `getActualClassNameForMorph()` — `partial`
-  - `through()` — `partial`
-  - `hasMany()` — `partial`
-  - `hasManyThrough()` — `partial`
-  - `morphMany()` — `partial`
-  - `belongsToMany()` — `partial`
-  - `morphToMany()` — `partial`
-  - `morphedByMany()` — `partial`
-  - `joiningTable()` — `partial`
-  - `joiningTableSegment()` — `partial`
-  - `touches()` — `partial`
-  - `touchOwners()` — `partial`
-  - `getMorphClass()` — `partial`
-  - `getRelations()` — `partial`
-  - `getRelation()` — `partial`
-  - `relationLoaded()` — `partial`
-  - `setRelation()` — `partial`
-  - `unsetRelation()` — `partial`
-  - `setRelations()` — `partial`
-  - `withRelationshipAutoloading()` — `partial`
-  - `withoutRelations()` — `partial`
-  - `withoutRelation()` — `partial`
-  - `unsetRelations()` — `partial`
-  - `getTouchedRelations()` — `partial`
-  - `setTouchedRelations()` — `partial`
 
 ### `Eloquent/Concerns/HasTimestamps.php` — `partial`
 - **class `HasTimestamps`** — `partial`
@@ -2014,22 +1068,6 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `withoutTimestampsOn()` — `partial`
   - `isIgnoringTimestamps()` — `partial`
 - **class `during`** — `partial`
-  - `initializeHasTimestamps()` — `partial`
-  - `touch()` — `partial`
-  - `touchQuietly()` — `partial`
-  - `updateTimestamps()` — `partial`
-  - `setCreatedAt()` — `partial`
-  - `setUpdatedAt()` — `partial`
-  - `freshTimestamp()` — `partial`
-  - `freshTimestampString()` — `partial`
-  - `usesTimestamps()` — `partial`
-  - `getCreatedAtColumn()` — `partial`
-  - `getUpdatedAtColumn()` — `partial`
-  - `getQualifiedCreatedAtColumn()` — `partial`
-  - `getQualifiedUpdatedAtColumn()` — `partial`
-  - `withoutTimestamps()` — `partial`
-  - `withoutTimestampsOn()` — `partial`
-  - `isIgnoringTimestamps()` — `partial`
 
 ### `Eloquent/Concerns/HasUlids.php` — `partial`
 - **class `HasUlids`** — `partial`
@@ -2125,39 +1163,34 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `toResource()` — `partial`
   - `guessResourceName()` — `partial`
 - **class `for`** — `partial`
-  - `toResource()` — `partial`
-  - `guessResourceName()` — `partial`
 - **class `for`** — `partial`
-  - `toResource()` — `partial`
-  - `guessResourceName()` — `partial`
 - **class `name`** — `partial`
-  - `toResource()` — `partial`
-  - `guessResourceName()` — `partial`
 - **class `from`** — `partial`
-  - `toResource()` — `partial`
-  - `guessResourceName()` — `partial`
 - **class `attribute`** — `partial`
-  - `toResource()` — `partial`
-  - `guessResourceName()` — `partial`
 
 ### `Eloquent/Factories/Attributes/UseModel.php` — `partial`
 - **class `UseModel`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Factories/BelongsToManyRelationship.php` — `partial`
 - **class `BelongsToManyRelationship`** — `partial`
+  - `__construct()` — `partial`
   - `createFor()` — `partial`
   - `recycle()` — `partial`
 
 ### `Eloquent/Factories/BelongsToRelationship.php` — `partial`
 - **class `BelongsToRelationship`** — `partial`
+  - `__construct()` — `partial`
   - `attributesFor()` — `partial`
   - `recycle()` — `partial`
 
 ### `Eloquent/Factories/CrossJoinSequence.php` — `partial`
 - **class `CrossJoinSequence`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Factories/Factory.php` — `partial`
 - **class `Factory`** — `partial`
+  - `__construct()` — `partial`
   - `new()` — `partial`
   - `times()` — `partial`
   - `configure()` — `partial`
@@ -2204,65 +1237,21 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `flushState()` — `partial`
   - `__call()` — `partial`
 - **class `names`** — `partial`
-  - `new()` — `partial`
-  - `times()` — `partial`
-  - `configure()` — `partial`
-  - `raw()` — `partial`
-  - `createOne()` — `partial`
-  - `createOneQuietly()` — `partial`
-  - `createMany()` — `partial`
-  - `createManyQuietly()` — `partial`
-  - `create()` — `partial`
-  - `createQuietly()` — `partial`
-  - `lazy()` — `partial`
-  - `makeOne()` — `partial`
-  - `make()` — `partial`
-  - `makeMany()` — `partial`
-  - `insert()` — `partial`
-  - `state()` — `partial`
-  - `prependState()` — `partial`
-  - `set()` — `partial`
-  - `sequence()` — `partial`
-  - `forEachSequence()` — `partial`
-  - `crossJoinSequence()` — `partial`
-  - `has()` — `partial`
-  - `hasAttached()` — `partial`
-  - `for()` — `partial`
-  - `recycle()` — `partial`
-  - `getRandomRecycledModel()` — `partial`
-  - `afterMaking()` — `partial`
-  - `afterCreating()` — `partial`
-  - `withoutAfterMaking()` — `partial`
-  - `withoutAfterCreating()` — `partial`
-  - `count()` — `partial`
-  - `withoutParents()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `connection()` — `partial`
-  - `newModel()` — `partial`
-  - `modelName()` — `partial`
-  - `guessModelNamesUsing()` — `partial`
-  - `useNamespace()` — `partial`
-  - `factoryForModel()` — `partial`
-  - `guessFactoryNamesUsing()` — `partial`
-  - `expandRelationshipsByDefault()` — `partial`
-  - `dontExpandRelationshipsByDefault()` — `partial`
-  - `resolveFactoryName()` — `partial`
-  - `flushState()` — `partial`
-  - `__call()` — `partial`
 
 ### `Eloquent/Factories/HasFactory.php` — `partial`
 - **class `HasFactory`** — `partial`
   - `factory()` — `partial`
 - **class `attribute`** — `partial`
-  - `factory()` — `partial`
 
 ### `Eloquent/Factories/Relationship.php` — `partial`
 - **class `Relationship`** — `partial`
+  - `__construct()` — `partial`
   - `createFor()` — `partial`
   - `recycle()` — `partial`
 
 ### `Eloquent/Factories/Sequence.php` — `partial`
 - **class `Sequence`** — `partial`
+  - `__construct()` — `partial`
   - `count()` — `partial`
   - `__invoke()` — `partial`
 
@@ -2285,18 +1274,16 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `newCollection()` — `partial`
   - `resolveCollectionFromAttribute()` — `partial`
 - **class `names`** — `partial`
-  - `newCollection()` — `partial`
-  - `resolveCollectionFromAttribute()` — `partial`
 - **class `name`** — `partial`
-  - `newCollection()` — `partial`
-  - `resolveCollectionFromAttribute()` — `partial`
 
 ### `Eloquent/HigherOrderBuilderProxy.php` — `partial`
 - **class `HigherOrderBuilderProxy`** — `partial`
+  - `__construct()` — `partial`
   - `__call()` — `partial`
 
 ### `Eloquent/InvalidCastException.php` — `partial`
 - **class `InvalidCastException`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/JsonEncodingException.php` — `partial`
 - **class `JsonEncodingException`** — `partial`
@@ -2314,10 +1301,12 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/MissingAttributeException.php` — `partial`
 - **class `MissingAttributeException`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Eloquent/Model.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Model.py`.
 - **class `Model`** — `partial`
+  - `__construct()` — `partial`
   - `initializeModelAttributes()` — `partial`
   - `clearBootedModels()` — `partial`
   - `withoutTouching()` — `partial`
@@ -2448,1343 +1437,36 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `__sleep()` — `partial`
   - `__wakeup()` — `partial`
 - **class `initializers`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `to`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `to`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `attributes`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `attributes`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `during`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `is`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `is`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `from`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 - **class `attribute`** — `partial`
-  - `initializeModelAttributes()` — `partial`
-  - `clearBootedModels()` — `partial`
-  - `withoutTouching()` — `partial`
-  - `withoutTouchingOn()` — `partial`
-  - `isIgnoringTouch()` — `partial`
-  - `shouldBeStrict()` — `partial`
-  - `preventLazyLoading()` — `partial`
-  - `automaticallyEagerLoadRelationships()` — `partial`
-  - `handleLazyLoadingViolationUsing()` — `partial`
-  - `preventSilentlyDiscardingAttributes()` — `partial`
-  - `handleDiscardedAttributeViolationUsing()` — `partial`
-  - `preventAccessingMissingAttributes()` — `partial`
-  - `handleMissingAttributeViolationUsing()` — `partial`
-  - `withoutBroadcasting()` — `partial`
-  - `fill()` — `partial`
-  - `forceFill()` — `partial`
-  - `qualifyColumn()` — `partial`
-  - `qualifyColumns()` — `partial`
-  - `newInstance()` — `partial`
-  - `newFromBuilder()` — `partial`
-  - `on()` — `partial`
-  - `onWriteConnection()` — `partial`
-  - `all()` — `partial`
-  - `with()` — `partial`
-  - `load()` — `partial`
-  - `loadMorph()` — `partial`
-  - `loadMissing()` — `partial`
-  - `loadAggregate()` — `partial`
-  - `loadCount()` — `partial`
-  - `loadMax()` — `partial`
-  - `loadMin()` — `partial`
-  - `loadSum()` — `partial`
-  - `loadAvg()` — `partial`
-  - `loadExists()` — `partial`
-  - `loadMorphAggregate()` — `partial`
-  - `loadMorphCount()` — `partial`
-  - `loadMorphMax()` — `partial`
-  - `loadMorphMin()` — `partial`
-  - `loadMorphSum()` — `partial`
-  - `loadMorphAvg()` — `partial`
-  - `update()` — `partial`
-  - `updateOrFail()` — `partial`
-  - `updateQuietly()` — `partial`
-  - `push()` — `partial`
-  - `pushQuietly()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `save()` — `partial`
-  - `saveOrIgnore()` — `partial`
-  - `saveOrFail()` — `partial`
-  - `destroy()` — `partial`
-  - `delete()` — `partial`
-  - `deleteQuietly()` — `partial`
-  - `deleteOrFail()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `query()` — `partial`
-  - `newQuery()` — `partial`
-  - `newModelQuery()` — `partial`
-  - `newQueryWithoutRelationships()` — `partial`
-  - `registerGlobalScopes()` — `partial`
-  - `newQueryWithoutScopes()` — `partial`
-  - `newQueryWithoutScope()` — `partial`
-  - `newQueryForRestoration()` — `partial`
-  - `newEloquentBuilder()` — `partial`
-  - `newPivot()` — `partial`
-  - `hasNamedScope()` — `partial`
-  - `callNamedScope()` — `partial`
-  - `toArray()` — `partial`
-  - `toJson()` — `partial`
-  - `toPrettyJson()` — `partial`
-  - `jsonSerialize()` — `partial`
-  - `fresh()` — `partial`
-  - `refresh()` — `partial`
-  - `refreshForUpdate()` — `partial`
-  - `replicate()` — `partial`
-  - `replicateQuietly()` — `partial`
-  - `is()` — `partial`
-  - `isNot()` — `partial`
-  - `getConnection()` — `partial`
-  - `getConnectionName()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `getConnectionResolver()` — `partial`
-  - `setConnectionResolver()` — `partial`
-  - `unsetConnectionResolver()` — `partial`
-  - `getTable()` — `partial`
-  - `setTable()` — `partial`
-  - `getKeyName()` — `partial`
-  - `setKeyName()` — `partial`
-  - `getQualifiedKeyName()` — `partial`
-  - `getKeyType()` — `partial`
-  - `setKeyType()` — `partial`
-  - `getIncrementing()` — `partial`
-  - `setIncrementing()` — `partial`
-  - `getKey()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `getQueueableRelations()` — `partial`
-  - `getQueueableConnection()` — `partial`
-  - `getRouteKey()` — `partial`
-  - `getRouteKeyName()` — `partial`
-  - `resolveRouteBinding()` — `partial`
-  - `resolveSoftDeletableRouteBinding()` — `partial`
-  - `resolveChildRouteBinding()` — `partial`
-  - `resolveSoftDeletableChildRouteBinding()` — `partial`
-  - `resolveRouteBindingQuery()` — `partial`
-  - `getForeignKey()` — `partial`
-  - `getPerPage()` — `partial`
-  - `setPerPage()` — `partial`
-  - `isSoftDeletable()` — `partial`
-  - `preventsLazyLoading()` — `partial`
-  - `isAutomaticallyEagerLoadingRelationships()` — `partial`
-  - `preventsSilentlyDiscardingAttributes()` — `partial`
-  - `preventsAccessingMissingAttributes()` — `partial`
-  - `broadcastChannelRoute()` — `partial`
-  - `broadcastChannel()` — `partial`
-  - `__get()` — `partial`
-  - `__set()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
-  - `__isset()` — `partial`
-  - `__unset()` — `partial`
-  - `__call()` — `partial`
-  - `__callStatic()` — `partial`
-  - `__toString()` — `partial`
-  - `escapeWhenCastingToString()` — `partial`
-  - `__sleep()` — `partial`
-  - `__wakeup()` — `partial`
 
 ### `Eloquent/ModelInfo.php` — `partial`
 - **class `ModelInfo`** — `partial`
+  - `__construct()` — `partial`
   - `toArray()` — `partial`
   - `offsetExists()` — `partial`
   - `offsetGet()` — `partial`
   - `offsetSet()` — `partial`
   - `offsetUnset()` — `partial`
 - **class `The`** — `partial`
-  - `toArray()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
 - **class `that`** — `partial`
-  - `toArray()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
 - **class `registered`** — `partial`
-  - `toArray()` — `partial`
-  - `offsetExists()` — `partial`
-  - `offsetGet()` — `partial`
-  - `offsetSet()` — `partial`
-  - `offsetUnset()` — `partial`
 
 ### `Eloquent/ModelInspector.php` — `partial`
 - **class `ModelInspector`** — `partial`
+  - `__construct()` — `partial`
   - `inspect()` — `partial`
 - **class `being`** — `partial`
-  - `inspect()` — `partial`
 - **class `being`** — `partial`
-  - `inspect()` — `partial`
 - **class `used`** — `partial`
-  - `inspect()` — `partial`
 - **class `base`** — `partial`
-  - `inspect()` — `partial`
 
 ### `Eloquent/ModelNotFoundException.php` — `partial`
 - **class `ModelNotFoundException`** — `partial`
@@ -3794,6 +1476,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/PendingHasThroughRelationship.php` — `partial`
 - **class `PendingHasThroughRelationship`** — `partial`
+  - `__construct()` — `partial`
   - `has()` — `partial`
   - `__call()` — `partial`
 
@@ -3814,6 +1497,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Eloquent/Relations/BelongsTo.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Relations/BelongsTo.py`.
 - **class `BelongsTo`** — `partial`
+  - `__construct()` — `partial`
   - `getResults()` — `partial`
   - `addConstraints()` — `partial`
   - `addEagerConstraints()` — `partial`
@@ -3836,257 +1520,92 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Eloquent/Relations/BelongsToMany.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Relations/BelongsToMany.py`.
 - **class `BelongsToMany`** — `partial`
+  - `__construct()` — `partial`
   - `addConstraints()` — `partial`
   - `addEagerConstraints()` — `partial`
   - `initRelation()` — `partial`
   - `match()` — `partial`
-  - `getPivotClass()` — `partial`
-  - `using()` — `partial`
-  - `as()` — `partial`
-  - `wherePivot()` — `partial`
-  - `wherePivotBetween()` — `partial`
-  - `orWherePivotBetween()` — `partial`
-  - `wherePivotNotBetween()` — `partial`
-  - `orWherePivotNotBetween()` — `partial`
-  - `wherePivotIn()` — `partial`
-  - `orWherePivot()` — `partial`
-  - `withPivotValue()` — `partial`
-  - `orWherePivotIn()` — `partial`
-  - `wherePivotNotIn()` — `partial`
-  - `orWherePivotNotIn()` — `partial`
-  - `wherePivotNull()` — `partial`
-  - `wherePivotNotNull()` — `partial`
-  - `orWherePivotNull()` — `partial`
-  - `orWherePivotNotNull()` — `partial`
-  - `orderByPivot()` — `partial`
-  - `orderByPivotDesc()` — `partial`
-  - `findOrNew()` — `partial`
-  - `firstOrNew()` — `partial`
-  - `firstOrCreate()` — `partial`
-  - `createOrFirst()` — `partial`
-  - `updateOrCreate()` — `partial`
-  - `find()` — `partial`
-  - `findSole()` — `partial`
-  - `findMany()` — `partial`
-  - `findOrFail()` — `partial`
-  - `findOr()` — `partial`
-  - `firstWhere()` — `partial`
-  - `first()` — `partial`
-  - `firstOrFail()` — `partial`
-  - `firstOr()` — `partial`
-  - `getResults()` — `partial`
-  - `get()` — `partial`
-  - `paginate()` — `partial`
-  - `simplePaginate()` — `partial`
-  - `cursorPaginate()` — `partial`
-  - `chunk()` — `partial`
-  - `chunkById()` — `partial`
-  - `chunkByIdDesc()` — `partial`
-  - `eachById()` — `partial`
-  - `orderedChunkById()` — `partial`
-  - `each()` — `partial`
-  - `lazy()` — `partial`
-  - `lazyById()` — `partial`
-  - `lazyByIdDesc()` — `partial`
-  - `cursor()` — `partial`
-  - `touchIfTouching()` — `partial`
-  - `touch()` — `partial`
-  - `allRelatedIds()` — `partial`
-  - `save()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `saveMany()` — `partial`
-  - `saveManyQuietly()` — `partial`
-  - `create()` — `partial`
-  - `createMany()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationExistenceQueryForSelfJoin()` — `partial`
-  - `take()` — `partial`
-  - `limit()` — `partial`
-  - `getExistenceCompareKey()` — `partial`
-  - `withTimestamps()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `getForeignPivotKeyName()` — `partial`
-  - `getQualifiedForeignPivotKeyName()` — `partial`
-  - `getRelatedPivotKeyName()` — `partial`
-  - `getQualifiedRelatedPivotKeyName()` — `partial`
-  - `getParentKeyName()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelatedKeyName()` — `partial`
-  - `getQualifiedRelatedKeyName()` — `partial`
-  - `getTable()` — `partial`
-  - `getRelationName()` — `partial`
-  - `getPivotAccessor()` — `partial`
-  - `getPivotColumns()` — `partial`
-  - `qualifyPivotColumn()` — `partial`
 - **class `name`** — `partial`
-  - `addConstraints()` — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `initRelation()` — `partial`
-  - `match()` — `partial`
-  - `getPivotClass()` — `partial`
-  - `using()` — `partial`
-  - `as()` — `partial`
-  - `wherePivot()` — `partial`
-  - `wherePivotBetween()` — `partial`
-  - `orWherePivotBetween()` — `partial`
-  - `wherePivotNotBetween()` — `partial`
-  - `orWherePivotNotBetween()` — `partial`
-  - `wherePivotIn()` — `partial`
-  - `orWherePivot()` — `partial`
-  - `withPivotValue()` — `partial`
-  - `orWherePivotIn()` — `partial`
-  - `wherePivotNotIn()` — `partial`
-  - `orWherePivotNotIn()` — `partial`
-  - `wherePivotNull()` — `partial`
-  - `wherePivotNotNull()` — `partial`
-  - `orWherePivotNull()` — `partial`
-  - `orWherePivotNotNull()` — `partial`
-  - `orderByPivot()` — `partial`
-  - `orderByPivotDesc()` — `partial`
-  - `findOrNew()` — `partial`
-  - `firstOrNew()` — `partial`
-  - `firstOrCreate()` — `partial`
-  - `createOrFirst()` — `partial`
-  - `updateOrCreate()` — `partial`
-  - `find()` — `partial`
-  - `findSole()` — `partial`
-  - `findMany()` — `partial`
-  - `findOrFail()` — `partial`
-  - `findOr()` — `partial`
-  - `firstWhere()` — `partial`
-  - `first()` — `partial`
-  - `firstOrFail()` — `partial`
-  - `firstOr()` — `partial`
-  - `getResults()` — `partial`
-  - `get()` — `partial`
-  - `paginate()` — `partial`
-  - `simplePaginate()` — `partial`
-  - `cursorPaginate()` — `partial`
-  - `chunk()` — `partial`
-  - `chunkById()` — `partial`
-  - `chunkByIdDesc()` — `partial`
-  - `eachById()` — `partial`
-  - `orderedChunkById()` — `partial`
-  - `each()` — `partial`
-  - `lazy()` — `partial`
-  - `lazyById()` — `partial`
-  - `lazyByIdDesc()` — `partial`
-  - `cursor()` — `partial`
-  - `touchIfTouching()` — `partial`
-  - `touch()` — `partial`
-  - `allRelatedIds()` — `partial`
-  - `save()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `saveMany()` — `partial`
-  - `saveManyQuietly()` — `partial`
-  - `create()` — `partial`
-  - `createMany()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationExistenceQueryForSelfJoin()` — `partial`
-  - `take()` — `partial`
-  - `limit()` — `partial`
-  - `getExistenceCompareKey()` — `partial`
-  - `withTimestamps()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `getForeignPivotKeyName()` — `partial`
-  - `getQualifiedForeignPivotKeyName()` — `partial`
-  - `getRelatedPivotKeyName()` — `partial`
-  - `getQualifiedRelatedPivotKeyName()` — `partial`
-  - `getParentKeyName()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelatedKeyName()` — `partial`
-  - `getQualifiedRelatedKeyName()` — `partial`
-  - `getTable()` — `partial`
-  - `getRelationName()` — `partial`
-  - `getPivotAccessor()` — `partial`
-  - `getPivotColumns()` — `partial`
-  - `qualifyPivotColumn()` — `partial`
 - **class `being`** — `partial`
-  - `addConstraints()` — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `initRelation()` — `partial`
-  - `match()` — `partial`
   - `getPivotClass()` — `partial`
-  - `using()` — `partial`
-  - `as()` — `partial`
-  - `wherePivot()` — `partial`
-  - `wherePivotBetween()` — `partial`
-  - `orWherePivotBetween()` — `partial`
-  - `wherePivotNotBetween()` — `partial`
-  - `orWherePivotNotBetween()` — `partial`
-  - `wherePivotIn()` — `partial`
-  - `orWherePivot()` — `partial`
-  - `withPivotValue()` — `partial`
-  - `orWherePivotIn()` — `partial`
-  - `wherePivotNotIn()` — `partial`
-  - `orWherePivotNotIn()` — `partial`
-  - `wherePivotNull()` — `partial`
-  - `wherePivotNotNull()` — `partial`
-  - `orWherePivotNull()` — `partial`
-  - `orWherePivotNotNull()` — `partial`
-  - `orderByPivot()` — `partial`
-  - `orderByPivotDesc()` — `partial`
-  - `findOrNew()` — `partial`
-  - `firstOrNew()` — `partial`
-  - `firstOrCreate()` — `partial`
-  - `createOrFirst()` — `partial`
-  - `updateOrCreate()` — `partial`
-  - `find()` — `partial`
-  - `findSole()` — `partial`
-  - `findMany()` — `partial`
-  - `findOrFail()` — `partial`
-  - `findOr()` — `partial`
-  - `firstWhere()` — `partial`
-  - `first()` — `partial`
-  - `firstOrFail()` — `partial`
-  - `firstOr()` — `partial`
-  - `getResults()` — `partial`
-  - `get()` — `partial`
-  - `paginate()` — `partial`
-  - `simplePaginate()` — `partial`
-  - `cursorPaginate()` — `partial`
-  - `chunk()` — `partial`
-  - `chunkById()` — `partial`
-  - `chunkByIdDesc()` — `partial`
-  - `eachById()` — `partial`
-  - `orderedChunkById()` — `partial`
-  - `each()` — `partial`
-  - `lazy()` — `partial`
-  - `lazyById()` — `partial`
-  - `lazyByIdDesc()` — `partial`
-  - `cursor()` — `partial`
-  - `touchIfTouching()` — `partial`
-  - `touch()` — `partial`
-  - `allRelatedIds()` — `partial`
-  - `save()` — `partial`
-  - `saveQuietly()` — `partial`
-  - `saveMany()` — `partial`
-  - `saveManyQuietly()` — `partial`
-  - `create()` — `partial`
-  - `createMany()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationExistenceQueryForSelfJoin()` — `partial`
-  - `take()` — `partial`
-  - `limit()` — `partial`
-  - `getExistenceCompareKey()` — `partial`
-  - `withTimestamps()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `getForeignPivotKeyName()` — `partial`
-  - `getQualifiedForeignPivotKeyName()` — `partial`
-  - `getRelatedPivotKeyName()` — `partial`
-  - `getQualifiedRelatedPivotKeyName()` — `partial`
-  - `getParentKeyName()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelatedKeyName()` — `partial`
-  - `getQualifiedRelatedKeyName()` — `partial`
-  - `getTable()` — `partial`
-  - `getRelationName()` — `partial`
-  - `getPivotAccessor()` — `partial`
-  - `getPivotColumns()` — `partial`
-  - `qualifyPivotColumn()` — `partial`
+- **public method `using()`** — `partial`
+- **public method `as()`** — `partial`
+- **public method `wherePivot()`** — `partial`
+- **public method `wherePivotBetween()`** — `partial`
+- **public method `orWherePivotBetween()`** — `partial`
+- **public method `wherePivotNotBetween()`** — `partial`
+- **public method `orWherePivotNotBetween()`** — `partial`
+- **public method `wherePivotIn()`** — `partial`
+- **public method `orWherePivot()`** — `partial`
+- **public method `withPivotValue()`** — `partial`
+- **public method `orWherePivotIn()`** — `partial`
+- **public method `wherePivotNotIn()`** — `partial`
+- **public method `orWherePivotNotIn()`** — `partial`
+- **public method `wherePivotNull()`** — `partial`
+- **public method `wherePivotNotNull()`** — `partial`
+- **public method `orWherePivotNull()`** — `partial`
+- **public method `orWherePivotNotNull()`** — `partial`
+- **public method `orderByPivot()`** — `partial`
+- **public method `orderByPivotDesc()`** — `partial`
+- **public method `findOrNew()`** — `partial`
+- **public method `firstOrNew()`** — `partial`
+- **public method `firstOrCreate()`** — `partial`
+- **public method `createOrFirst()`** — `partial`
+- **public method `updateOrCreate()`** — `partial`
+- **public method `find()`** — `partial`
+- **public method `findSole()`** — `partial`
+- **public method `findMany()`** — `partial`
+- **public method `findOrFail()`** — `partial`
+- **public method `findOr()`** — `partial`
+- **public method `firstWhere()`** — `partial`
+- **public method `first()`** — `partial`
+- **public method `firstOrFail()`** — `partial`
+- **public method `firstOr()`** — `partial`
+- **public method `getResults()`** — `partial`
+- **public method `get()`** — `partial`
+- **public method `paginate()`** — `partial`
+- **public method `simplePaginate()`** — `partial`
+- **public method `cursorPaginate()`** — `partial`
+- **public method `chunk()`** — `partial`
+- **public method `chunkById()`** — `partial`
+- **public method `chunkByIdDesc()`** — `partial`
+- **public method `eachById()`** — `partial`
+- **public method `orderedChunkById()`** — `partial`
+- **public method `each()`** — `partial`
+- **public method `lazy()`** — `partial`
+- **public method `lazyById()`** — `partial`
+- **public method `lazyByIdDesc()`** — `partial`
+- **public method `cursor()`** — `partial`
+- **public method `touchIfTouching()`** — `partial`
+- **public method `touch()`** — `partial`
+- **public method `allRelatedIds()`** — `partial`
+- **public method `save()`** — `partial`
+- **public method `saveQuietly()`** — `partial`
+- **public method `saveMany()`** — `partial`
+- **public method `saveManyQuietly()`** — `partial`
+- **public method `create()`** — `partial`
+- **public method `createMany()`** — `partial`
+- **public method `getRelationExistenceQuery()`** — `partial`
+- **public method `getRelationExistenceQueryForSelfJoin()`** — `partial`
+- **public method `take()`** — `partial`
+- **public method `limit()`** — `partial`
+- **public method `getExistenceCompareKey()`** — `partial`
+- **public method `withTimestamps()`** — `partial`
+- **public method `createdAt()`** — `partial`
+- **public method `updatedAt()`** — `partial`
+- **public method `getForeignPivotKeyName()`** — `partial`
+- **public method `getQualifiedForeignPivotKeyName()`** — `partial`
+- **public method `getRelatedPivotKeyName()`** — `partial`
+- **public method `getQualifiedRelatedPivotKeyName()`** — `partial`
+- **public method `getParentKeyName()`** — `partial`
+- **public method `getQualifiedParentKeyName()`** — `partial`
+- **public method `getRelatedKeyName()`** — `partial`
+- **public method `getQualifiedRelatedKeyName()`** — `partial`
+- **public method `getTable()`** — `partial`
+- **public method `getRelationName()`** — `partial`
+- **public method `getPivotAccessor()`** — `partial`
+- **public method `getPivotColumns()`** — `partial`
+- **public method `qualifyPivotColumn()`** — `partial`
 
 ### `Eloquent/Relations/Concerns/AsPivot.php` — `partial`
 - **class `AsPivot`** — `partial`
@@ -4134,19 +1653,19 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `syncWithoutDetachingOrFail()` — `partial`
   - `syncWithPivotValues()` — `partial`
   - `syncWithPivotValuesOrFail()` — `partial`
-  - `updateExistingPivot()` — `partial`
-  - `updateExistingPivotOrFail()` — `partial`
-  - `attach()` — `partial`
-  - `attachOrFail()` — `partial`
-  - `hasPivotColumn()` — `partial`
-  - `detach()` — `partial`
-  - `detachOrFail()` — `partial`
-  - `newPivot()` — `partial`
-  - `newExistingPivot()` — `partial`
-  - `newPivotStatement()` — `partial`
-  - `newPivotStatementForId()` — `partial`
-  - `newPivotQuery()` — `partial`
-  - `withPivot()` — `partial`
+- **public method `updateExistingPivot()`** — `partial`
+- **public method `updateExistingPivotOrFail()`** — `partial`
+- **public method `attach()`** — `partial`
+- **public method `attachOrFail()`** — `partial`
+- **public method `hasPivotColumn()`** — `partial`
+- **public method `detach()`** — `partial`
+- **public method `detachOrFail()`** — `partial`
+- **public method `newPivot()`** — `partial`
+- **public method `newExistingPivot()`** — `partial`
+- **public method `newPivotStatement()`** — `partial`
+- **public method `newPivotStatementForId()`** — `partial`
+- **public method `newPivotQuery()`** — `partial`
+- **public method `withPivot()`** — `partial`
 
 ### `Eloquent/Relations/Concerns/SupportsDefaultModels.php` — `partial`
 - **class `SupportsDefaultModels`** — `partial`
@@ -4188,6 +1707,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Eloquent/Relations/HasOneOrMany.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Relations/HasOneOrMany.py`.
 - **class `HasOneOrMany`** — `partial`
+  - `__construct()` — `partial`
   - `make()` — `partial`
   - `makeMany()` — `partial`
   - `addConstraints()` — `partial`
@@ -4225,6 +1745,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/Relations/HasOneOrManyThrough.php` — `partial`
 - **class `HasOneOrManyThrough`** — `partial`
+  - `__construct()` — `partial`
   - `addConstraints()` — `partial`
   - `getQualifiedParentKeyName()` — `partial`
   - `throughParentSoftDeletes()` — `partial`
@@ -4303,6 +1824,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/Relations/MorphOneOrMany.php` — `partial`
 - **class `MorphOneOrMany`** — `partial`
+  - `__construct()` — `partial`
   - `addConstraints()` — `partial`
   - `addEagerConstraints()` — `partial`
   - `forceCreate()` — `partial`
@@ -4312,23 +1834,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getMorphType()` — `partial`
   - `getMorphClass()` — `partial`
 - **class `of`** — `partial`
-  - `addConstraints()` — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `forceCreate()` — `partial`
-  - `upsert()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getQualifiedMorphType()` — `partial`
-  - `getMorphType()` — `partial`
-  - `getMorphClass()` — `partial`
 - **class `of`** — `partial`
-  - `addConstraints()` — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `forceCreate()` — `partial`
-  - `upsert()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getQualifiedMorphType()` — `partial`
-  - `getMorphType()` — `partial`
-  - `getMorphClass()` — `partial`
 
 ### `Eloquent/Relations/MorphPivot.php` — `partial`
 - **class `MorphPivot`** — `partial`
@@ -4339,15 +1845,10 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getQueueableId()` — `partial`
   - `newQueryForRestoration()` — `partial`
 - **class `for`** — `partial`
-  - `delete()` — `partial`
-  - `getMorphType()` — `partial`
-  - `setMorphType()` — `partial`
-  - `setMorphClass()` — `partial`
-  - `getQueueableId()` — `partial`
-  - `newQueryForRestoration()` — `partial`
 
 ### `Eloquent/Relations/MorphTo.php` — `partial`
 - **class `MorphTo`** — `partial`
+  - `__construct()` — `partial`
   - `addEagerConstraints()` — `partial`
   - `getEager()` — `partial`
   - `createModelByType()` — `partial`
@@ -4368,6 +1869,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Eloquent/Relations/MorphToMany.php` — `partial`
 - **class `MorphToMany`** — `partial`
+  - `__construct()` — `partial`
   - `addEagerConstraints()` — `partial`
   - `getRelationExistenceQuery()` — `partial`
   - `newPivotQuery()` — `partial`
@@ -4377,23 +1879,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getMorphClass()` — `partial`
   - `getInverse()` — `partial`
 - **class `of`** — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `newPivotQuery()` — `partial`
-  - `newPivot()` — `partial`
-  - `getMorphType()` — `partial`
-  - `getQualifiedMorphTypeName()` — `partial`
-  - `getMorphClass()` — `partial`
-  - `getInverse()` — `partial`
 - **class `name`** — `partial`
-  - `addEagerConstraints()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `newPivotQuery()` — `partial`
-  - `newPivot()` — `partial`
-  - `getMorphType()` — `partial`
-  - `getQualifiedMorphTypeName()` — `partial`
-  - `getMorphClass()` — `partial`
-  - `getInverse()` — `partial`
 
 ### `Eloquent/Relations/Pivot.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Relations/Pivot.py`.
@@ -4402,6 +1888,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Eloquent/Relations/Relation.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Eloquent/Relations/Relation.py`.
 - **class `Relation`** — `partial`
+  - `__construct()` — `partial`
   - `noConstraints()` — `partial`
   - `noConstraintsForRelation()` — `partial`
   - `withConstraints()` — `partial`
@@ -4433,98 +1920,8 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `__call()` — `partial`
   - `__clone()` — `partial`
 - **class `names`** — `partial`
-  - `noConstraints()` — `partial`
-  - `noConstraintsForRelation()` — `partial`
-  - `withConstraints()` — `partial`
-  - `withConstraintsForNestedRelation()` — `partial`
-  - `getEager()` — `partial`
-  - `sole()` — `partial`
-  - `get()` — `partial`
-  - `touch()` — `partial`
-  - `rawUpdate()` — `partial`
-  - `getRelationExistenceCountQuery()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationCountHash()` — `partial`
-  - `getQuery()` — `partial`
-  - `getBaseQuery()` — `partial`
-  - `toBase()` — `partial`
-  - `getParent()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelated()` — `partial`
-  - `getRelatedClass()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `relatedUpdatedAt()` — `partial`
-  - `requireMorphMap()` — `partial`
-  - `requiresMorphMap()` — `partial`
-  - `enforceMorphMap()` — `partial`
-  - `morphMap()` — `partial`
-  - `getMorphedModel()` — `partial`
-  - `getMorphAlias()` — `partial`
-  - `__call()` — `partial`
-  - `__clone()` — `partial`
 - **class `name`** — `partial`
-  - `noConstraints()` — `partial`
-  - `noConstraintsForRelation()` — `partial`
-  - `withConstraints()` — `partial`
-  - `withConstraintsForNestedRelation()` — `partial`
-  - `getEager()` — `partial`
-  - `sole()` — `partial`
-  - `get()` — `partial`
-  - `touch()` — `partial`
-  - `rawUpdate()` — `partial`
-  - `getRelationExistenceCountQuery()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationCountHash()` — `partial`
-  - `getQuery()` — `partial`
-  - `getBaseQuery()` — `partial`
-  - `toBase()` — `partial`
-  - `getParent()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelated()` — `partial`
-  - `getRelatedClass()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `relatedUpdatedAt()` — `partial`
-  - `requireMorphMap()` — `partial`
-  - `requiresMorphMap()` — `partial`
-  - `enforceMorphMap()` — `partial`
-  - `morphMap()` — `partial`
-  - `getMorphedModel()` — `partial`
-  - `getMorphAlias()` — `partial`
-  - `__call()` — `partial`
-  - `__clone()` — `partial`
 - **class `names`** — `partial`
-  - `noConstraints()` — `partial`
-  - `noConstraintsForRelation()` — `partial`
-  - `withConstraints()` — `partial`
-  - `withConstraintsForNestedRelation()` — `partial`
-  - `getEager()` — `partial`
-  - `sole()` — `partial`
-  - `get()` — `partial`
-  - `touch()` — `partial`
-  - `rawUpdate()` — `partial`
-  - `getRelationExistenceCountQuery()` — `partial`
-  - `getRelationExistenceQuery()` — `partial`
-  - `getRelationCountHash()` — `partial`
-  - `getQuery()` — `partial`
-  - `getBaseQuery()` — `partial`
-  - `toBase()` — `partial`
-  - `getParent()` — `partial`
-  - `getQualifiedParentKeyName()` — `partial`
-  - `getRelated()` — `partial`
-  - `getRelatedClass()` — `partial`
-  - `createdAt()` — `partial`
-  - `updatedAt()` — `partial`
-  - `relatedUpdatedAt()` — `partial`
-  - `requireMorphMap()` — `partial`
-  - `requiresMorphMap()` — `partial`
-  - `enforceMorphMap()` — `partial`
-  - `morphMap()` — `partial`
-  - `getMorphedModel()` — `partial`
-  - `getMorphAlias()` — `partial`
-  - `__call()` — `partial`
-  - `__clone()` — `partial`
 
 ### `Eloquent/Scope.php` — `partial`
 - **class `Scope`** — `partial`
@@ -4550,39 +1947,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `getDeletedAtColumn()` — `partial`
   - `getQualifiedDeletedAtColumn()` — `partial`
 - **class `for`** — `partial`
-  - `bootSoftDeletes()` — `partial`
-  - `initializeSoftDeletes()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDeleteQuietly()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `restore()` — `partial`
-  - `restoreQuietly()` — `partial`
-  - `trashed()` — `partial`
-  - `softDeleted()` — `partial`
-  - `restoring()` — `partial`
-  - `restored()` — `partial`
-  - `forceDeleting()` — `partial`
-  - `forceDeleted()` — `partial`
-  - `isForceDeleting()` — `partial`
-  - `getDeletedAtColumn()` — `partial`
-  - `getQualifiedDeletedAtColumn()` — `partial`
 - **class `for`** — `partial`
-  - `bootSoftDeletes()` — `partial`
-  - `initializeSoftDeletes()` — `partial`
-  - `forceDelete()` — `partial`
-  - `forceDeleteQuietly()` — `partial`
-  - `forceDestroy()` — `partial`
-  - `restore()` — `partial`
-  - `restoreQuietly()` — `partial`
-  - `trashed()` — `partial`
-  - `softDeleted()` — `partial`
-  - `restoring()` — `partial`
-  - `restored()` — `partial`
-  - `forceDeleting()` — `partial`
-  - `forceDeleted()` — `partial`
-  - `isForceDeleting()` — `partial`
-  - `getDeletedAtColumn()` — `partial`
-  - `getQualifiedDeletedAtColumn()` — `partial`
 
 ### `Eloquent/SoftDeletingScope.php` — `partial`
 - **class `SoftDeletingScope`** — `partial`
@@ -4594,21 +1959,26 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Events/ConnectionEvent.php` — `partial`
 - **class `ConnectionEvent`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/DatabaseBusy.php` — `partial`
 - **class `DatabaseBusy`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/DatabaseRefreshed.php` — `partial`
 - **class `DatabaseRefreshed`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/MigrationEnded.php` — `partial`
 - **class `MigrationEnded`** — `partial`
 
 ### `Events/MigrationEvent.php` — `partial`
 - **class `MigrationEvent`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/MigrationSkipped.php` — `partial`
 - **class `MigrationSkipped`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/MigrationStarted.php` — `partial`
 - **class `MigrationStarted`** — `partial`
@@ -4618,41 +1988,51 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Events/MigrationsEvent.php` — `partial`
 - **class `MigrationsEvent`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/MigrationsPruned.php` — `partial`
 - **class `MigrationsPruned`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/MigrationsStarted.php` — `partial`
 - **class `MigrationsStarted`** — `partial`
 
 ### `Events/ModelPruningFinished.php` — `partial`
 - **class `ModelPruningFinished`** — `partial`
+  - `__construct()` — `partial`
 - **class `names`** — `partial`
 
 ### `Events/ModelPruningStarting.php` — `partial`
 - **class `ModelPruningStarting`** — `partial`
+  - `__construct()` — `partial`
 - **class `names`** — `partial`
 
 ### `Events/ModelsPruned.php` — `partial`
 - **class `ModelsPruned`** — `partial`
+  - `__construct()` — `partial`
 - **class `name`** — `partial`
 
 ### `Events/NoPendingMigrations.php` — `partial`
 - **class `NoPendingMigrations`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/QueryExecuted.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Events/QueryExecuted.py`.
 - **class `QueryExecuted`** — `partial`
+  - `__construct()` — `partial`
   - `toRawSql()` — `partial`
 
 ### `Events/SchemaDumped.php` — `partial`
 - **class `SchemaDumped`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/SchemaLoaded.php` — `partial`
 - **class `SchemaLoaded`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/StatementPrepared.php` — `partial`
 - **class `StatementPrepared`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Events/TransactionBeginning.php` — `partial`
 - **class `TransactionBeginning`** — `partial`
@@ -4668,6 +2048,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Grammar.php` — `partial`
 - **class `Grammar`** — `partial`
+  - `__construct()` — `partial`
   - `wrapArray()` — `partial`
   - `wrapTable()` — `partial`
   - `wrap()` — `partial`
@@ -4684,6 +2065,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `LazyLoadingViolationException.php` — `partial`
 - **class `LazyLoadingViolationException`** — `partial`
+  - `__construct()` — `partial`
 
 ### `LostConnectionDetector.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/LostConnectionDetector.py`.
@@ -4708,6 +2090,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Migrations/DatabaseMigrationRepository.php` — `partial`
 - **class `DatabaseMigrationRepository`** — `partial`
+  - `__construct()` — `partial`
   - `getRan()` — `partial`
   - `getMigrations()` — `partial`
   - `getMigrationsByBatch()` — `partial`
@@ -4731,20 +2114,13 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Migrations/MigrationCreator.php` — `partial`
 - **class `MigrationCreator`** — `partial`
+  - `__construct()` — `partial`
   - `create()` — `partial`
   - `afterCreate()` — `partial`
   - `stubPath()` — `partial`
   - `getFilesystem()` — `partial`
 - **class `already`** — `partial`
-  - `create()` — `partial`
-  - `afterCreate()` — `partial`
-  - `stubPath()` — `partial`
-  - `getFilesystem()` — `partial`
 - **class `name`** — `partial`
-  - `create()` — `partial`
-  - `afterCreate()` — `partial`
-  - `stubPath()` — `partial`
-  - `getFilesystem()` — `partial`
 
 ### `Migrations/MigrationRepositoryInterface.php` — `partial`
 - **class `MigrationRepositoryInterface`** — `partial`
@@ -4765,6 +2141,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Migrations/Migrator.php` — `partial`
 - **class `Migrator`** — `partial`
+  - `__construct()` — `partial`
   - `run()` — `partial`
   - `runPending()` — `partial`
   - `rollback()` — `partial`
@@ -4789,83 +2166,15 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `setOutput()` — `partial`
   - `fireMigrationEvent()` — `partial`
 - **class `implementation`** — `partial`
-  - `run()` — `partial`
-  - `runPending()` — `partial`
-  - `rollback()` — `partial`
-  - `reset()` — `partial`
-  - `resolve()` — `partial`
-  - `getMigrationFiles()` — `partial`
-  - `requireFiles()` — `partial`
-  - `getMigrationName()` — `partial`
-  - `path()` — `partial`
-  - `paths()` — `partial`
-  - `withoutMigrations()` — `partial`
-  - `getConnection()` — `partial`
-  - `usingConnection()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `resolveConnectionsUsing()` — `partial`
-  - `getRepository()` — `partial`
-  - `repositoryExists()` — `partial`
-  - `hasRunAnyMigrations()` — `partial`
-  - `deleteRepository()` — `partial`
-  - `getFilesystem()` — `partial`
-  - `setOutput()` — `partial`
-  - `fireMigrationEvent()` — `partial`
 - **class `from`** — `partial`
-  - `run()` — `partial`
-  - `runPending()` — `partial`
-  - `rollback()` — `partial`
-  - `reset()` — `partial`
-  - `resolve()` — `partial`
-  - `getMigrationFiles()` — `partial`
-  - `requireFiles()` — `partial`
-  - `getMigrationName()` — `partial`
-  - `path()` — `partial`
-  - `paths()` — `partial`
-  - `withoutMigrations()` — `partial`
-  - `getConnection()` — `partial`
-  - `usingConnection()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `resolveConnectionsUsing()` — `partial`
-  - `getRepository()` — `partial`
-  - `repositoryExists()` — `partial`
-  - `hasRunAnyMigrations()` — `partial`
-  - `deleteRepository()` — `partial`
-  - `getFilesystem()` — `partial`
-  - `setOutput()` — `partial`
-  - `fireMigrationEvent()` — `partial`
 - **class `name`** — `partial`
-  - `run()` — `partial`
-  - `runPending()` — `partial`
-  - `rollback()` — `partial`
-  - `reset()` — `partial`
-  - `resolve()` — `partial`
-  - `getMigrationFiles()` — `partial`
-  - `requireFiles()` — `partial`
-  - `getMigrationName()` — `partial`
-  - `path()` — `partial`
-  - `paths()` — `partial`
-  - `withoutMigrations()` — `partial`
-  - `getConnection()` — `partial`
-  - `usingConnection()` — `partial`
-  - `setConnection()` — `partial`
-  - `resolveConnection()` — `partial`
-  - `resolveConnectionsUsing()` — `partial`
-  - `getRepository()` — `partial`
-  - `repositoryExists()` — `partial`
-  - `hasRunAnyMigrations()` — `partial`
-  - `deleteRepository()` — `partial`
-  - `getFilesystem()` — `partial`
-  - `setOutput()` — `partial`
-  - `fireMigrationEvent()` — `partial`
 
 ### `MultipleColumnsSelectedException.php` — `partial`
 - **class `MultipleColumnsSelectedException`** — `partial`
 
 ### `MultipleRecordsFoundException.php` — `partial`
 - **class `MultipleRecordsFoundException`** — `partial`
+  - `__construct()` — `partial`
   - `getCount()` — `partial`
 
 ### `MySqlConnection.php` — `partial`
@@ -4888,6 +2197,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Query/Builder.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/QueryBuilder.py`.
 - **class `Builder`** — `partial`
+  - `__construct()` — `partial`
   - `select()` — `partial`
   - `selectSub()` — `partial`
   - `selectExpression()` — `partial`
@@ -5118,6 +2428,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Query/Expression.php` — `partial`
 - **class `Expression`** — `partial`
+  - `__construct()` — `partial`
   - `getValue()` — `partial`
 
 ### `Query/Grammars/Grammar.php` — `partial`
@@ -5226,16 +2537,15 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Query/IndexHint.php` — `partial`
 - **class `IndexHint`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Query/JoinClause.php` — `partial`
 - **class `JoinClause`** — `partial`
+  - `__construct()` — `partial`
   - `on()` — `partial`
   - `orOn()` — `partial`
   - `newQuery()` — `partial`
 - **class `name`** — `partial`
-  - `on()` — `partial`
-  - `orOn()` — `partial`
-  - `newQuery()` — `partial`
 
 ### `Query/JoinLateralClause.php` — `partial`
 - **class `JoinLateralClause`** — `partial`
@@ -5287,6 +2597,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `QueryException.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/QueryException.py`.
 - **class `QueryException`** — `partial`
+  - `__construct()` — `partial`
   - `getConnectionName()` — `partial`
   - `getSql()` — `partial`
   - `getRawSql()` — `partial`
@@ -5307,10 +2618,12 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `SQLiteDatabaseDoesNotExistException.php` — `partial`
 - **class `SQLiteDatabaseDoesNotExistException`** — `partial`
+  - `__construct()` — `partial`
 
 ### `Schema/Blueprint.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Schema/Blueprint.py`.
 - **class `Blueprint`** — `partial`
+  - `__construct()` — `partial`
   - `build()` — `partial`
   - `toSql()` — `partial`
   - `addFluentCommands()` — `partial`
@@ -5438,6 +2751,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Schema/BlueprintState.php` — `partial`
 - **class `BlueprintState`** — `partial`
+  - `__construct()` — `partial`
   - `getPrimaryKey()` — `partial`
   - `getColumns()` — `partial`
   - `getIndexes()` — `partial`
@@ -5447,6 +2761,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 ### `Schema/Builder.php` — `partial`
 - Candidate PyJinx counterpart: `framework/Illuminate/Database/Schema/Builder.py`.
 - **class `Builder`** — `partial`
+  - `__construct()` — `partial`
   - `defaultStringLength()` — `partial`
   - `defaultTimePrecision()` — `partial`
   - `defaultMorphKeyType()` — `partial`
@@ -5500,6 +2815,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Schema/ForeignIdColumnDefinition.php` — `partial`
 - **class `ForeignIdColumnDefinition`** — `partial`
+  - `__construct()` — `partial`
   - `constrained()` — `partial`
   - `references()` — `partial`
 
@@ -5533,11 +2849,11 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `compileDropFullText()` — `partial`
   - `compileForeign()` — `partial`
   - `compileDropForeign()` — `partial`
-  - `prefixArray()` — `partial`
-  - `wrapTable()` — `partial`
-  - `wrap()` — `partial`
-  - `getFluentCommands()` — `partial`
-  - `supportsSchemaTransactions()` — `partial`
+- **public method `prefixArray()`** — `partial`
+- **public method `wrapTable()`** — `partial`
+- **public method `wrap()`** — `partial`
+- **public method `getFluentCommands()`** — `partial`
+- **public method `supportsSchemaTransactions()`** — `partial`
 
 ### `Schema/Grammars/MariaDbGrammar.php` — `partial`
 - **class `MariaDbGrammar`** — `partial`
@@ -5626,46 +2942,6 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `compileTableComment()` — `partial`
   - `escapeNames()` — `partial`
 - **class `key`** — `partial`
-  - `compileCreateDatabase()` — `partial`
-  - `compileSchemas()` — `partial`
-  - `compileTableExists()` — `partial`
-  - `compileTables()` — `partial`
-  - `compileViews()` — `partial`
-  - `compileTypes()` — `partial`
-  - `compileColumns()` — `partial`
-  - `compileIndexes()` — `partial`
-  - `compileForeignKeys()` — `partial`
-  - `compileCreate()` — `partial`
-  - `compileAdd()` — `partial`
-  - `compileAutoIncrementStartingValues()` — `partial`
-  - `compileChange()` — `partial`
-  - `compilePrimary()` — `partial`
-  - `compileUnique()` — `partial`
-  - `compileIndex()` — `partial`
-  - `compileFulltext()` — `partial`
-  - `compileSpatialIndex()` — `partial`
-  - `compileVectorIndex()` — `partial`
-  - `compileForeign()` — `partial`
-  - `compileDrop()` — `partial`
-  - `compileDropIfExists()` — `partial`
-  - `compileDropAllTables()` — `partial`
-  - `compileDropAllViews()` — `partial`
-  - `compileDropAllTypes()` — `partial`
-  - `compileDropAllDomains()` — `partial`
-  - `compileDropColumn()` — `partial`
-  - `compileDropPrimary()` — `partial`
-  - `compileDropUnique()` — `partial`
-  - `compileDropIndex()` — `partial`
-  - `compileDropFullText()` — `partial`
-  - `compileDropSpatialIndex()` — `partial`
-  - `compileDropForeign()` — `partial`
-  - `compileRename()` — `partial`
-  - `compileRenameIndex()` — `partial`
-  - `compileEnableForeignKeyConstraints()` — `partial`
-  - `compileDisableForeignKeyConstraints()` — `partial`
-  - `compileComment()` — `partial`
-  - `compileTableComment()` — `partial`
-  - `escapeNames()` — `partial`
 
 ### `Schema/Grammars/SQLiteGrammar.php` — `partial`
 - **class `SQLiteGrammar`** — `partial`
@@ -5706,42 +2982,6 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `compileDisableForeignKeyConstraints()` — `partial`
   - `pragma()` — `partial`
 - **class `set`** — `partial`
-  - `getAlterCommands()` — `partial`
-  - `compileSqlCreateStatement()` — `partial`
-  - `compileDbstatExists()` — `partial`
-  - `compileSchemas()` — `partial`
-  - `compileTableExists()` — `partial`
-  - `compileTables()` — `partial`
-  - `compileLegacyTables()` — `partial`
-  - `compileViews()` — `partial`
-  - `compileColumns()` — `partial`
-  - `compileIndexes()` — `partial`
-  - `compileForeignKeys()` — `partial`
-  - `compileCreate()` — `partial`
-  - `compileAdd()` — `partial`
-  - `compileAlter()` — `partial`
-  - `compileChange()` — `partial`
-  - `compilePrimary()` — `partial`
-  - `compileUnique()` — `partial`
-  - `compileIndex()` — `partial`
-  - `compileSpatialIndex()` — `partial`
-  - `compileForeign()` — `partial`
-  - `compileDrop()` — `partial`
-  - `compileDropIfExists()` — `partial`
-  - `compileDropAllTables()` — `partial`
-  - `compileDropAllViews()` — `partial`
-  - `compileRebuild()` — `partial`
-  - `compileDropColumn()` — `partial`
-  - `compileDropPrimary()` — `partial`
-  - `compileDropUnique()` — `partial`
-  - `compileDropIndex()` — `partial`
-  - `compileDropSpatialIndex()` — `partial`
-  - `compileDropForeign()` — `partial`
-  - `compileRename()` — `partial`
-  - `compileRenameIndex()` — `partial`
-  - `compileEnableForeignKeyConstraints()` — `partial`
-  - `compileDisableForeignKeyConstraints()` — `partial`
-  - `pragma()` — `partial`
 
 ### `Schema/Grammars/SqlServerGrammar.php` — `partial`
 - **class `SqlServerGrammar`** — `partial`
@@ -5827,6 +3067,7 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
 
 ### `Schema/SchemaState.php` — `partial`
 - **class `SchemaState`** — `partial`
+  - `__construct()` — `partial`
   - `makeProcess()` — `partial`
   - `hasMigrationTable()` — `partial`
   - `withMigrationTable()` — `partial`
@@ -5853,13 +3094,6 @@ Status meanings: `implemented` means a named PyJinx counterpart exists but still
   - `setCommand()` — `partial`
   - `__invoke()` — `partial`
 - **class `once`** — `partial`
-  - `call()` — `partial`
-  - `callWith()` — `partial`
-  - `callSilent()` — `partial`
-  - `callOnce()` — `partial`
-  - `setContainer()` — `partial`
-  - `setCommand()` — `partial`
-  - `__invoke()` — `partial`
 
 ### `SqlServerConnection.php` — `partial`
 - **class `SqlServerConnection`** — `partial`
