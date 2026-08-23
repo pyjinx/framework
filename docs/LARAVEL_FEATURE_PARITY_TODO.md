@@ -221,7 +221,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 ### Database and Eloquent
 
 - [x] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
-- [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
+- [~] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
   - Partial slice (2026-08-23): `ConfigurationUrlParser` now mirrors Laravel's
     URL-to-configuration boundary for SQLite paths, driver aliases, native
     query-string values, and URL precedence over individual options.
@@ -282,14 +282,17 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::parseConnectionName` (177–182), `build` (113–125),
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
-  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
+  - Current evidence: `cd starter && uv run python -m pytest
     tests/test_database.py tests/test_database_exceptions.py
-    tests/test_lost_connection_detector.py -q` — 48 passed; full PyJinx
-    suite: `uv run --no-sync python3 -m pytest tests/ -q` — 218 passed,
-    20 warnings.
-  - Residual parity gaps: full URL parsing, strict mode, non-SQLite drivers,
-    connector extensions/events, transaction manager semantics, retries,
-    normalized exception integration, and complete connection API remain open.
+    tests/test_lost_connection_detector.py tests/test_configuration_url_parser.py
+    tests/test_connection_resolver.py -q` — 56 passed; warning-as-error full
+    suite: `uv run python -m pytest -W error::DeprecationWarning tests/ -q` —
+    197 passed.
+  - Residual parity gaps: Laravel's full `Connection`/PDO contract,
+    `setReconnector`, transaction-mode configuration, nested URL query arrays,
+    strict mode, non-SQLite connectors/drivers, connector events, complete
+    connection lifecycle integration, and remaining normalized exception
+    semantics remain partial or intentionally blocked.
 - [ ] Complete database manager/resolver parity: connection switching,
   transactions, nested transactions, retries, query listeners, and normalized
   exceptions.
