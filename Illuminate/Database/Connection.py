@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from pathlib import Path
 
 from sqlalchemy.engine import Engine
 
@@ -18,6 +17,11 @@ class Connection:
         self.engine = engine
         self._name = name
         self._config = dict(config or {})
+        self._read_write_type: str | None = None
+        self._read_pdo = None
+        self._direct_pdo = None
+        self._read_pdo_config: dict = {}
+        self._direct_pdo_config: dict = {}
         self.reconnector: Callable[[Connection], object] | None = None
 
     @property
@@ -83,12 +87,48 @@ class Connection:
         return self.get_pdo()
 
     def get_read_pdo(self):
-        return self.get_pdo()
+        return self._read_pdo or self.get_pdo()
+
+    def get_raw_read_pdo(self):
+        return self._read_pdo
+
+    def get_direct_pdo(self):
+        return self._direct_pdo or self.get_pdo()
+
+    def get_raw_direct_pdo(self):
+        return self._direct_pdo
+
+    def set_read_pdo(self, pdo) -> Connection:
+        self._read_pdo = pdo
+        return self
+
+    def set_read_pdo_config(self, config: dict) -> Connection:
+        self._read_pdo_config = dict(config)
+        return self
+
+    def set_direct_pdo(self, pdo) -> Connection:
+        self._direct_pdo = pdo
+        return self
+
+    def set_direct_pdo_config(self, config: dict) -> Connection:
+        self._direct_pdo_config = dict(config)
+        return self
+
+    def get_direct_pdo_config(self) -> dict:
+        return dict(self._direct_pdo_config)
+
+    def has_direct_connection(self) -> bool:
+        return bool(self._direct_pdo_config)
 
     def get_name(self) -> str:
         return self._name
 
+    def set_read_write_type(self, connection_type: str | None) -> Connection:
+        self._read_write_type = connection_type
+        return self
+
     def get_name_with_read_write_type(self, connection_type: str | None = None) -> str:
+        connection_type = connection_type or self._read_write_type
         return f"{self._name}::{connection_type}" if connection_type else self._name
 
     def get_config(self, option: str | None = None):
@@ -103,6 +143,11 @@ class Connection:
 
     def get_driver_name(self) -> str | None:
         return self.get_config("driver")
+    def get_driver_title(self) -> str | None:
+        return self.get_driver_name()
+
+    def get_server_version(self) -> str:
+        return ".".join(str(part) for part in self.engine.dialect.server_version_info)
 
     def get_database_name(self):
         return self.get_config("database")
