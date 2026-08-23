@@ -294,10 +294,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     the underlying SQLAlchemy engine explicitly.
   - Partial slice (2026-08-23): the adapter also exposes parameterized
     `select`, `select_one`, `scalar`, `insert`, `update`, `delete`, `statement`,
-    `affecting_statement`, and `unprepared` operations over SQLite.
-  - Current evidence: connection, adapter SQL, resolver, URL, lifecycle, and
-    reconnector tests — 63 focused tests; warning-as-error full suite:
-    204 passed.
+    `affecting_statement`, and `unprepared` operations over SQLite, plus
+    read/direct PDO metadata and driver/title/server-version accessors.
+  - Current evidence: connection, adapter metadata/SQL, resolver, URL,
+    lifecycle, and reconnector tests — 64 focused tests; warning-as-error full
+    suite: 205 passed.
   - Residual parity gaps: complete Laravel `Connection`/PDO public-method
     coverage, connector events, complete connection lifecycle integration, and
     remaining normalized exception semantics remain partial or intentionally
