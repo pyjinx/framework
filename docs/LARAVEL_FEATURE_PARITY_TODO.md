@@ -5,7 +5,7 @@ Source reference:
 
 ## Reference and snapshot metadata
 
-- **Last reviewed:** 2026-08-22
+- **Last reviewed:** 2026-08-23
 - **Feature checklist:** 10/38 implementation-present, 7/38 partial, 21/38 not started
 - **Exact parity audit:** 0/38 verified exact; all 38/38 remain provisional or incomplete
 - **Audit method:** compare the local Laravel 13 reference projects and framework source, inspect the Laravel 13.x API namespace index, and run focused PyJinx behavior checks where a runtime exists.
@@ -206,6 +206,16 @@ The audit used `references/laravel/` (application) and `references/framework/` (
 ### Resume point
 
 Next implementation area: finish the Database / ORM foundation and continue the Eloquent port. The DB manager, SQLAlchemy/Alembic boundary, migrations, raw query builder, DB facade, initial User model, casts, and model events exist only as early slices; they are not full Laravel parity.
+
+### Database / Eloquent inventory baseline — 2026-08-23
+
+- Complete machine-generated checklist: [`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
+- Laravel source scope: `references/framework/src/Illuminate/Database/` — 250 PHP files, 355 classes/interfaces/traits, and 2,196 public method declarations.
+- PyJinx source scope: `framework/Illuminate/Database/` — 24 Python files, 29 classes, and 463 public methods/functions.
+- Area status: `Eloquent` partial (108 Laravel files / 11 PyJinx files), `Query` partial (17 / 0 direct namespace files; PyJinx `QueryBuilder.py` is the current counterpart), `Schema` partial (23 / 2), `Migrations` partial (6 / 0 direct namespace files; application migration commands are outside this namespace), `Events` partial (24 / 2), and root connection/exception classes partial; Laravel Capsule, connectors, console, concerns, and most dialect-specific surfaces are missing.
+- Mapping method: each Laravel public method is listed by source file/class with a provisional `implemented`, `partial`, `missing`, or `blocked` status; matching PyJinx files are recorded as candidate counterparts. Method rows are not exact-parity evidence until focused behavior tests exist.
+- Blocked contract: JSON-overlap methods remain `blocked` because the pinned Laravel SQLite grammar does not expose `compileJsonOverlaps`; no overlap semantics are invented.
+- Acceptance evidence required: source/API mapping for every method, focused red-green-refactor tests for implemented slices, synchronized canonical/runtime docs, and a warning-as-error full suite.
 
 ### Database and Eloquent
 

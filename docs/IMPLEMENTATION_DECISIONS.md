@@ -189,3 +189,26 @@
   executable remains `loom`.
 - **Compatibility:** Do not retain a global `loom` alias. The current starter
   `pyjinx` script is replaced by `loom` only for generated project commands.
+
+## 2026-08-23 — Laravel 13 Database/Eloquent API inventory
+
+- **Decision:** Establish a complete source-first Database/Eloquent inventory
+  before implementing another ORM behavior. The tracked artifact is
+  `docs/DATABASE_ELOQUENT_API_INVENTORY.md`.
+- **Scope:** Compare every class/interface/trait and public method under
+  `references/framework/src/Illuminate/Database/` against
+  `framework/Illuminate/Database/`, with Laravel 13 API documentation as the
+  public-contract reference.
+- **Baseline:** Laravel contains 250 files, 355 classes/interfaces/traits, and
+  2,196 public method declarations in this namespace. PyJinx currently contains
+  24 files, 29 classes, and 463 public methods/functions. The inventory is
+  therefore a gap map, not a parity claim.
+- **Status policy:** `implemented` means a named counterpart exists but still
+  needs evidence; `partial` means only a behavior slice exists; `missing` means
+  no counterpart; `blocked` is reserved for an authoritative contract that
+  cannot be implemented without inventing behavior.
+- **Known blocker:** SQLite JSON-overlap methods remain blocked while the pinned
+  Laravel SQLite grammar lacks `compileJsonOverlaps`.
+- **Acceptance:** Each selected implementation slice must have Laravel source
+  mapping, strict red-green-refactor tests, synchronized canonical/runtime
+  framework state, and warning-as-error regression evidence.
