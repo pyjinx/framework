@@ -15,7 +15,7 @@ Generated inventory for the PyJinx parity goal.
 | Source | Files | Classes / interfaces / traits | Public methods |
 |---|---:|---:|---:|
 | Laravel 13 Database namespace | 250 | 355 | 2196 |
-| PyJinx Database namespace | 24 | 29 | 463 |
+| PyJinx Database namespace | 25 | 30 | 468 |
 
 Laravel has a substantially larger surface. No area is exact parity until every listed method has behavioral evidence.
 
@@ -32,7 +32,7 @@ Laravel has a substantially larger surface. No area is exact parity until every 
 | `Migrations` | 6 | 10 | 59 | 0 | 0 | 0 | `partial` |
 | `Query` | 17 | 18 | 347 | 0 | 0 | 0 | `partial` |
 | `Schema` | 23 | 25 | 391 | 2 | 5 | 60 | `partial` |
-| `__root__` | 32 | 34 | 218 | 9 | 11 | 167 | `partial` |
+| `__root__` | 32 | 34 | 218 | 10 | 12 | 172 | `partial` |
 
 Status meanings: `implemented` means a named PyJinx counterpart exists but still needs evidence; `partial` means only a subset or behavior slice exists; `missing` means no counterpart; `blocked` is reserved for contracts intentionally deferred by the pinned Laravel/SQLite source.
 
@@ -3912,6 +3912,14 @@ The following files are the current implementation surface to reconcile against 
   - `set_columns()`
 
 ### `framework/Illuminate/Database/__init__.py`
+
+### `framework/Illuminate/Database/ConnectionResolver.py`
+- class `ConnectionResolver`
+  - `connection()`
+  - `add_connection()`
+  - `has_connection()`
+  - `get_default_connection()`
+  - `set_default_connection()`
 
 ## Immediate inventory follow-up
 

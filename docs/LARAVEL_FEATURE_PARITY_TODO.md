@@ -211,7 +211,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 - Complete machine-generated checklist: [`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
 - Laravel source scope: `references/framework/src/Illuminate/Database/` — 250 PHP files, 355 classes/interfaces/traits, and 2,196 public method declarations.
-- PyJinx source scope: `framework/Illuminate/Database/` — 24 Python files, 29 classes, and 463 public methods/functions.
+- PyJinx source scope: `framework/Illuminate/Database/` — 25 Python files, 30 classes, and 468 public methods/functions.
 - Area status: `Eloquent` partial (108 Laravel files / 11 PyJinx files), `Query` partial (17 / 0 direct namespace files; PyJinx `QueryBuilder.py` is the current counterpart), `Schema` partial (23 / 2), `Migrations` partial (6 / 0 direct namespace files; application migration commands are outside this namespace), `Events` partial (24 / 2), and root connection/exception classes partial; Laravel Capsule, connectors, console, concerns, and most dialect-specific surfaces are missing.
 - Mapping method: each Laravel public method is listed by source file/class with a provisional `implemented`, `partial`, `missing`, or `blocked` status; matching PyJinx files are recorded as candidate counterparts. Method rows are not exact-parity evidence until focused behavior tests exist.
 - Blocked contract: JSON-overlap methods remain `blocked` because the pinned Laravel SQLite grammar does not expose `compileJsonOverlaps`; no overlap semantics are invented.
@@ -233,8 +233,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `getPrimaryOptions`, `getQueryOptions`, `parseUrl`, `parseStringsToNativeTypes`,
     `SQLiteConnector::configureForeignKeyConstraints`, `configureBusyTimeout`,
     `configureJournalMode`, and `configureSynchronous`.
-  - Evidence: `tests/test_configuration_url_parser.py` and focused database
-    configuration tests — 53 passed; warning-as-error full suite — 194 passed.
+  - Partial slice (2026-08-23): `ConnectionResolver` now mirrors Laravel's
+    registered connection lookup, default connection selection, registration,
+    and presence checks.
+  - Evidence: URL/parser, resolver, and focused database configuration tests —
+    55 passed; warning-as-error full suite — 196 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and

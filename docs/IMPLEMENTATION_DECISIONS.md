@@ -224,12 +224,12 @@
   SQLite-specific options are applied on each DBAPI connection.
 - **Implemented:** driver aliases, SQLite relative/absolute/memory paths,
   boolean/numeric query values, `foreign_key_constraints`, `busy_timeout`,
-  `journal_mode`, `synchronous`, custom pragmas, and reconnect fingerprints for
-  those options.
+  `journal_mode`, `synchronous`, custom pragmas, reconnect fingerprints for
+  those options, and the `ConnectionResolver` registered/default lookup API.
 - **Non-SQLite boundary:** MySQL, MariaDB, PostgreSQL, and SQL Server remain
   advertised as Laravel-supported driver names but are not implemented by the
   SQLite backend. Strict-mode and driver-specific connector behavior remain
   partial and must not be invented without an implemented backend.
-- **Evidence:** focused connection/parser tests passed (53 total in the
-  connection regression group); warning-as-error full starter suite passed
-  (194 tests).
+- **Evidence:** focused connection/parser/resolver tests passed (55 total in
+  the connection regression group); warning-as-error full starter suite passed
+  (196 tests).
