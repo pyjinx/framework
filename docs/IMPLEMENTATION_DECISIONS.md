@@ -176,3 +176,17 @@
   added later only for a standalone API explorer.
 - **Status:** Research-approved architecture; website implementation remains
   a separate workspace and delivery stream.
+
+## 2026-08-23 — Framework CLI and global installer identities
+
+- **Decision:** Use `loom` as the project-local framework CLI, analogous to
+  Laravel's Artisan. Commands will be `loom serve`, `loom migrate`, and
+  `loom test`.
+- **Installer boundary:** The future `pyjinx-installer` distribution exposes
+  the global `pyjinx new hello-world` command. It is not the framework CLI.
+- **Migration:** After the Veyra rename, the installer becomes
+  `veyra-installer` and the project creator becomes `veyra new hello-world`;
+  the project-local framework CLI remains `loom`.
+- **Compatibility:** Do not retain a `pyjinx` alias for the project-local
+  framework CLI. The current starter `pyjinx` script is transitional and must
+  be replaced when the CLI migration slice is implemented.
