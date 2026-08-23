@@ -287,14 +287,17 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::parseConnectionName` (177–182), `build` (113–125),
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
-  - Partial slice (2026-08-23): a Laravel-shaped `Connection` adapter now wraps
+  - Partial slice (2026-08-23): a Laravel-shaped `Connection` adapter wraps
     SQLAlchemy engines with metadata, URL, config, prefix, PDO-boundary,
     reconnect, disconnect, purge, and engine-resource methods. DatabaseManager
     returns adapters, propagates `setReconnector`, and query/schema callers bind
     the underlying SQLAlchemy engine explicitly.
-  - Current evidence: connection, adapter, resolver, URL, lifecycle, and
-    reconnector tests — 62 focused tests; warning-as-error full suite:
-    203 passed.
+  - Partial slice (2026-08-23): the adapter also exposes parameterized
+    `select`, `select_one`, `scalar`, `insert`, `update`, `delete`, `statement`,
+    `affecting_statement`, and `unprepared` operations over SQLite.
+  - Current evidence: connection, adapter SQL, resolver, URL, lifecycle, and
+    reconnector tests — 63 focused tests; warning-as-error full suite:
+    204 passed.
   - Residual parity gaps: complete Laravel `Connection`/PDO public-method
     coverage, connector events, complete connection lifecycle integration, and
     remaining normalized exception semantics remain partial or intentionally

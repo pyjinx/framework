@@ -237,9 +237,12 @@
   purge, and engine-resource methods. DatabaseManager now returns adapters,
   propagates `setReconnector`, and query/schema integration explicitly binds
   underlying SQLAlchemy engines.
+- **Implemented:** the adapter also exposes parameterized SQLite
+  `select`, `select_one`, `scalar`, `insert`, `update`, `delete`, `statement`,
+  `affecting_statement`, and `unprepared` operations.
 - **Residuals:** Complete Laravel `Connection`/PDO method coverage, connector
   events, full normalized exception/lifecycle behavior, strict mode, and
   non-SQLite connector behavior remain open or intentionally blocked.
 - **Evidence:** focused connection/adapter/parser/resolver/read-write/session/
-  transaction/reconnector tests passed (62 total); warning-as-error full
-  starter suite passed (203 tests).
+  transaction/reconnector/SQL-operation tests passed (63 total);
+  warning-as-error full starter suite passed (204 tests).
