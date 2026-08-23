@@ -287,17 +287,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DatabaseManager::parseConnectionName` (177–182), `build` (113–125),
     `calculateDynamicConnectionName` (133–138), `connectUsing` (150–169),
     `configuration` (219–231), and `purge` (301–312).
-  - Current evidence: `cd starter && uv run python -m pytest
-    tests/test_database.py tests/test_database_exceptions.py
-    tests/test_lost_connection_detector.py tests/test_configuration_url_parser.py
-    tests/test_connection_resolver.py -q` — 59 passed; warning-as-error full
-    suite: `uv run python -m pytest -W error::DeprecationWarning tests/ -q` —
-    200 passed.
-  - Residual parity gaps: Laravel's full `Connection`/PDO contract,
-    `setReconnector`, connector events, complete connection lifecycle
-    integration, and remaining normalized exception semantics remain partial
-    or intentionally blocked. Strict mode and non-SQLite connectors/drivers
-    remain outside the implemented SQLite backend.
+  - Partial slice (2026-08-23): a Laravel-shaped `Connection` adapter now wraps
+    SQLAlchemy engines with metadata, URL, config, prefix, PDO-boundary,
+    reconnect, disconnect, purge, and engine-resource methods. DatabaseManager
+    returns adapters while query/schema callers bind the underlying SQLAlchemy
+    engine explicitly.
+  - Current evidence: connection, adapter, resolver, URL, and lifecycle tests —
+    61 focused tests; warning-as-error full suite: 202 passed.
+  - Residual parity gaps: complete Laravel `Connection`/PDO public-method
+    coverage, manager-level `setReconnector` integration, connector events,
+    complete connection lifecycle integration, and remaining normalized
+    exception semantics remain partial or intentionally blocked. Strict mode
+    and non-SQLite connectors/drivers remain outside the implemented SQLite
+    backend.
 - [ ] Complete database manager/resolver parity: connection switching,
   transactions, nested transactions, retries, query listeners, and normalized
   exceptions.
