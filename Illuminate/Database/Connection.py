@@ -38,6 +38,46 @@ class Connection:
 
     def get_pdo(self):
         return self.raw_connection()
+    def select(self, query: str, bindings=(), use_read_pdo: bool = True) -> list[dict]:
+        del use_read_pdo
+        with self.engine.connect() as connection:
+            return [
+                dict(row)
+                for row in connection.exec_driver_sql(query, bindings).mappings()
+            ]
+
+    def select_one(self, query: str, bindings=(), use_read_pdo: bool = True):
+        rows = self.select(query, bindings, use_read_pdo)
+        return rows[0] if rows else None
+
+    def scalar(self, query: str, bindings=(), use_read_pdo: bool = True):
+        del use_read_pdo
+        with self.engine.connect() as connection:
+            return connection.exec_driver_sql(query, bindings).scalar()
+
+    def select_from_write_connection(self, query: str, bindings=()):
+        return self.select(query, bindings, use_read_pdo=False)
+
+    def insert(self, query: str, bindings=()) -> bool:
+        return self.statement(query, bindings)
+
+    def update(self, query: str, bindings=()) -> int:
+        return self.affecting_statement(query, bindings)
+
+    def delete(self, query: str, bindings=()) -> int:
+        return self.affecting_statement(query, bindings)
+
+    def statement(self, query: str, bindings=()) -> bool:
+        with self.engine.begin() as connection:
+            connection.exec_driver_sql(query, bindings)
+        return True
+
+    def affecting_statement(self, query: str, bindings=()) -> int:
+        with self.engine.begin() as connection:
+            return connection.exec_driver_sql(query, bindings).rowcount
+
+    def unprepared(self, query: str) -> bool:
+        return self.statement(query)
 
     def get_raw_pdo(self):
         return self.get_pdo()
