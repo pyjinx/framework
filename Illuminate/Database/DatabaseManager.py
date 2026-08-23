@@ -364,14 +364,15 @@ class DatabaseManager:
         return QueryBuilder(self, table_name, connection_name)
 
     def session(self, name: str | None = None) -> Session:
-        name = name or self.get_default_connection()
-        sessions = (self._transaction_sessions.get() or {}).get(name, ())
+        requested = name or self.get_default_connection()
+        cache_name = self._engine_cache_name(requested)
+        sessions = (self._transaction_sessions.get() or {}).get(cache_name, ())
         if sessions:
             return sessions[-1]
 
-        self.connection(name)
-        session = self._session_factories[name]()
-        self._active_sessions.setdefault(name, WeakSet()).add(session)
+        self.connection(requested)
+        session = self._session_factories[cache_name]()
+        self._active_sessions.setdefault(cache_name, WeakSet()).add(session)
         return session
 
     @contextmanager
