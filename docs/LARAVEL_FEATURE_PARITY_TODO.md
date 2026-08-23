@@ -227,8 +227,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     query-string values, and URL precedence over individual options.
   - Partial slice (2026-08-23): SQLite connection setup applies Laravel
     `foreign_key_constraints`, `busy_timeout`, `journal_mode`, `synchronous`,
-    and custom `pragmas` on every DBAPI connection. Fingerprints include these
-    options so reconnect rebuilds changed SQLite resources.
+    `transaction_mode`, and custom `pragmas` on every DBAPI connection.
+    Fingerprints include these options so reconnect rebuilds changed SQLite
+    resources.
   - Source mapping: Laravel `Support\ConfigurationUrlParser::parseConfiguration`,
     `getPrimaryOptions`, `getQueryOptions`, `parseUrl`, `parseStringsToNativeTypes`,
     `SQLiteConnector::configureForeignKeyConstraints`, `configureBusyTimeout`,
@@ -241,8 +242,9 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     base connection when no overrides are configured.
   - Source mapping: Laravel `ConnectionFactory::createReadWriteConnection`,
     `getReadConfig`, `getWriteConfig`, and `mergeReadWriteConfig`.
-  - Evidence: URL/parser, resolver, read/write, and focused database
-    configuration tests — 56 passed; warning-as-error full suite — 197 passed.
+  - Evidence: URL/parser, resolver, transaction-mode, read/write, and focused
+    database configuration tests — 57 passed; warning-as-error full suite —
+    198 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and
