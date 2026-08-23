@@ -527,6 +527,17 @@ class Model(JsonSerializable):
             lambda: self.replicate(except_attributes)
         )
 
+    def is_(self, model) -> bool:
+        return (
+            model is not None
+            and self.get_key() == model.get_key()
+            and self.get_table() == model.get_table()
+            and self.get_connection_name() == model.get_connection_name()
+        )
+
+    def is_not(self, model) -> bool:
+        return not self.is_(model)
+
     def get_arrayable_items(self, values):
         if self.get_visible():
             values = {

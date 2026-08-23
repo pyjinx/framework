@@ -549,11 +549,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `Model.refresh` and `refresh_for_update`
     reload persisted attributes in place, synchronize the original/changes
     baseline, and leave unsaved models unchanged.
+  - Partial slice (2026-08-23): `Model.is_` and `is_not` compare model key,
+    table, and connection identity while remaining safe for null models.
   - Source mapping: Laravel `HasEvents::withoutEvents` (447–462),
     `Model::forceFill` (725–728), `Model::saveQuietly` (1371–1374),
     `Model::deleteQuietly` (1776–1779),
     `Model::fresh`/`refresh`/`refreshForUpdate` (2089–2129),
     `Model::replicate`/`replicateQuietly` (2162–2194),
+    `Model::is`/`isNot` (2202–2219),
     `Builder::forceCreate` (1256–1264),
     `Builder::firstOrNew`/`firstOrCreate`/`createOrFirst` (694–735),
     `Builder::updateOrCreate` (744–751), and
@@ -561,8 +564,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
     tests/test_eloquent_model.py tests/test_eloquent_attributes.py
     tests/test_eloquent_relationships.py tests/test_eloquent_soft_deletes.py -q`
-    — 44 passed, 17 warnings; full PyJinx suite:
-    `uv run --no-sync python3 -m pytest tests/ -q` — 222 passed, 20 warnings.
+    — 45 passed, 17 warnings; warning-as-error full suite:
+    `uv run pytest -W error::DeprecationWarning tests/ -q` — 226 passed.
   - Residual parity gaps: update-or-fail, save-or-fail, save-or-ignore, touch,
     upsert, transaction/savepoint handling for create-or-first races,
     cast-aware dirty/original synchronization, and complete CRUD
