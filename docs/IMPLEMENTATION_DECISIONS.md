@@ -201,7 +201,7 @@
   public-contract reference.
 - **Baseline:** Laravel contains 250 files, 355 classes/interfaces/traits, and
   2,196 public method declarations in this namespace. PyJinx currently contains
-  24 files, 29 classes, and 463 public methods/functions. The inventory is
+  27 files, 31 classes, and 512 public methods/functions. The inventory is
   therefore a gap map, not a parity claim.
 - **Status policy:** `implemented` means a named counterpart exists but still
   needs evidence; `partial` means only a behavior slice exists; `missing` means

@@ -211,7 +211,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 - Complete machine-generated checklist: [`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
 - Laravel source scope: `references/framework/src/Illuminate/Database/` — 250 PHP files, 355 classes/interfaces/traits, and 2,196 public method declarations.
-- PyJinx source scope: `framework/Illuminate/Database/` — 25 Python files, 30 classes, and 468 public methods/functions.
+- PyJinx source scope: `framework/Illuminate/Database/` — 27 Python files, 31 classes, and 512 public methods/functions.
 - Area status: `Eloquent` partial (108 Laravel files / 11 PyJinx files), `Query` partial (17 / 0 direct namespace files; PyJinx `QueryBuilder.py` is the current counterpart), `Schema` partial (23 / 2), `Migrations` partial (6 / 0 direct namespace files; application migration commands are outside this namespace), `Events` partial (24 / 2), and root connection/exception classes partial; Laravel Capsule, connectors, console, concerns, and most dialect-specific surfaces are missing.
 - Mapping method: each Laravel public method is listed by source file/class with a provisional `implemented`, `partial`, `missing`, or `blocked` status; matching PyJinx files are recorded as candidate counterparts. Method rows are not exact-parity evidence until focused behavior tests exist.
 - Blocked contract: JSON-overlap methods remain `blocked` because the pinned Laravel SQLite grammar does not expose `compileJsonOverlaps`; no overlap semantics are invented.

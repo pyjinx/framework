@@ -15,7 +15,7 @@ Generated inventory for the PyJinx parity goal.
 | Source | Files | Classes / interfaces / traits | Public methods |
 |---|---:|---:|---:|
 | Laravel 13 Database namespace | 250 | 355 | 2196 |
-| PyJinx Database namespace | 25 | 30 | 468 |
+| PyJinx Database namespace | 27 | 31 | 512 |
 
 Laravel has a substantially larger surface. No area is exact parity until every listed method has behavioral evidence.
 
@@ -32,7 +32,7 @@ Laravel has a substantially larger surface. No area is exact parity until every 
 | `Migrations` | 6 | 10 | 59 | 0 | 0 | 0 | `partial` |
 | `Query` | 17 | 18 | 347 | 0 | 0 | 0 | `partial` |
 | `Schema` | 23 | 25 | 391 | 2 | 5 | 60 | `partial` |
-| `__root__` | 32 | 34 | 218 | 10 | 12 | 172 | `partial` |
+| `__root__` | 32 | 34 | 218 | 12 | 13 | 216 | `partial` |
 
 Status meanings: `implemented` means a named PyJinx counterpart exists but still needs evidence; `partial` means only a subset or behavior slice exists; `missing` means no counterpart; `blocked` is reserved for contracts intentionally deferred by the pinned Laravel/SQLite source.
 
@@ -3912,6 +3912,52 @@ The following files are the current implementation surface to reconcile against 
   - `set_columns()`
 
 ### `framework/Illuminate/Database/__init__.py`
+
+### `framework/Illuminate/Database/Connection.py`
+- class `Connection`
+  - `url()`
+  - `listen()`
+  - `before_executing()`
+  - `connect()`
+  - `begin()`
+  - `raw_connection()`
+  - `get_pdo()`
+  - `select()`
+  - `select_one()`
+  - `scalar()`
+  - `select_from_write_connection()`
+  - `insert()`
+  - `update()`
+  - `delete()`
+  - `statement()`
+  - `affecting_statement()`
+  - `unprepared()`
+  - `get_raw_pdo()`
+  - `get_read_pdo()`
+  - `get_raw_read_pdo()`
+  - `get_direct_pdo()`
+  - `get_raw_direct_pdo()`
+  - `set_read_pdo()`
+  - `set_read_pdo_config()`
+  - `set_direct_pdo()`
+  - `set_direct_pdo_config()`
+  - `get_direct_pdo_config()`
+  - `has_direct_connection()`
+  - `get_name()`
+  - `set_read_write_type()`
+  - `get_name_with_read_write_type()`
+  - `get_config()`
+  - `get_driver_name()`
+  - `get_driver_title()`
+  - `get_server_version()`
+  - `get_database_name()`
+  - `get_table_prefix()`
+  - `set_table_prefix()`
+  - `set_reconnector()`
+  - `reconnect()`
+  - `disconnect()`
+  - `purge()`
+  - `dispose()`
 
 ### `framework/Illuminate/Database/ConnectionResolver.py`
 - class `ConnectionResolver`
