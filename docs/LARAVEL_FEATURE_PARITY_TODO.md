@@ -219,7 +219,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 ### Database and Eloquent
 
-- [ ] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
+- [x] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
 - [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
