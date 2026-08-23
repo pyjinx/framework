@@ -740,6 +740,7 @@ class DatabaseManager:
             config.get("busy_timeout"),
             config.get("journal_mode"),
             config.get("synchronous"),
+            config.get("transaction_mode"),
             repr(config.get("pragmas", {})),
         )
 
@@ -754,6 +755,13 @@ class DatabaseManager:
         journal_mode = config.get("journal_mode")
         synchronous = config.get("synchronous")
         custom_pragmas = config.get("pragmas", {})
+        transaction_mode = config.get("transaction_mode")
+        if transaction_mode is not None:
+            transaction_mode = str(transaction_mode).upper()
+            if transaction_mode not in {"DEFERRED", "IMMEDIATE", "EXCLUSIVE"}:
+                raise ValueError(
+                    f"Unsupported SQLite transaction_mode [{transaction_mode}]."
+                )
 
         if not isinstance(custom_pragmas, dict):
             raise ValueError("SQLite pragmas must be configured as a mapping.")
@@ -789,3 +797,10 @@ class DatabaseManager:
                     cursor.execute(f"PRAGMA {pragma} = {value}")
             finally:
                 cursor.close()
+
+        if transaction_mode is not None:
+            @event.listens_for(engine, "begin")
+            def begin_transaction(connection):
+                connection.exec_driver_sql(
+                    f"BEGIN {transaction_mode} TRANSACTION"
+                )
