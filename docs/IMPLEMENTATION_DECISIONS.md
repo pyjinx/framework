@@ -209,6 +209,11 @@
   cannot be implemented without inventing behavior.
 - **Known blocker:** SQLite JSON-overlap methods remain blocked while the pinned
   Laravel SQLite grammar lacks `compileJsonOverlaps`.
+- **Runtime mirror blocker:** The current `starter` checkout has no
+  `framework/` submodule, so canonical/runtime synchronization cannot be
+  verified or performed. The inventory remains committed in the canonical
+  framework repository; restoring the runtime mirror requires an explicit
+  repository decision.
 - **Acceptance:** Each selected implementation slice must have Laravel source
   mapping, strict red-green-refactor tests, synchronized canonical/runtime
   framework state, and warning-as-error regression evidence.
