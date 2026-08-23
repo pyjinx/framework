@@ -234,11 +234,12 @@
   partial and must not be invented without an implemented backend.
 - **Implemented:** the initial SQLAlchemy-backed `Connection` adapter exposes
   Laravel-shaped metadata, config, prefix, PDO boundary, reconnect, disconnect,
-  purge, and engine-resource methods. DatabaseManager now returns adapters;
-  query/schema integration explicitly binds underlying SQLAlchemy engines.
-- **Residuals:** Complete Laravel `Connection`/PDO method coverage,
-  connector events, full normalized exception/lifecycle behavior, strict mode,
-  and non-SQLite connector behavior remain open or intentionally blocked.
+  purge, and engine-resource methods. DatabaseManager now returns adapters,
+  propagates `setReconnector`, and query/schema integration explicitly binds
+  underlying SQLAlchemy engines.
+- **Residuals:** Complete Laravel `Connection`/PDO method coverage, connector
+  events, full normalized exception/lifecycle behavior, strict mode, and
+  non-SQLite connector behavior remain open or intentionally blocked.
 - **Evidence:** focused connection/adapter/parser/resolver/read-write/session/
   transaction/reconnector tests passed (62 total); warning-as-error full
   starter suite passed (203 tests).

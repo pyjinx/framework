@@ -290,8 +290,8 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-23): a Laravel-shaped `Connection` adapter now wraps
     SQLAlchemy engines with metadata, URL, config, prefix, PDO-boundary,
     reconnect, disconnect, purge, and engine-resource methods. DatabaseManager
-    returns adapters while query/schema callers bind the underlying SQLAlchemy
-    engine explicitly.
+    returns adapters, propagates `setReconnector`, and query/schema callers bind
+    the underlying SQLAlchemy engine explicitly.
   - Current evidence: connection, adapter, resolver, URL, lifecycle, and
     reconnector tests — 62 focused tests; warning-as-error full suite:
     203 passed.
