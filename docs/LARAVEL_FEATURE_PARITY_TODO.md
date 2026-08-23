@@ -242,9 +242,12 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     base connection when no overrides are configured.
   - Source mapping: Laravel `ConnectionFactory::createReadWriteConnection`,
     `getReadConfig`, `getWriteConfig`, and `mergeReadWriteConfig`.
-  - Evidence: URL/parser, resolver, transaction-mode, read/write, and focused
-    database configuration tests — 57 passed; warning-as-error full suite —
-    198 passed.
+  - Partial slice (2026-08-23): session factories and active-session cleanup
+    normalize `::read`/`::write` suffixes to their engine resource keys when
+    no distinct read/write override exists.
+  - Evidence: URL/parser, resolver, transaction-mode, read/write, session
+    suffix, and focused database configuration tests — 58 passed;
+    warning-as-error full suite — 199 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and
