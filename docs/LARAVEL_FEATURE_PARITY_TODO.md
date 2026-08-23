@@ -215,7 +215,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 - Area status: `Eloquent` partial (108 Laravel files / 11 PyJinx files), `Query` partial (17 / 0 direct namespace files; PyJinx `QueryBuilder.py` is the current counterpart), `Schema` partial (23 / 2), `Migrations` partial (6 / 0 direct namespace files; application migration commands are outside this namespace), `Events` partial (24 / 2), and root connection/exception classes partial; Laravel Capsule, connectors, console, concerns, and most dialect-specific surfaces are missing.
 - Mapping method: each Laravel public method is listed by source file/class with a provisional `implemented`, `partial`, `missing`, or `blocked` status; matching PyJinx files are recorded as candidate counterparts. Method rows are not exact-parity evidence until focused behavior tests exist.
 - Blocked contract: JSON-overlap methods remain `blocked` because the pinned Laravel SQLite grammar does not expose `compileJsonOverlaps`; no overlap semantics are invented.
-- Runtime mirror blocker: `starter/framework/` is absent in the current starter checkout, so canonical/runtime documentation synchronization cannot be verified or performed without an explicit repository decision to restore the submodule.
+- Runtime mirror evidence: `starter/framework/` is restored at the canonical inventory revision and the inventory, tracker, and decision documents compare byte-identically between `framework/docs/` and `starter/framework/docs/`.
 - Acceptance evidence required: source/API mapping for every method, focused red-green-refactor tests for implemented slices, synchronized canonical/runtime docs, and a warning-as-error full suite.
 
 ### Database and Eloquent
