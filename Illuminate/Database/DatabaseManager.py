@@ -11,9 +11,9 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
-
-from Illuminate.Database.Events.QueryExecuted import QueryExecuted
 from Illuminate.Database.ConfigurationUrlParser import ConfigurationUrlParser
+from Illuminate.Database.Connection import Connection as DatabaseConnection
+from Illuminate.Database.Events.QueryExecuted import QueryExecuted
 from Illuminate.Database.QueryException import QueryException
 from Illuminate.Database.UniqueConstraintViolationException import (
     UniqueConstraintViolationException,
@@ -79,7 +79,7 @@ class DatabaseManager:
                 return name[: -len(suffix)], connection_type
         return name, None
 
-    def connection(self, name: str | None = None) -> Engine:
+    def connection(self, name: str | None = None) -> DatabaseConnection:
         requested_name = name or self.get_default_connection()
         database_name, connection_type = self.parse_connection_name(requested_name)
         connection = self._configuration_for_type(database_name, connection_type)
@@ -120,7 +120,8 @@ class DatabaseManager:
         if connection["driver"] == "sqlite":
             self._configure_sqlite(engine, connection)
 
-        self._engines[cache_name] = engine
+        wrapped = DatabaseConnection(engine, cache_name, connection)
+        self._engines[cache_name] = wrapped
         self._engine_fingerprints[cache_name] = self._sqlite_fingerprint(url, connection)
         self._session_factories[cache_name] = sessionmaker(
             bind=engine,
@@ -129,7 +130,7 @@ class DatabaseManager:
             close_resets_only=False,
         )
         self._active_sessions.setdefault(cache_name, WeakSet())
-        return engine
+        return wrapped
 
     def build(self, config: dict) -> Engine:
         """Build and cache a SQLite connection from dynamic configuration."""
@@ -398,9 +399,10 @@ class DatabaseManager:
             raise self._wrap_query_exception(error, requested) from error
 
     def _query_bind(self, name: str | None = None):
-        name = name or self.get_default_connection()
-        sessions = (self._transaction_sessions.get() or {}).get(name, ())
-        return sessions[-1].connection() if sessions else self.connection(name)
+        requested = name or self.get_default_connection()
+        cache_name = self._engine_cache_name(requested)
+        sessions = (self._transaction_sessions.get() or {}).get(cache_name, ())
+        return sessions[-1].connection() if sessions else self.connection(requested).engine
 
     def _wrap_query_exception(self, error: Exception, name: str) -> QueryException:
         statement = str(getattr(error, "statement", "") or "")

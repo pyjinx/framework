@@ -18,7 +18,7 @@ class SchemaBuilder:
         return self
 
     def _get_connection(self):
-        return self.manager.connection(self.connection_name)
+        return self.manager.connection(self.connection_name).engine
 
     def _table_name(self, table_name: str) -> str:
         return self.manager.prefixed_table_name(table_name, self.connection_name)
