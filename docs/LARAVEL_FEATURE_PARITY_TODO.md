@@ -222,6 +222,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 - [x] Expand the Laravel 13 Database/Eloquent API inventory down to every class and public method.
 - [ ] Complete connection configuration parity: default/named connections, URLs, prefixes, strict mode, read/write connections, reconnect and purge behavior.
+  - Partial slice (2026-08-23): `ConfigurationUrlParser` now mirrors Laravel's
+    URL-to-configuration boundary for SQLite paths, driver aliases, native
+    query-string values, and URL precedence over individual options.
+  - Partial slice (2026-08-23): SQLite connection setup applies Laravel
+    `foreign_key_constraints`, `busy_timeout`, `journal_mode`, `synchronous`,
+    and custom `pragmas` on every DBAPI connection. Fingerprints include these
+    options so reconnect rebuilds changed SQLite resources.
+  - Source mapping: Laravel `Support\ConfigurationUrlParser::parseConfiguration`,
+    `getPrimaryOptions`, `getQueryOptions`, `parseUrl`, `parseStringsToNativeTypes`,
+    `SQLiteConnector::configureForeignKeyConstraints`, `configureBusyTimeout`,
+    `configureJournalMode`, and `configureSynchronous`.
+  - Evidence: `tests/test_configuration_url_parser.py` and focused database
+    configuration tests — 53 passed; warning-as-error full suite — 194 passed.
   - Partial slice (2026-08-22): `DatabaseManager` now resolves default/named SQLite connections, restores defaults through callback failure, validates drivers before URL use, tracks URL/SQLite-option fingerprints, rebuilds changed connections, evicts invalid cached configurations, closes manager-owned sessions, returns registry snapshots, and reports deterministic unknown/unsupported-driver errors.
   - Partial slice (2026-08-22): the manager exposes `get_pdo`,
     `get_raw_pdo`, `get_read_pdo`, `get_name`, and
