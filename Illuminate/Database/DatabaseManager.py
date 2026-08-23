@@ -2,6 +2,7 @@ from collections.abc import Callable
 from contextlib import contextmanager
 from contextvars import ContextVar
 import hashlib
+import re
 from pathlib import Path
 from time import perf_counter
 from weakref import WeakSet
@@ -12,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 from Illuminate.Database.Events.QueryExecuted import QueryExecuted
+from Illuminate.Database.ConfigurationUrlParser import ConfigurationUrlParser
 from Illuminate.Database.QueryException import QueryException
 from Illuminate.Database.UniqueConstraintViolationException import (
     UniqueConstraintViolationException,
@@ -55,7 +57,7 @@ class DatabaseManager:
         self._engines: dict[str, Engine] = {}
         self._dynamic_connection_configurations: dict[str, dict] = {}
         self._extensions: dict[str, Callable] = {}
-        self._engine_fingerprints: dict[str, tuple[str, bool]] = {}
+        self._engine_fingerprints: dict[str, tuple] = {}
         self._session_factories: dict[str, sessionmaker] = {}
         self._active_sessions: dict[str, WeakSet[Session]] = {}
         self._transaction_sessions: ContextVar[
@@ -110,14 +112,11 @@ class DatabaseManager:
                 )
             ),
         )
-        if connection["driver"] == "sqlite" and connection.get("foreign_keys", True):
-            self._enable_sqlite_foreign_keys(engine)
+        if connection["driver"] == "sqlite":
+            self._configure_sqlite(engine, connection)
 
         self._engines[name] = engine
-        self._engine_fingerprints[name] = (
-            url,
-            bool(connection.get("foreign_keys", True)),
-        )
+        self._engine_fingerprints[name] = self._sqlite_fingerprint(url, connection)
         self._session_factories[name] = sessionmaker(
             bind=engine,
             autoflush=True,
@@ -306,8 +305,7 @@ class DatabaseManager:
         try:
             connection = self._configuration(name)
             configured_fingerprint = (
-                self._url(connection),
-                bool(connection.get("foreign_keys", True)),
+                self._sqlite_fingerprint(self._url(connection), connection)
             )
         except Exception as configuration_error:
             try:
@@ -672,7 +670,7 @@ class DatabaseManager:
             connection = self.config.get(f"database.connections.{name}")
         if connection is None:
             raise ValueError(f"Database connection [{name}] is not configured.")
-        return connection
+        return ConfigurationUrlParser().parse_configuration(connection)
 
     def _url(self, connection: dict) -> str:
         driver = connection.get("driver")
@@ -696,9 +694,63 @@ class DatabaseManager:
         return f"sqlite:///{database}"
 
     @staticmethod
-    def _enable_sqlite_foreign_keys(engine):
+    def _sqlite_fingerprint(url: str, config: dict) -> tuple:
+        foreign_keys = config.get(
+            "foreign_key_constraints",
+            config.get("foreign_keys", True),
+        )
+        return (
+            url,
+            bool(foreign_keys),
+            config.get("busy_timeout"),
+            config.get("journal_mode"),
+            config.get("synchronous"),
+            repr(config.get("pragmas", {})),
+        )
+
+    @staticmethod
+    def _configure_sqlite(engine, config: dict) -> None:
+        """Apply Laravel SQLite connector pragmas on every DBAPI connection."""
+        foreign_keys = config.get(
+            "foreign_key_constraints",
+            config.get("foreign_keys", True),
+        )
+        busy_timeout = config.get("busy_timeout")
+        journal_mode = config.get("journal_mode")
+        synchronous = config.get("synchronous")
+        custom_pragmas = config.get("pragmas", {})
+
+        if not isinstance(custom_pragmas, dict):
+            raise ValueError("SQLite pragmas must be configured as a mapping.")
+
         @event.listens_for(engine, "connect")
-        def set_foreign_keys(dbapi_connection, _connection_record):
+        def configure_pragmas(dbapi_connection, _connection_record):
             cursor = dbapi_connection.cursor()
-            cursor.execute("PRAGMA foreign_keys=ON")
-            cursor.close()
+            try:
+                cursor.execute(f"PRAGMA foreign_keys = {1 if foreign_keys else 0}")
+
+                if busy_timeout is not None:
+                    timeout = int(busy_timeout)
+                    if timeout < 0:
+                        raise ValueError("SQLite busy_timeout must be non-negative.")
+                    cursor.execute(f"PRAGMA busy_timeout = {timeout}")
+
+                if journal_mode is not None:
+                    mode = str(journal_mode).upper()
+                    if mode not in {"DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF"}:
+                        raise ValueError(f"Unsupported SQLite journal_mode [{journal_mode}].")
+                    cursor.execute(f"PRAGMA journal_mode = {mode}")
+
+                if synchronous is not None:
+                    sync = str(synchronous).upper()
+                    levels = {"OFF": 0, "NORMAL": 1, "FULL": 2, "EXTRA": 3}
+                    if sync not in levels and sync not in {"0", "1", "2", "3"}:
+                        raise ValueError(f"Unsupported SQLite synchronous mode [{synchronous}].")
+                    cursor.execute(f"PRAGMA synchronous = {levels.get(sync, sync)}")
+
+                for pragma, value in custom_pragmas.items():
+                    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", str(pragma)):
+                        raise ValueError(f"Invalid SQLite pragma name [{pragma}].")
+                    cursor.execute(f"PRAGMA {pragma} = {value}")
+            finally:
+                cursor.close()
