@@ -162,8 +162,9 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 ### 5.8 CLI and scaffolding parity (Laravel-style)
 
-- **FR-19 CLI entrypoint**
-  - Global and project-local command executable is `loom`.
+- **FR-19 CLI entrypoints**
+  - Global project creation uses `pyjinx new`.
+  - Generated projects use `loom` for the framework command surface.
   - Root command groups follow `make:*`, `queue:*`, `migrate:*`, `config:*`, `route:*` conventions.
 
 - **FR-20 Required command surface for v1.0**
@@ -257,7 +258,7 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 ## 9) Acceptance gates (v1.0 candidate)
 
-1. Run `loom new` then scaffold app bootstraps.
+1. Run `pyjinx new` then scaffold app bootstraps.
 2. Define and serve at least one route via ASGI.
 3. Validate payload with rule DSL from request class.
 4. Run migration create + migrate + rollback on starter db.

@@ -42,7 +42,7 @@ pyjinx/website  ───────────────▶  website/ ─�
   marketing and docs                                            /, /docs, /docs/api
 
 future pyjinx-installer ────────────────────────────────────▶  global command
-                                                               loom new hello-world
+                                                               pyjinx new hello-world
 
 future installer ─────▶ copy starter skeleton ─────▶ hello-world/
 hello-world/ ──────────▶ uv sync --no-sources ──────▶ PyPI: pyjinx
@@ -58,8 +58,8 @@ hello-world/ ──────────▶ uv sync --no-sources ────
 | Skeleton repository | `pyjinx/starter` | `veyra/starter` | Laravel-style project template |
 | Skeleton distribution | `pyjinx-starter` | `veyra-starter` | Optional template package |
 | Installer distribution | `pyjinx-installer` (future) | `veyra-installer` | Global project creator |
-| Installer command | `loom new hello-world` | `loom new hello-world` | Creates a new project |
-| Project-local framework CLI | `loom serve`, `loom migrate`, `loom test` | Same `loom` command | Installer and app command surface |
+| Installer command | `pyjinx new hello-world` | `veyra new hello-world` | Creates a new project |
+| Project-local framework CLI | `loom serve`, `loom migrate`, `loom test` | Same `loom` command | Artisan-equivalent app command tool |
 | Website repository | `pyjinx/website` | `veyra/website` | Marketing site and docs |
 | Temporary website URL | Vercel `website` aliases | Veyra public domain | Public website and docs |
 
@@ -72,7 +72,8 @@ from Illuminate.Database.QueryBuilder import QueryBuilder
 
 The future installer distribution must not also be named `pyjinx`, because the
 framework package already owns that PyPI name. Its distribution is
-`pyjinx-installer`, while its executable is `loom`, shared by PyJinx and Veyra.
+`pyjinx-installer`, while its current executable is `pyjinx`; the project-local
+framework executable is `loom` for both PyJinx and Veyra.
 
 ## Development dependency flow
 
@@ -100,7 +101,7 @@ Developer
 Generated applications must not contain the development submodule:
 
 ```text
-loom new hello-world
+pyjinx new hello-world
           │
           ▼
 Copy starter skeleton without the development submodule

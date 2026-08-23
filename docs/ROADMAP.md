@@ -96,11 +96,12 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ### Scope
 
-- Add executable entrypoint:
-  - `loom` (global or local project command).
+- Add executable entrypoints:
+  - `pyjinx` global installer command.
+  - `loom` project-local framework command.
   - stable `--help`, `--version`, global options.
 - Command groups:
-  - `loom new`, `loom serve`, `loom tinker`, `loom about`.
+  - `pyjinx new`, `loom serve`, `loom tinker`, `loom about`.
   - `loom make:model|controller|middleware|command|migration|request|factory`.
   - `loom route:list`.
   - `loom migrate|migrate:status|migrate:rollback|db:seed`.
@@ -117,7 +118,7 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ### Acceptance
 
-- `loom --help` enumerates available commands and groups.
+- `loom --help` enumerates available project commands and groups.
 - `loom serve` launches ASGI app with clear startup/stop behavior.
 - `loom make:controller` writes deterministic skeleton.
 - `loom route:list` reports route table from loaded bootstrap routes.
@@ -153,7 +154,7 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Acceptance
 
 - New app can be created from framework command and boot without manual edits.
-- `loom new` + `loom serve` and one protected route test pass.
+- `pyjinx new` + `loom serve` and one protected route test pass.
 
 ---
 

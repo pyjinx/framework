@@ -45,7 +45,7 @@ This document is the concrete user-facing documentation for the CLI parity surfa
 
 | Command | Purpose |
 |---|---|
-| `loom new <project>` | Create a new starter application skeleton |
+| `pyjinx new <project>` | Create a new starter application skeleton |
 
 ### Database / migration
 

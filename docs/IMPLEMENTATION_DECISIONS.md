@@ -178,13 +178,14 @@
 
 ## 2026-08-23 — Framework CLI and global installer identities
 
-- **Decision:** Use `loom` as the single executable for both PyJinx and Veyra.
-  Global project creation uses `loom new hello-world`; project-local commands
-  use `loom serve`, `loom migrate`, and `loom test`.
+- **Decision:** Keep the global installer executable as `pyjinx`, with
+  `pyjinx new hello-world` creating a project. Use `loom` only inside the
+  generated project for `loom serve`, `loom migrate`, and `loom test`, matching
+  Laravel's Artisan boundary.
 - **Installer boundary:** The `pyjinx-installer` distribution exposes the
-  global `loom` executable. The executable name is intentionally independent
-  of the temporary PyJinx and future Veyra distribution names.
+  global `pyjinx` executable. The project-local starter executable is `loom`.
 - **Migration:** After the Veyra rename, the installer distribution becomes
-  `veyra-installer`, but the global command remains `loom`.
-- **Compatibility:** Do not retain `pyjinx` or `veyra` executable aliases.
-  The current starter `pyjinx` script is replaced by `loom`.
+  `veyra-installer` and its global command becomes `veyra`; the project-local
+  executable remains `loom`.
+- **Compatibility:** Do not retain a global `loom` alias. The current starter
+  `pyjinx` script is replaced by `loom` only for generated project commands.

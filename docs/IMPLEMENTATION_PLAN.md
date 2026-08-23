@@ -144,7 +144,7 @@ Use short, shippable milestones:
 
 **Tasks:**
 1. Implement command parser and routing for:
-   - `loom new`
+   - `pyjinx new`
    - `loom serve`
    - `loom make:model`
    - `loom make:controller`
@@ -199,7 +199,7 @@ Use short, shippable milestones:
 5. Add test suite scaffold with at least one functional flow.
 
 **Acceptance:**
-- `loom new` produces a runnable skeleton that boots and serves a smoke route.
+- `pyjinx new` produces a runnable skeleton that boots and serves a smoke route.
 
 ### 3.2 Vertical slice contract in starter
 

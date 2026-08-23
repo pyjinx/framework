@@ -42,7 +42,7 @@ loom route:list
 ### Project initialization
 
 ```bash
-loom new my-project
+pyjinx new my-project
 ```
 
 ### Database commands
