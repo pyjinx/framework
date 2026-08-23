@@ -80,13 +80,18 @@ class DatabaseManager:
         return name, None
 
     def connection(self, name: str | None = None) -> Engine:
-        name = name or self.get_default_connection()
-        database_name, _ = self.parse_connection_name(name)
-        name = database_name
-        if database_name in self._engines:
-            return self._engines[database_name]
+        requested_name = name or self.get_default_connection()
+        database_name, connection_type = self.parse_connection_name(requested_name)
+        connection = self._configuration_for_type(database_name, connection_type)
+        cache_name = (
+            requested_name
+            if connection_type in {"read", "write"}
+            and isinstance(self._configuration(database_name).get(connection_type), dict)
+            else database_name
+        )
+        if cache_name in self._engines:
+            return self._engines[cache_name]
 
-        connection = self._configuration(database_name)
         resolver = self._extensions.get(database_name) or self._extensions.get(
             connection.get("driver")
         )
@@ -102,7 +107,7 @@ class DatabaseManager:
             "after_cursor_execute",
             lambda connection, cursor, statement, parameters, context, executemany: (
                 self._after_cursor_execute(
-                    name,
+                    requested_name,
                     connection,
                     cursor,
                     statement,
@@ -115,15 +120,15 @@ class DatabaseManager:
         if connection["driver"] == "sqlite":
             self._configure_sqlite(engine, connection)
 
-        self._engines[name] = engine
-        self._engine_fingerprints[name] = self._sqlite_fingerprint(url, connection)
-        self._session_factories[name] = sessionmaker(
+        self._engines[cache_name] = engine
+        self._engine_fingerprints[cache_name] = self._sqlite_fingerprint(url, connection)
+        self._session_factories[cache_name] = sessionmaker(
             bind=engine,
             autoflush=True,
             expire_on_commit=False,
             close_resets_only=False,
         )
-        self._active_sessions.setdefault(name, WeakSet())
+        self._active_sessions.setdefault(cache_name, WeakSet())
         return engine
 
     def build(self, config: dict) -> Engine:
@@ -261,12 +266,21 @@ class DatabaseManager:
     def prefixed_table_name(self, table_name: str, name: str | None = None) -> str:
         return f"{self.get_table_prefix(name)}{table_name}"
 
+    def _engine_cache_name(self, requested: str) -> str:
+        base, connection_type = self.parse_connection_name(requested)
+        candidate = (
+            f"{base}::{connection_type}"
+            if connection_type in {"read", "write"}
+            else base
+        )
+        return candidate if candidate in self._engines else base
+
     def disconnect(self, name: str | None = None) -> None:
         requested = name or self.get_default_connection()
-        name, _ = self.parse_connection_name(requested)
-        cleanup_error = self._close_sessions(name)
+        cache_name = self._engine_cache_name(requested)
+        cleanup_error = self._close_sessions(cache_name)
         dispose_error = None
-        if engine := self._engines.get(name):
+        if engine := self._engines.get(cache_name):
             try:
                 engine.dispose()
             except Exception as error:
@@ -281,45 +295,46 @@ class DatabaseManager:
 
     def purge(self, name: str | None = None) -> None:
         requested = name or self.get_default_connection()
-        name, _ = self.parse_connection_name(requested)
+        cache_name = self._engine_cache_name(requested)
         cleanup_error = None
         try:
-            self.disconnect(name)
+            self.disconnect(requested)
         except Exception as error:
             cleanup_error = error
         finally:
-            self._engines.pop(name, None)
-            self._engine_fingerprints.pop(name, None)
-            self._session_factories.pop(name, None)
-            self._active_sessions.pop(name, None)
+            self._engines.pop(cache_name, None)
+            self._engine_fingerprints.pop(cache_name, None)
+            self._session_factories.pop(cache_name, None)
+            self._active_sessions.pop(cache_name, None)
 
         if cleanup_error is not None:
             raise cleanup_error
 
     def reconnect(self, name: str | None = None) -> Engine:
         requested = name or self.get_default_connection()
-        name, _ = self.parse_connection_name(requested)
-        if name not in self._engines:
-            return self.connection(name)
+        database_name, connection_type = self.parse_connection_name(requested)
+        cache_name = self._engine_cache_name(requested)
+        if cache_name not in self._engines:
+            return self.connection(requested)
 
         try:
-            connection = self._configuration(name)
-            configured_fingerprint = (
-                self._sqlite_fingerprint(self._url(connection), connection)
+            connection = self._configuration_for_type(database_name, connection_type)
+            configured_fingerprint = self._sqlite_fingerprint(
+                self._url(connection), connection
             )
         except Exception as configuration_error:
             try:
-                self.purge(name)
+                self.purge(requested)
             except Exception as cleanup_error:
                 raise configuration_error from cleanup_error
             raise
 
-        if self._engine_fingerprints.get(name) != configured_fingerprint:
-            self.purge(name)
-            return self.connection(name)
+        if self._engine_fingerprints.get(cache_name) != configured_fingerprint:
+            self.purge(requested)
+            return self.connection(requested)
 
-        self.disconnect(name)
-        return self._engines[name]
+        self.disconnect(requested)
+        return self._engines[cache_name]
 
     def using_connection(self, name: str, callback):
         previous_name = self.get_default_connection()
@@ -672,6 +687,26 @@ class DatabaseManager:
             raise ValueError(f"Database connection [{name}] is not configured.")
         return ConfigurationUrlParser().parse_configuration(connection)
 
+    def _configuration_for_type(
+        self, name: str, connection_type: str | None
+    ) -> dict:
+        config = self._configuration(name)
+        if connection_type not in {"read", "write"}:
+            return config
+
+        override = config.get(connection_type)
+        if not isinstance(override, dict):
+            return config
+
+        base = {
+            key: value
+            for key, value in config.items()
+            if key not in {"read", "write"}
+        }
+        return {
+            **base,
+            **ConfigurationUrlParser().parse_configuration(override),
+        }
     def _url(self, connection: dict) -> str:
         driver = connection.get("driver")
         if driver is None:
