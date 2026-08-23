@@ -184,12 +184,12 @@ Use short, shippable milestones:
 
 ---
 
-## Workstream 3: Starter repository (`pyjinx/pyjinx`) creation
+## Workstream 3: Starter repository (`pyjinx/starter`) creation
 
 ### 3.1 Project skeleton structure
 
 **Outside this repo in intended sibling package:**
-- `pyjinx/pyjinx` directory layout.
+- `pyjinx/starter` directory layout.
 
 **Tasks:**
 1. Create app entrypoints and bootstrap file.

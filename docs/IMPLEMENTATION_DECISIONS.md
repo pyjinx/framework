@@ -111,7 +111,7 @@
 
 ## 2026-08-22 — Laravel provider ownership and package auto-discovery
 
-- **Decision:** Mirror Laravel provider ownership: `pyjinx/` supplies
+- **Decision:** Mirror Laravel provider ownership: `pyjinx/starter/` supplies
   application providers; `framework/` supplies framework default and
   framework command providers.
 - **Auto-discovery:** Port the Composer equivalent for package provider

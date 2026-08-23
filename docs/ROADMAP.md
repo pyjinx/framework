@@ -18,7 +18,7 @@ Version bands are placeholders and should be adjusted against release policy.
 - **M0** — Current baseline: core framework primitives exist but incomplete for production.
 - **M1** — Framework core stabilized (ASGI-first, typed lifecycle contracts, robust routing/middleware).
 - **M2** — CLI parity baseline (`pyjinx` command, generators, `serve`, `migrate`, `make:*`, `route:list`).
-- **M3** — Starter scaffold (`pyjinx/pyjinx`) delivered with one vertical slice.
+- **M3** — Starter scaffold (`pyjinx/starter`) delivered with one vertical slice.
 - **M4** — Queue + observability ecosystem and optional facade tightening.
 - **M5** — Hardened public release with migration docs and release train gates.
 
@@ -124,13 +124,13 @@ Version bands are placeholders and should be adjusted against release policy.
 
 ---
 
-## Phase 3 — Starter scaffold release (`pyjinx/pyjinx`)
+## Phase 3 — Starter scaffold release (`pyjinx/starter`)
 
 **Goal:** provide the thin app repo that depends on framework and demonstrates the vertical slice.
 
 ### Scope
 
-- Create `pyjinx/pyjinx` scaffold repo structure:
+- Create `pyjinx/starter` scaffold repo structure:
   - `app/`, `routes/`, `config/`, `resources/views/`, `database/migrations/`, `tests/`, `.env.example`.
 - Add `pyproject.toml` dependency on framework package semver-compatible.
 - Include first-class boot entrypoints:
@@ -223,7 +223,7 @@ Version bands are placeholders and should be adjusted against release policy.
 ### Deliverables
 
 - `pyjinx/framework` 1.0.0 with semantic release.
-- Starter `pyjinx/pyjinx` versioned compatibility.
+- Starter `pyjinx/starter` versioned compatibility.
 - Changelog and migration instructions.
 
 ### Acceptance

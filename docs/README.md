@@ -37,4 +37,4 @@ When the public API changes:
 ## Repository expectations
 
 - Canonical framework package docs live here.
-- Starter application documentation should live in the starter repository (`pyjinx/pyjinx`) once created.
+- Starter application documentation should live in the starter repository (`pyjinx/starter`) once created.

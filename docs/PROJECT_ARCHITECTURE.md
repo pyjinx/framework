@@ -35,7 +35,7 @@ GitHub repositories             Local checkouts                 Published/runtim
 pyjinx/framework  ───────────▶  framework/  ────────────────▶  PyPI: pyjinx
   framework source                   │                          framework package
                                      │ editable submodule
-pyjinx/pyjinx  ───────────────▶  pyjinx/ + framework/ ───────▶  pyjinx-starter
+pyjinx/starter  ───────────────▶  pyjinx/ + framework/ ───────▶  pyjinx-starter
   starter skeleton                   │                          optional template
                                      │
 pyjinx/website  ───────────────▶  website/ ─────────────────▶  Vercel: website
@@ -55,7 +55,7 @@ hello-world/ ──────────▶ uv sync --no-sources ────
 | Framework repository | `pyjinx/framework` | `veyra/framework` | Framework source and history |
 | Framework PyPI distribution | `pyjinx` | `veyra` | Installable framework package |
 | Framework Python imports | `Illuminate.*` | Migration decision required | Laravel-compatible import namespace |
-| Skeleton repository | `pyjinx/pyjinx` | `veyra/starter` | Laravel-style project template |
+| Skeleton repository | `pyjinx/starter` | `veyra/starter` | Laravel-style project template |
 | Skeleton distribution | `pyjinx-starter` | `veyra-starter` | Optional template package |
 | Installer distribution | `pyjinx-installer` (future) | `veyra-installer` | Global project creator |
 | Installer command | `pyjinx new hello-world` | `veyra new hello-world` | Creates a new project |
@@ -156,7 +156,7 @@ and must not duplicate the Python endpoint contract by hand.
 | Local/repository artifact | External target | Current status |
 |---|---|---|
 | `framework/` | `github.com/pyjinx/framework` | Framework source repository |
-| `pyjinx/` | `github.com/pyjinx/pyjinx` | Starter skeleton repository |
+| `starter/` | `github.com/pyjinx/starter` | Starter skeleton repository |
 | `website/` | `github.com/pyjinx/website` | Website MVP repository |
 | Framework wheel | `pypi.org/project/pyjinx` | Package identity; publish/release lifecycle remains separate |
 | Starter wheel/template | `pypi.org/project/pyjinx-starter` | Optional template distribution |

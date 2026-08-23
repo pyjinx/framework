@@ -24,7 +24,7 @@ We mimic:
 
 The port boundary is explicit:
 
-- `laravel/laravel` → `pyjinx/` application repository.
+- `laravel/laravel` → `pyjinx/starter/` application repository.
 - `laravel/framework` → `framework/` reusable framework repository.
 - `pyjinx/framework` → the application's pinned submodule checkout of
   `framework/`; it is not a second framework source repository.
@@ -140,7 +140,7 @@ Future migration checklist:
 - Starter identity: `veyra-starter`
 - GitHub organization repositories currently named:
   - `pyjinx/framework`
-  - `pyjinx/pyjinx`
+  - `pyjinx/starter`
 - Check PyPI, GitHub, domains, and trademarks before migration.
 - Preserve import/CLI compatibility aliases for the documented migration
   window, then remove obsolete paths only after the clean cutover.
@@ -175,7 +175,7 @@ obligations is not a framework implementation requirement.
 
 ## Future Open-Source Publication Boundary
 
-The current `pyjinx/framework` and `pyjinx/pyjinx` repositories are private
+The current `pyjinx/framework` and `pyjinx/starter` repositories are private
 until the Veyra migration and release audit are complete.
 
 Before public release:

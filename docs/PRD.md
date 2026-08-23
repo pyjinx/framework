@@ -2,7 +2,7 @@
 
 ## 1) Executive summary
 
-PyJinx currently has a compact internal core in `Illuminate/`, but it does not yet deliver a production-grade Laravel-style developer framework. The v1.0 target is to build a Python-native, ASGI-first framework package (`pyjinx/framework`) plus a thin starter application (`pyjinx/pyjinx`) with deterministic behavior, explicit contracts, strong typing, and high-fidelity DX.
+PyJinx currently has a compact internal core in `Illuminate/`, but it does not yet deliver a production-grade Laravel-style developer framework. The v1.0 target is to build a Python-native, ASGI-first framework package (`pyjinx/framework`) plus a thin starter application (`pyjinx/starter`) with deterministic behavior, explicit contracts, strong typing, and high-fidelity DX.
 
 Primary acceptance target: a Laravel-inspired but non-trivial framework slice where a developer can create a real app with `pyjinx new`, run HTTP routes, apply validation, use database models/migrations, serve via ASGI, generate assets via CLI, and validate the app via functional tests.
 
@@ -42,7 +42,7 @@ The PRD formalizes the target state and controls scope so the framework becomes 
 
 4. **Split architecture**
    - `pyjinx/framework`: reusable framework package.
-   - `pyjinx/pyjinx`: thin starter scaffold (routes, app config, migrations, views, tests, entrypoints).
+   - `pyjinx/starter`: thin starter scaffold (routes, app config, migrations, views, tests, entrypoints).
 
 5. **Typed boundaries and deterministic behavior**
    - Boundaries between app container/config, router, request, auth, validation, and response layers are typed and tested.
