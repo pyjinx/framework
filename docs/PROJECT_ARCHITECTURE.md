@@ -17,7 +17,7 @@ same thing.
 │   ├── app/, bootstrap/, ...   # Laravel-style application skeleton
 │   ├── pyproject.toml          # distribution: pyjinx-starter
 │   └── uv.lock
-└── starter-kit/                # website repository
+└── website/                   # website repository
     ├── app/                    # Next.js marketing/docs routes
     ├── content/docs/           # Markdown/MDX narrative docs
     └── openapi/                # OpenAPI source artifacts
@@ -34,7 +34,7 @@ flowchart LR
     subgraph GitHub[GitHub repositories]
         FW[pyjinx/framework\nframework source]
         SK[pyjinx/pyjinx\nstarter skeleton]
-        SITE[pyjinx/starter-kit\nwebsite and docs]
+        SITE[pyjinx/website\nwebsite and docs]
         INST[future pyjinx-installer\nproject creator]
     end
 
@@ -42,7 +42,7 @@ flowchart LR
         FWC[framework/\ncanonical checkout]
         SKC[pyjinx/\napplication checkout]
         SUB[pyjinx/framework/\neditable submodule]
-        SITEC[starter-kit/\nNext.js checkout]
+        SITEC[website/\nNext.js checkout]
     end
 
     subgraph Packages[Package indexes]
@@ -90,8 +90,8 @@ flowchart LR
 | Installer distribution | `pyjinx-installer` (future) | `veyra-installer` | Global project creator |
 | Installer command | `pyjinx new hello-world` | `veyra new hello-world` | Creates a new project |
 | Project-local framework CLI | `loom serve`, `loom migrate`, `loom test` | Same `loom` command | Artisan-equivalent app command tool |
-| Website repository | `pyjinx/starter-kit` | `veyra/starter-kit` | Marketing site and docs |
-| Temporary website URL | Vercel `starter-kit` aliases | Veyra public domain | Public website and docs |
+| Website repository | `pyjinx/website` | `veyra/website` | Marketing site and docs |
+| Temporary website URL | Vercel `website` aliases | Veyra public domain | Public website and docs |
 
 A distribution name is not an import name. Installing `pyjinx` must continue to
 provide imports such as:
@@ -177,10 +177,10 @@ and must not duplicate the Python endpoint contract by hand.
 |---|---|---|
 | `framework/` | `github.com/pyjinx/framework` | Framework source repository |
 | `pyjinx/` | `github.com/pyjinx/pyjinx` | Starter skeleton repository |
-| `starter-kit/` | `github.com/pyjinx/starter-kit` | Website MVP repository |
+| `website/` | `github.com/pyjinx/website` | Website MVP repository |
 | Framework wheel | `pypi.org/project/pyjinx` | Package identity; publish/release lifecycle remains separate |
 | Starter wheel/template | `pypi.org/project/pyjinx-starter` | Optional template distribution |
-| Website deployment | Vercel `starter-kit` project | Production deployment is ready; access protection may require Vercel configuration |
+| Website deployment | Vercel `website` project | Production deployment is ready; access protection may require Vercel configuration |
 | Future public site | `veyraframework.com` | Planned after naming migration and release audit |
 
 ## Rules
