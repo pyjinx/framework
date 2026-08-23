@@ -57,12 +57,14 @@ revalidated.
      submodule through `tool.uv.sources` for development, while
      `uv sync --no-sources` resolves the published `pyjinx` package for
      production-like installation.
+   - Datetime slice (2026-08-23): Pendulum is now the framework's
+     Carbon-equivalent boundary through `Illuminate.Support.DateTime`; explicit
+     SQLite datetime/date adapters preserve timezone-aware inputs at the
+     persistence boundary without deprecated implicit sqlite3 adapters.
   - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_exception_handler.py tests/test_serve_command.py
-    tests/test_post_comments_api.py -q` plus direct
-    `./.venv/bin/pyjinx --version` and `./.venv/bin/pyjinx serve --help`;
-    full suite: `uv run --no-sync python3 -m pytest tests/ -q` — 219 passed,
-    20 warnings.
+    tests/test_datetime.py -q` — 3 passed; warning-as-error full suite:
+    `uv run pytest -W error::DeprecationWarning tests/ -q` — 225 passed;
+    standard full suite: `uv run pytest tests/ -q` — 225 passed, 0 warnings.
      Source mapping and residuals are in `IMPLEMENTATION_DECISIONS.md`.
    - Gaps: full Laravel bootstrap policy, maintenance mode, complete Laravel
      exception conversion/rendering, and service registration lifecycle

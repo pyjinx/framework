@@ -16,6 +16,7 @@ from Illuminate.Database.QueryException import QueryException
 from Illuminate.Database.UniqueConstraintViolationException import (
     UniqueConstraintViolationException,
 )
+from Illuminate.Support.DateTime import register_sqlite_adapters
 
 class _TransactionCallbacks:
     def __init__(self) -> None:
@@ -48,6 +49,7 @@ class _ManualRollback(Exception):
 
 class DatabaseManager:
     def __init__(self, app, config) -> None:
+        register_sqlite_adapters()
         self.app = app
         self.config = config
         self._engines: dict[str, Engine] = {}
