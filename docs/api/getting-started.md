@@ -14,30 +14,21 @@ Install the global project creator with uv:
 uv tool install --upgrade pyjinx-installer
 ```
 
-Create a project from anywhere:
+Create a project from anywhere. Replace `hello-world` with your project name:
 
 ```bash
 pyjinx new hello-world
 cd hello-world
 uv sync
-```
-
-Activate the generated virtual environment on macOS/Linux:
-
-```bash
 source .venv/bin/activate
+loom serve
 ```
 
-On Windows PowerShell:
+`uv sync` creates the project-local `.venv` when it does not exist. On Windows
+PowerShell, activate it with:
 
 ```powershell
 .venv\Scripts\Activate.ps1
-```
-
-Start the project-local framework CLI:
-
-```bash
-loom serve
 ```
 
 The development server is available at `http://localhost:8000`.
