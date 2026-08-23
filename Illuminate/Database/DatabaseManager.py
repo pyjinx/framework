@@ -70,6 +70,7 @@ class DatabaseManager:
             dict[str, tuple[object, ...]] | None
         ] = ContextVar("database_manager_manual_transaction_contexts", default=None)
         self._query_listeners: list[Callable[[QueryExecuted], object]] = []
+        self._reconnector: Callable[[DatabaseConnection], object] | None = None
 
     @staticmethod
     def parse_connection_name(name: str) -> tuple[str, str | None]:
@@ -121,6 +122,10 @@ class DatabaseManager:
             self._configure_sqlite(engine, connection)
 
         wrapped = DatabaseConnection(engine, cache_name, connection)
+        wrapped.set_reconnector(
+            self._reconnector
+            or (lambda current: self.reconnect(current.get_name()))
+        )
         self._engines[cache_name] = wrapped
         self._engine_fingerprints[cache_name] = self._sqlite_fingerprint(url, connection)
         self._session_factories[cache_name] = sessionmaker(
@@ -161,6 +166,14 @@ class DatabaseManager:
 
     def listen(self, callback: Callable[[QueryExecuted], object]) -> None:
         self._query_listeners.append(callback)
+
+    def set_reconnector(
+        self, reconnector: Callable[[DatabaseConnection], object]
+    ) -> "DatabaseManager":
+        self._reconnector = reconnector
+        for connection in self._engines.values():
+            connection.set_reconnector(reconnector)
+        return self
 
     def extend(self, name: str, resolver: Callable) -> None:
         self._extensions[name] = resolver
