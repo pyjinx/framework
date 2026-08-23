@@ -6,15 +6,45 @@ This guide shows how to boot a PyJinx application from your package and start ha
 >
 > PyJinx currently exposes core runtime components and route/DI/validation/CLI scaffolding. This guide reflects the intended public API for stable development.
 
-## 1) Install and initialize the framework
+## 1) Install the CLI and create an application
 
-Install dependencies with uv:
+Install the global project creator with uv:
 
 ```bash
+uv tool install --upgrade pyjinx-installer
+```
+
+Create a project from anywhere:
+
+```bash
+pyjinx new hello-world
+cd hello-world
 uv sync
 ```
 
-Create an application bootstrap file (example: `bootstrap/app.py`):
+Activate the generated virtual environment on macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Start the project-local framework CLI:
+
+```bash
+loom serve
+```
+
+The development server is available at `http://localhost:8000`.
+
+## 2) Application bootstrap
+
+Create or customize `bootstrap/app.py`:
 
 ```python
 from pathlib import Path
@@ -31,7 +61,7 @@ app = (
 
 `Application.configure(...).create()` returns the central `Application` instance.
 
-## 2) Register routes
+## 3) Register routes
 
 Use the application router service:
 
@@ -47,7 +77,7 @@ router.post("/users", [UserController, "store"])
 router.get("/health", lambda request: {"status": "ok"})
 ```
 
-## 3) Serve a request
+## 4) Serve a request
 
 PyJinx currently runs through the HTTP kernel in WSGI compatibility flow:
 
@@ -69,11 +99,11 @@ def wsgi_app(environ, start_response):
     return [response.get_content().encode("utf-8")]
 ```
 
-## 4) CLI entrypoint
+## 5) Project-local CLI
 
 The CLI command is `loom`. See [CLI docs](./cli.md).
 
-## 5) Starter workflow for first success path
+## 6) Starter workflow for first success path
 
 1. Configure routes
 2. Register request/response handlers
@@ -83,7 +113,7 @@ The CLI command is `loom`. See [CLI docs](./cli.md).
 
 For the required command set, see [CLI reference](../CLI_REFERENCE.md).
 
-## 6) Next
+## 7) Next
 
 - [Application bootstrap and lifecycle](./application.md)
 - [Routing details](./routing.md)
