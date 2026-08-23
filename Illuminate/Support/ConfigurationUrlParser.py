@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from urllib.parse import parse_qs, unquote, urlparse
 
 
@@ -75,10 +76,28 @@ class ConfigurationUrlParser:
 
         options = {}
         for key, values in parse_qs(query, keep_blank_values=True).items():
-            normalized_key = key[:-2] if key.endswith("[]") else key
-            parsed_values = [self._native(unquote(value)) for value in values]
-            options[normalized_key] = parsed_values if key.endswith("[]") else parsed_values[-1]
+            for raw_value in values:
+                self._assign_query_option(
+                    options,
+                    key,
+                    self._native(unquote(raw_value)),
+                )
         return options
+
+    @staticmethod
+    def _assign_query_option(options: dict, key: str, value) -> None:
+        parts = re.findall(r"([^\[\]]+)|\[\]", key)
+        parts = [part or "" for part in parts]
+        if len(parts) == 1:
+            options[parts[0]] = value
+            return
+        if len(parts) == 2 and parts[1] == "":
+            options.setdefault(parts[0], []).append(value)
+            return
+        if len(parts) == 3 and parts[2] == "":
+            options.setdefault(parts[0], {}).setdefault(parts[1], []).append(value)
+            return
+        options[key] = value
 
     @staticmethod
     def _native(value: str):
