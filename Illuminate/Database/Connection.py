@@ -24,6 +24,8 @@ class Connection:
         self._direct_pdo_config: dict = {}
         self.reconnector: Callable[[Connection], object] | None = None
         self._listeners: list[Callable[[object], object]] = []
+        self._query_duration_handlers: list[dict] = []
+        self._total_query_duration = 0.0
         self._before_callbacks: list[Callable[[str, object], object]] = []
 
     @property
@@ -48,6 +50,32 @@ class Connection:
     def _dispatch_query(self, event) -> None:
         for callback in tuple(self._listeners):
             callback(event)
+    def when_querying_for_longer_than(self, threshold: float, handler) -> Connection:
+        self._query_duration_handlers.append(
+            {"threshold": float(threshold), "handler": handler, "has_run": False}
+        )
+        return self
+
+    def allow_query_duration_handlers_to_run_again(self) -> None:
+        for registered in self._query_duration_handlers:
+            registered["has_run"] = False
+
+    def total_query_duration(self) -> float:
+        return self._total_query_duration
+
+    def reset_total_query_duration(self) -> None:
+        self._total_query_duration = 0.0
+        self.allow_query_duration_handlers_to_run_again()
+
+    def _record_query_duration(self, event) -> None:
+        self._total_query_duration += event.time
+        for registered in self._query_duration_handlers:
+            if (
+                not registered["has_run"]
+                and self._total_query_duration > registered["threshold"]
+            ):
+                registered["has_run"] = True
+                registered["handler"](event)
     def __getattr__(self, name: str):
         return getattr(self.engine, name)
 

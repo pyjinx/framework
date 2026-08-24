@@ -215,6 +215,7 @@ class DatabaseManager:
             self._engine_cache_name(name)
         )
         if adapter is not None:
+            adapter._record_query_duration(query)
             adapter._dispatch_query(query)
 
     @staticmethod
