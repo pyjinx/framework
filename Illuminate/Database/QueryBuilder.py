@@ -14,6 +14,7 @@ from sqlalchemy import (
     select,
     text,
     tuple_,
+    true,
     update,
 )
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
@@ -36,6 +37,7 @@ class QueryBuilder:
         self._havings = []
         self._distinct = False
         self._joins = []
+        self._join_sources = {}
         self._aliased_columns = []
         self._loaded_tables = None
         self._raw_selects = []
@@ -139,6 +141,50 @@ class QueryBuilder:
         """Add a left join clause."""
         table = self.manager.prefixed_table_name(table, self.connection_name)
         self._joins.append(("left", table, first, operator, second))
+        self._loaded_tables = None
+        return self
+    def _coerce_join_subquery(self, query_or_callback, alias: str):
+        query = query_or_callback
+        if callable(query_or_callback):
+            query = QueryBuilder(self.manager, self.table_name, self.connection_name)
+            result = query_or_callback(query)
+            if isinstance(result, QueryBuilder):
+                query = result
+        if not isinstance(query, QueryBuilder):
+            eloquent_query = getattr(query, "query", None)
+            if isinstance(eloquent_query, QueryBuilder):
+                query = eloquent_query
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("A join subquery requires a QueryBuilder.")
+        subquery = query._build_select().subquery(alias)
+        self._join_sources[alias] = subquery
+        return alias
+
+    def join_sub(
+        self, query_or_callback, alias: str, first, operator="=", second=None
+    ):
+        alias = self._coerce_join_subquery(query_or_callback, alias)
+        self._joins.append(("inner", alias, first, operator, second))
+        self._loaded_tables = None
+        return self
+
+    def left_join_sub(
+        self, query_or_callback, alias: str, first, operator="=", second=None
+    ):
+        alias = self._coerce_join_subquery(query_or_callback, alias)
+        self._joins.append(("left", alias, first, operator, second))
+        self._loaded_tables = None
+        return self
+
+    def cross_join(self, table):
+        table = self.manager.prefixed_table_name(table, self.connection_name)
+        self._joins.append(("cross", table, None, None, None))
+        self._loaded_tables = None
+        return self
+
+    def cross_join_sub(self, query_or_callback, alias: str):
+        alias = self._coerce_join_subquery(query_or_callback, alias)
+        self._joins.append(("cross", alias, None, None, None))
         self._loaded_tables = None
         return self
 
@@ -898,7 +944,12 @@ class QueryBuilder:
             for join in self._joins:
                 _, join_table, _, _, _ = join[:5]
                 if join_table not in tables:
-                    tables[join_table] = Table(join_table, metadata, autoload_with=bind)
+                    if join_table in self._join_sources:
+                        tables[join_table] = self._join_sources[join_table]
+                    else:
+                        tables[join_table] = Table(
+                            join_table, metadata, autoload_with=bind
+                        )
             self._loaded_tables = tables
         return self._loaded_tables
 
@@ -1122,10 +1173,13 @@ class QueryBuilder:
                 join_type, join_name, first, operator, second = join[:5]
                 where_join = len(join) == 6 and join[5]
                 join_table = self._load_tables()[join_name]
-                right = second if where_join else self._resolve_column(second)
-                on_clause = self._comparison(
-                    self._resolve_column(first), operator, right
-                )
+                if join_type == "cross":
+                    on_clause = true()
+                else:
+                    right = second if where_join else self._resolve_column(second)
+                    on_clause = self._comparison(
+                        self._resolve_column(first), operator, right
+                    )
                 from_clause = from_clause.join(
                     join_table, on_clause, isouter=join_type == "left"
                 )

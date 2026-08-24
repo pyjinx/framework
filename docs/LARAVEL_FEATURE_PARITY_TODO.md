@@ -367,10 +367,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DeadlockException`.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
-  - Partial slice (2026-08-24): `join_where` and `left_join_where` now compile
-    literal-value join predicates while preserving ordinary column joins.
-  - Evidence: `tests/test_query_builder.py` focused suite — 63 passed;
-    warning-as-error full starter suite — 213 passed.
+  - Partial slice (2026-08-24): `join_where`, `left_join_where`, `join_sub`,
+    `left_join_sub`, `cross_join`, and `cross_join_sub` compile SQLite join and
+    aliased subquery join contracts.
+  - Evidence: `tests/test_query_builder.py` focused suite — 64 passed;
+    warning-as-error full starter suite — 214 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,

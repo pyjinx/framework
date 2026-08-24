@@ -19,15 +19,15 @@ A name mismatch is not automatically a behavior gap. Each candidate requires Lar
 ## SQLite-supported candidate gaps
 
 These are the next behavior candidates unless Laravel source or SQLite grammar blocks them.
-- [ ] `joinWhere`
-- [ ] `joinSub`
-- [ ] `leftJoinWhere`
-- [ ] `leftJoinSub`
+- [x] `joinWhere` — SQLite literal join condition; `tests/test_query_builder.py::test_join_where_compares_join_column_to_literal`.
+- [x] `joinSub` — SQLite subquery join through aliased SQLAlchemy subqueries; `tests/test_query_builder.py::test_join_sub_and_cross_join_sqlite_contracts`.
+- [x] `leftJoinWhere` — shares the SQLite literal join implementation and binding boundary.
+- [x] `leftJoinSub` — shares the SQLite aliased subquery join implementation.
 - [ ] `rightJoin`
 - [ ] `rightJoinWhere`
 - [ ] `rightJoinSub`
-- [ ] `crossJoin`
-- [ ] `crossJoinSub`
+- [x] `crossJoin` — SQLite cross join via a true join predicate.
+- [x] `crossJoinSub` — SQLite cross join against an aliased subquery.
 - [ ] `mergeWheres`
 - [ ] `orWhereNotBetween`
 - [ ] `whereValueBetween`
