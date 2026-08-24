@@ -72,6 +72,7 @@ class DatabaseManager:
         ] = ContextVar("database_manager_manual_transaction_contexts", default=None)
         self._transactions_manager = DatabaseTransactionsManager()
         self._query_listeners: list[Callable[[QueryExecuted], object]] = []
+        self._event_dispatcher = app.make("events") if app.bound("events") else None
         self._reconnector: Callable[[DatabaseConnection], object] | None = None
 
     @staticmethod
@@ -211,6 +212,8 @@ class DatabaseManager:
         )
         for callback in tuple(self._query_listeners):
             callback(query)
+        if self._event_dispatcher is not None:
+            self._event_dispatcher.dispatch(QueryExecuted, [query])
         adapter = self._engines.get(name) or self._engines.get(
             self._engine_cache_name(name)
         )
