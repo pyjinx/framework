@@ -267,3 +267,24 @@
 - **Evidence:** transaction-manager, query-duration, application-event, and
   manager integration tests passed (4 focused manager tests); warning-as-error
   full starter suite passed (212 tests).
+
+## 2026-08-24 — Batched contract-family parity workflow
+
+- **Decision:** Keep the Laravel inventory at class/method granularity, but
+  implement behavior in coherent contract-family batches rather than one
+  method per iteration.
+- **Batch examples:** joins/subqueries, where/having predicates,
+  projections/bindings, pagination/cursors, and Eloquent forwarding.
+- **TDD loop:** compare the complete Laravel family, write a discriminatory
+  failing test matrix, implement shared primitives once, run the focused
+  family suite, then run the warning-as-error full suite once per batch.
+- **Preservation rule:** existing passing `QueryBuilder.py` behavior is not
+  rewritten wholesale. A method is changed only when its Laravel contract is
+  missing or behaviorally incorrect.
+- **Backend rule:** SQLite batches are implemented only where the pinned
+  Laravel SQLite grammar and runtime support the behavior. MySQL/PostgreSQL
+  methods remain classified until real connectors, grammars, dependencies, and
+  integration evidence exist.
+- **Delivery:** each batch updates the parity tracker, source mapping,
+  residual matrix, canonical/runtime submodule, focused evidence, and full
+  regression result.

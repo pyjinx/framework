@@ -367,6 +367,10 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `DeadlockException`.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
+  - Partial slice (2026-08-24): `join_where` and `left_join_where` now compile
+    literal-value join predicates while preserving ordinary column joins.
+  - Evidence: `tests/test_query_builder.py` focused suite — 63 passed;
+    warning-as-error full starter suite — 213 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,
@@ -537,6 +541,19 @@ test, SQLite and/or real-driver integration evidence where applicable, runtime
 submodule synchronization, and a warning-as-error full suite. Existing
 `QueryBuilder.py` methods must be audited and preserved; only missing or
 incorrect contracts should be changed.
+
+#### Batch execution flow
+
+The inventory remains method-level, but implementation runs by coherent
+contract family:
+
+1. Compare the complete Laravel family and grammar behavior.
+2. Add a focused failing test matrix for the family.
+3. Implement shared primitives once; do not rewrite passing methods.
+4. Run the focused family suite.
+5. Run the warning-as-error full suite once.
+6. Update source mappings, residual classification, runtime synchronization,
+   and evidence in one batch.
 
 - [~] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
     - SQLAlchemy/Alembic-backed manager, query/schema builders, migrations, and early Eloquent slices exist; broad Laravel API parity remains incomplete.
