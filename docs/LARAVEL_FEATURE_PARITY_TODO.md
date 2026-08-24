@@ -370,8 +370,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-24): `join_where`, `left_join_where`, `join_sub`,
     `left_join_sub`, `cross_join`, and `cross_join_sub` compile SQLite join and
     aliased subquery join contracts.
-  - Evidence: `tests/test_query_builder.py` focused suite — 64 passed;
-    warning-as-error full starter suite — 214 passed.
+  - Partial slice (2026-08-24): `or_where_not_between`,
+    `where_value_between`, `or_where_value_between`,
+    `where_value_not_between`, `or_where_value_not_between`, `or_having`,
+    `having_between`, `having_not_between`, `or_having_between`, and
+    `or_having_not_between` compile SQLite boolean, value-range, and grouped
+    having predicates.
+  - Evidence: `tests/test_query_builder.py` focused suite — 65 passed;
+    warning-as-error full starter suite — 215 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,

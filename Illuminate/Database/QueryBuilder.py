@@ -584,6 +584,39 @@ class QueryBuilder:
         low, high = values
         self._where_clauses.append(("not_between", "and", column, (low, high)))
         return self
+    def or_where_not_between(self, column, values):
+        low, high = values
+        self._where_clauses.append(("not_between", "or", column, (low, high)))
+        return self
+
+    def where_value_between(self, value, columns, not_between=False):
+        low, high = columns
+        self._where_clauses.append(
+            ("value_between", "and", (low, high), (value, not_between))
+        )
+        return self
+
+    def or_where_value_between(self, value, columns):
+        low, high = columns
+        self._where_clauses.append(
+            ("value_between", "or", (low, high), (value, False))
+        )
+        return self
+
+    def where_value_not_between(self, value, columns):
+        return self.where_value_between(value, columns, True)
+
+    def or_where_value_not_between(self, value, columns):
+        low, high = columns
+        return self._append_value_between(
+            value, low, high, "or", True
+        )
+
+    def _append_value_between(self, value, low, high, boolean, not_between):
+        self._where_clauses.append(
+            ("value_between", boolean, (low, high), (value, not_between))
+        )
+        return self
 
     # ---- Ordering ----
 
@@ -599,7 +632,6 @@ class QueryBuilder:
             self._raw_expression(expression, [] if bindings is None else bindings)
         )
         return self
-
     def order_by_desc(self, column):
         return self.order_by(column, "desc")
 
@@ -621,11 +653,31 @@ class QueryBuilder:
         )
         return self
 
-    def having(self, column, operator="=", value=None):
+    def having(self, column, operator="=", value=None, boolean="and"):
         if value is None:
             value = operator
             operator = "="
-        self._havings.append((column, operator, value))
+        self._havings.append((column, operator, value, boolean))
+        return self
+
+    def or_having(self, column, operator="=", value=None):
+        return self.having(column, operator, value, "or")
+
+    def having_between(self, column, values, boolean="and", not_between=False):
+        low, high = values
+        self._havings.append(
+            (column, "between", (low, high, not_between), boolean)
+        )
+        return self
+
+    def having_not_between(self, column, values):
+        return self.having_between(column, values, not_between=True)
+
+    def or_having_between(self, column, values):
+        return self.having_between(column, values, "or")
+
+    def or_having_not_between(self, column, values):
+        return self.having_between(column, values, "or", True)
 
     def having_raw(self, expression: str, bindings=None, boolean: str = "and"):
         self._raw_havings.append(
@@ -1105,9 +1157,7 @@ class QueryBuilder:
                     "value"
                 )
                 expr = exists(
-                    select(1)
-                    .select_from(json_values)
-                    .where(json_values.c.value == value)
+                    select(1).select_from(json_values).where(json_values.c.value == value)
                 )
                 if not_contains:
                     expr = ~expr
@@ -1142,6 +1192,14 @@ class QueryBuilder:
                 expr = col.between(val[0], val[1])
             elif kind == "not_between":
                 expr = ~col.between(val[0], val[1])
+            elif kind == "value_between":
+                (low, high), (value, not_between) = column, val
+                expr = and_(
+                    self._comparison(self._resolve_column(low), "<=", value),
+                    self._comparison(self._resolve_column(high), ">=", value),
+                )
+                if not_between:
+                    expr = ~expr
             else:
                 continue
 
@@ -1197,12 +1255,31 @@ class QueryBuilder:
         for col_name in self._groups:
             statement = statement.group_by(self._resolve_column(col_name))
 
-        for column, operator, value in self._havings:
-            statement = statement.having(
-                self._comparison(self._resolve_column(column), operator, value)
-            )
+        and_havings = []
+        or_havings = []
+        for having in self._havings:
+            if len(having) == 3:
+                column, operator, value = having
+                boolean = "and"
+            else:
+                column, operator, value, boolean = having
+            column_expr = self._resolve_column(column)
+            if operator == "between":
+                low, high, not_between = value
+                expression = column_expr.between(low, high)
+                if not_between:
+                    expression = ~expression
+            else:
+                expression = self._comparison(column_expr, operator, value)
+            (or_havings if boolean == "or" else and_havings).append(expression)
         for expression, boolean in self._raw_havings:
-            statement = statement.having(expression)
+            (or_havings if boolean == "or" else and_havings).append(expression)
+        if and_havings and or_havings:
+            statement = statement.having(or_(and_(*and_havings), *or_havings))
+        elif and_havings:
+            statement = statement.having(and_(*and_havings))
+        elif or_havings:
+            statement = statement.having(or_(*or_havings))
 
         for col_name, direction in self._orders:
             col = self._resolve_column(col_name)

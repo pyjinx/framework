@@ -29,27 +29,25 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [x] `crossJoin` — SQLite cross join via a true join predicate.
 - [x] `crossJoinSub` — SQLite cross join against an aliased subquery.
 - [ ] `mergeWheres`
-- [ ] `orWhereNotBetween`
-- [ ] `whereValueBetween`
-- [ ] `orWhereValueBetween`
-- [ ] `whereValueNotBetween`
-- [ ] `orWhereValueNotBetween`
+- [x] `orWhereNotBetween` — SQLite boolean `OR` negative range predicate.
+- [x] `whereValueBetween` — SQLite value bounded by two columns.
+- [x] `orWhereValueBetween` — SQLite `OR` value-between predicate.
+- [x] `whereValueNotBetween` — SQLite negated value-between predicate.
+- [x] `orWhereValueNotBetween` — SQLite `OR` negated value-between predicate.
 - [ ] `whereNested`
 - [ ] `forNestedWhere`
 - [ ] `addNestedWhereQuery`
 - [ ] `addWhereExistsQuery`
 - [ ] `dynamicWhere`
-- [ ] `orHaving`
+- [x] `orHaving` — SQLite boolean `OR` aggregate/group predicate.
 - [ ] `havingNested`
 - [ ] `addNestedHavingQuery`
 - [ ] `havingNull`
 - [ ] `orHavingNull`
-- [ ] `havingNotNull`
-- [ ] `orHavingNotNull`
-- [ ] `havingBetween`
-- [ ] `havingNotBetween`
-- [ ] `orHavingBetween`
-- [ ] `orHavingNotBetween`
+- [x] `havingBetween` — SQLite grouped range predicate.
+- [x] `havingNotBetween` — SQLite negated grouped range predicate.
+- [x] `orHavingBetween` — SQLite `OR` grouped range predicate.
+- [x] `orHavingNotBetween` — SQLite `OR` negated grouped range predicate.
 - [ ] `inRandomOrder`
 - [ ] `inOrderOf`
 - [ ] `groupLimit`
