@@ -251,3 +251,15 @@
 - **Evidence:** focused connection/adapter metadata/parser/resolver/read-write/
   session/transaction/reconnector/SQL-operation/event tests passed (66 total);
   warning-as-error full starter suite passed (207 tests).
+
+## 2026-08-24 — Database transaction manager parity slice
+
+- **Implemented:** `DatabaseTransactionRecord` stores commit and rollback
+  callbacks with nested parent relationships. `DatabaseTransactionsManager`
+  tracks pending/committed records, stages commits, rolls back records, and
+  exposes callback applicability and record accessors.
+- **Boundary:** The manager is currently a Laravel-shaped contract slice and
+  is not yet wired into `DatabaseManager`'s existing ContextVar transaction
+  state. No non-SQLite transaction behavior is added.
+- **Evidence:** transaction-manager contract tests passed (2);
+  warning-as-error full starter suite passed (209 tests).

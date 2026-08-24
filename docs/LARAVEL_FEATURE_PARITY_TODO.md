@@ -344,30 +344,27 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-22): `LostConnectionDetector` matches Laravel's
     full message-pattern contract for server, socket, SSL, network, read-only,
     proxy, and transport failures while rejecting unrelated database errors.
-  - Source mapping: Laravel
-    `Database\Concerns\ManagesTransactions` (26–76, 124–219, 261–378),
-    `Connection::listen` (1115–1118), `Connection::logQuery` (906–933),
-    `DatabaseManager::disconnect` (320–325),
-    `DatabaseManager::purge` (307–312),
-    `DatabaseManager::reconnect` (333–344),
-    `DatabaseManager::setApplication` (476–487),
-    `QueryException` (10–168),
-    `UniqueConstraintViolationException` (5–44),
-    `DeadlockException` (5–10),
-    `LostConnectionDetector` (9–107), and `Events\QueryExecuted` (5–79).
-  - Evidence: `cd pyjinx && uv run --no-sync python3 -m pytest
-    tests/test_database.py tests/test_database_exceptions.py
-    tests/test_lost_connection_detector.py -q` — 48 passed; full PyJinx
-    evidence: `uv run --no-sync python3 -m pytest tests/ -q` — 218 passed,
-    20 warnings.
-  - Residual parity gaps: SQLAlchemy has no Laravel
-    `DatabaseTransactionsManager`, transaction lifecycle events, or
-    query-grammar savepoint compilation. Query event dispatch still lacks
-    Laravel's application event dispatcher integration, read/write/direct
-    classification, raw SQL substitution, threshold handlers, and complete
-    connection API. The available DBAPI exception surface cannot faithfully
-    normalize every Laravel concurrency or lost-connection case, and nested
-    concurrency errors are re-raised rather than translated to Laravel's
+  - Partial slice (2026-08-24): `DatabaseTransactionRecord` and
+    `DatabaseTransactionsManager` provide Laravel-shaped pending/committed
+    transaction records, nested parent relationships, commit/rollback
+    callbacks, staging, rollback, and callback applicability APIs.
+  - Source mapping: Laravel `DatabaseTransactionsManager::begin`, `commit`,
+    `stageTransactions`, `rollback`, `addCallback`, `addCallbackForRollback`,
+    and `DatabaseTransactionRecord` callback accessors.
+  - Evidence: transaction-manager contract tests — 2 passed; warning-as-error
+    full starter suite — 209 passed.
+  - Existing manager evidence: `DatabaseManager.transaction`,
+    `begin_transaction`, direct commit/rollback, retries, query listeners,
+    normalized exceptions, and lifecycle tests remain covered by the full
+    warning-as-error suite.
+  - Residual parity gaps: `DatabaseTransactionsManager` is not yet integrated
+    into `DatabaseManager` transaction state; transaction lifecycle events and
+    query-grammar savepoint compilation remain incomplete. Query event dispatch
+    still lacks Laravel's application event dispatcher integration, read/write/
+    direct classification, raw SQL substitution, threshold handlers, and
+    complete connection API. The available DBAPI exception surface cannot
+    faithfully normalize every Laravel concurrency or lost-connection case,
+    and nested concurrency errors are re-raised rather than translated to
     `DeadlockException`.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
