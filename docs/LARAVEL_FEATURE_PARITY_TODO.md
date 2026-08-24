@@ -376,8 +376,12 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `having_between`, `having_not_between`, `or_having_between`, and
     `or_having_not_between` compile SQLite boolean, value-range, and grouped
     having predicates.
-  - Evidence: `tests/test_query_builder.py` focused suite — 65 passed;
-    warning-as-error full starter suite — 215 passed.
+  - Partial slice (2026-08-24): `raw_value`, `implode`, `get_columns`,
+    `get_limit`, `get_offset`, `get_raw_bindings`, `set_bindings`,
+    `add_binding`, `cast_binding`, `merge_bindings`, and `clean_bindings`
+    expose SQLite projection metadata and Laravel-shaped binding buckets.
+  - Evidence: `tests/test_query_builder.py` focused suite — 66 passed;
+    warning-as-error full starter suite — 216 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,

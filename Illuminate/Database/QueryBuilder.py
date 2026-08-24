@@ -44,6 +44,20 @@ class QueryBuilder:
         self._raw_orders = []
         self._raw_groups = []
         self._raw_havings = []
+        self._bindings = {
+            binding_type: []
+            for binding_type in (
+                "select",
+                "from",
+                "join",
+                "where",
+                "groupBy",
+                "having",
+                "order",
+                "union",
+                "unionOrder",
+            )
+        }
         self._lock = None
 
     # ---- Select ----
@@ -903,6 +917,31 @@ class QueryBuilder:
             return None
         return row.get(column)
 
+    def raw_value(self, expression: str, bindings=None):
+        original_columns = self._columns
+        original_raw_selects = list(self._raw_selects)
+        original_limit = self._limit
+        try:
+            self.select_raw(expression, bindings)
+            row = self.first()
+            return next(iter(row.values())) if row else None
+        finally:
+            self._columns = original_columns
+            self._raw_selects = original_raw_selects
+            self._limit = original_limit
+    def implode(self, column, glue=""):
+        return glue.join(str(value) for value in self.pluck(column))
+
+    def get_columns(self):
+        if self._columns is None:
+            return []
+        return list(self._columns)
+
+    def get_limit(self):
+        return self._limit
+
+    def get_offset(self):
+        return self._offset
     def pluck(self, column, key=None):
         """Get a list of column values, optionally keyed by another column."""
         if key is not None:
@@ -977,6 +1016,40 @@ class QueryBuilder:
         compiled = self._compile_select()
         parameter_names = compiled.positiontup or tuple(compiled.params)
         return self._flatten_bindings(compiled.params[name] for name in parameter_names)
+    def get_raw_bindings(self):
+        return {binding_type: list(values) for binding_type, values in self._bindings.items()}
+
+    def set_bindings(self, bindings, binding_type="where"):
+        if binding_type not in self._bindings:
+            raise ValueError(f"Invalid binding type: {binding_type}.")
+        self._bindings[binding_type] = list(bindings)
+        return self
+
+    def add_binding(self, value, binding_type="where"):
+        if binding_type not in self._bindings:
+            raise ValueError(f"Invalid binding type: {binding_type}.")
+        values = value if isinstance(value, (list, tuple)) else [value]
+        self._bindings[binding_type].extend(self.cast_binding(item) for item in values)
+        return self
+
+    @staticmethod
+    def cast_binding(value):
+        return value
+
+    def merge_bindings(self, query):
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("Bindings can only be merged from a QueryBuilder.")
+        for binding_type, values in query._bindings.items():
+            self._bindings[binding_type].extend(values)
+        return self
+
+    @classmethod
+    def clean_bindings(cls, bindings):
+        return [
+            cls.cast_binding(value)
+            for value in bindings
+            if not hasattr(value, "_compiler_dispatch")
+        ]
 
     # ---- Internals ----
 

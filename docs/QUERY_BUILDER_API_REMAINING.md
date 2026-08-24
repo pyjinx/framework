@@ -63,13 +63,13 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [ ] `toRawSql`
 - [ ] `find`
 - [ ] `findOr`
-- [ ] `rawValue`
+- [x] `rawValue` — SQLite raw expression scalar retrieval; `tests/test_query_builder.py::test_projection_and_binding_contracts`.
 - [ ] `soleValue`
 - [ ] `paginate`
 - [ ] `simplePaginate`
 - [ ] `cursorPaginate`
 - [ ] `getCountForPagination`
-- [ ] `implode`
+- [x] `implode` — SQLite column concatenation over the selected result window.
 - [ ] `existsOr`
 - [ ] `doesntExistOr`
 - [ ] `aggregate`
@@ -82,15 +82,15 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [ ] `updateOrInsert`
 - [ ] `incrementEach`
 - [ ] `decrementEach`
-- [ ] `getColumns`
-- [ ] `getLimit`
-- [ ] `getOffset`
-- [ ] `getRawBindings`
-- [ ] `setBindings`
-- [ ] `addBinding`
-- [ ] `castBinding`
-- [ ] `mergeBindings`
-- [ ] `cleanBindings`
+- [x] `getColumns` — SQLite selected-column metadata.
+- [x] `getLimit` — SQLite limit metadata.
+- [x] `getOffset` — SQLite offset metadata.
+- [x] `getRawBindings` — Laravel-shaped binding buckets.
+- [x] `setBindings` — validates and replaces a binding bucket.
+- [x] `addBinding` — appends scalar or sequence bindings.
+- [x] `castBinding` — identity cast for Python-native values.
+- [x] `mergeBindings` — merges Laravel-shaped binding buckets.
+- [x] `cleanBindings` — filters SQL expression objects.
 - [ ] `useWritePdo`
 - [ ] `fetchUsing`
 
