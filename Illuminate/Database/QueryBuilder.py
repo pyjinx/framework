@@ -122,6 +122,18 @@ class QueryBuilder:
         self._joins.append(("inner", table, first, operator, second))
         self._loaded_tables = None
         return self
+    def join_where(self, table, first, operator="=", second=None):
+        """Add a join whose second operand is a bound literal value."""
+        table = self.manager.prefixed_table_name(table, self.connection_name)
+        self._joins.append(("inner", table, first, operator, second, True))
+        self._loaded_tables = None
+        return self
+
+    def left_join_where(self, table, first, operator="=", second=None):
+        table = self.manager.prefixed_table_name(table, self.connection_name)
+        self._joins.append(("left", table, first, operator, second, True))
+        self._loaded_tables = None
+        return self
 
     def left_join(self, table, first, operator="=", second=None):
         """Add a left join clause."""
@@ -883,7 +895,8 @@ class QueryBuilder:
                         self.table_name, metadata, autoload_with=bind
                     )
                 }
-            for _, join_table, _, _, _ in self._joins:
+            for join in self._joins:
+                _, join_table, _, _, _ = join[:5]
                 if join_table not in tables:
                     tables[join_table] = Table(join_table, metadata, autoload_with=bind)
             self._loaded_tables = tables
@@ -1105,10 +1118,13 @@ class QueryBuilder:
 
         if self._joins:
             from_clause = table
-            for join_type, join_name, first, operator, second in self._joins:
+            for join in self._joins:
+                join_type, join_name, first, operator, second = join[:5]
+                where_join = len(join) == 6 and join[5]
                 join_table = self._load_tables()[join_name]
+                right = second if where_join else self._resolve_column(second)
                 on_clause = self._comparison(
-                    self._resolve_column(first), operator, self._resolve_column(second)
+                    self._resolve_column(first), operator, right
                 )
                 from_clause = from_clause.join(
                     join_table, on_clause, isouter=join_type == "left"
