@@ -491,6 +491,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 The complete method inventory is in
 [`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
+- Detailed method classification: [`QUERY_BUILDER_API_REMAINING.md`](./QUERY_BUILDER_API_REMAINING.md).
 The counts below are surface-area indicators, not a direct subtraction-based
 task count because Laravel traits/inheritance and Python naming differ.
 
