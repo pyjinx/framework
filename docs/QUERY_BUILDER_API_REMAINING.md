@@ -51,10 +51,10 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [ ] `inRandomOrder`
 - [ ] `inOrderOf`
 - [ ] `groupLimit`
-- [ ] `forPageBeforeId`
-- [ ] `forPageAfterId`
-- [ ] `reorder`
-- [ ] `reorderDesc`
+- [x] `forPageBeforeId` — SQLite ID-keyset page before a boundary.
+- [x] `forPageAfterId` — SQLite ID-keyset page after a boundary.
+- [x] `reorder` — clears existing order clauses and optionally adds one.
+- [x] `reorderDesc` — descending `reorder` convenience.
 - [ ] `timeout`
 - [ ] `beforeQuery`
 - [ ] `applyBeforeQueryCallbacks`

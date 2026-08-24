@@ -723,6 +723,30 @@ class QueryBuilder:
 
     def for_page(self, page: int, per_page: int = 15):
         return self.offset((page - 1) * per_page).limit(per_page)
+    def for_page_before_id(self, per_page=15, last_id=0, column="id"):
+        self._orders = [order for order in self._orders if order[0] != column]
+        if last_id is None:
+            self.where_not_null(column)
+        else:
+            self.where(column, "<", last_id)
+        return self.order_by(column, "desc").limit(per_page)
+
+    def for_page_after_id(self, per_page=15, last_id=0, column="id"):
+        self._orders = [order for order in self._orders if order[0] != column]
+        if last_id is None:
+            self.where_not_null(column)
+        else:
+            self.where(column, ">", last_id)
+        return self.order_by(column, "asc").limit(per_page)
+
+    def reorder(self, column=None, direction="asc"):
+        self._orders = []
+        if column is not None:
+            return self.order_by(column, direction)
+        return self
+
+    def reorder_desc(self, column):
+        return self.reorder(column, "desc")
 
     def chunk(self, count: int, callback):
         if count < 1:

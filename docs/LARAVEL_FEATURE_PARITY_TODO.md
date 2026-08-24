@@ -380,8 +380,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `get_limit`, `get_offset`, `get_raw_bindings`, `set_bindings`,
     `add_binding`, `cast_binding`, `merge_bindings`, and `clean_bindings`
     expose SQLite projection metadata and Laravel-shaped binding buckets.
-  - Evidence: `tests/test_query_builder.py` focused suite — 66 passed;
-    warning-as-error full starter suite — 216 passed.
+  - Partial slice (2026-08-24): `for_page_before_id`, `for_page_after_id`,
+    `reorder`, and `reorder_desc` implement SQLite keyset pagination and
+    order reset contracts.
+  - Evidence: `tests/test_query_builder.py` focused suite — 67 passed;
+    warning-as-error full starter suite — 217 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,
