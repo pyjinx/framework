@@ -487,6 +487,56 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     grammar does; custom lock strings are retained as state but not rendered.
     Laravel expression objects and non-SQLite grammar-specific upsert/lock
     semantics remain unported.
+### ORM / Query Builder remaining-work matrix — 2026-08-24
+
+The complete method inventory is in
+[`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
+The counts below are surface-area indicators, not a direct subtraction-based
+task count because Laravel traits/inheritance and Python naming differ.
+
+| Surface | Laravel 13 | PyJinx current | Remaining status |
+|---|---:|---:|---|
+| Query Builder | 17 files / 18 classes / 347 public methods | 1 file / 1 class / 117 public methods | SQLite partial; exact method-by-method parity open |
+| Eloquent | 108 files / 190 classes / 1,067 public methods | 11 files / 12 classes / 236 public methods | Broad partial implementation |
+| Schema | 23 files / 25 classes / 391 public methods | 2 files / 5 classes / 60 public methods | SQLite partial; dialect surface missing |
+| Migrations | 6 files / 10 classes / 59 public methods | Application-side Alembic commands | Laravel repository/batch semantics partial |
+
+#### SQLite remaining work
+
+- Complete remaining `where*` variants, nested relationship/subquery behavior,
+  full-text predicates, expression objects, and binding bucket semantics.
+- Complete JSON object/complex-array predicates and `toRawSql` substitution.
+- Keep JSON overlaps blocked until the pinned SQLite Laravel grammar exposes
+  `compileJsonOverlaps`; do not invent a replacement.
+- Complete query grammar, schema alteration, migration batch/status, and
+  Eloquent relationship/event/resource parity.
+- Add focused boundary tests before each implementation slice, then rerun the
+  warning-as-error full suite.
+
+#### MySQL and PostgreSQL remaining work
+
+Runtime availability is currently SQLite-only:
+
+```text
+supported drivers: mysql, mariadb, pgsql, sqlite, sqlsrv
+available drivers: sqlite
+```
+
+MySQL/PostgreSQL work remains unimplemented and requires separate source-first
+slices for DBAPI dependencies, connectors, connection classes, URL/options,
+strict mode, read/write routing, grammars, processors, schema/migration
+dialect behavior, locking, transactions, and normalized driver exceptions.
+No MySQL or PostgreSQL behavior is counted as implemented until real-driver
+integration evidence exists.
+
+#### Acceptance gates for remaining ORM work
+
+Every slice must include Laravel source/API mappings, a discriminatory focused
+test, SQLite and/or real-driver integration evidence where applicable, runtime
+submodule synchronization, and a warning-as-error full suite. Existing
+`QueryBuilder.py` methods must be audited and preserved; only missing or
+incorrect contracts should be changed.
+
 - [~] **Database / ORM** (`Illuminate\Database` / `Illuminate\Database\Eloquent`)
     - SQLAlchemy/Alembic-backed manager, query/schema builders, migrations, and early Eloquent slices exist; broad Laravel API parity remains incomplete.
 - [ ] Complete schema builder parity: tables, columns, indexes, constraints, foreign keys, renames, drops, dialect behavior, and SQLite limitations.
