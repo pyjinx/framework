@@ -5,9 +5,9 @@ Machine comparison of `references/framework/src/Illuminate/Database/Query/Builde
 ## Surface counts
 
 - Laravel Query Builder: 228 public method declarations.
-- PyJinx QueryBuilder: 117 public methods.
-- Name-normalized matches: 112.
-- Directly missing names: 116.
+- PyJinx QueryBuilder: 149 public methods.
+- Name-normalized matches: 145.
+- Directly missing names: 83.
 - Alias/shape matches: 2.
 
 A name mismatch is not automatically a behavior gap. Each candidate requires Laravel source comparison and a focused behavioral test.

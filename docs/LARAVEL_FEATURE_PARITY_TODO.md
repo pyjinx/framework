@@ -518,7 +518,7 @@ task count because Laravel traits/inheritance and Python naming differ.
 
 | Surface | Laravel 13 | PyJinx current | Remaining status |
 |---|---:|---:|---|
-| Query Builder | 17 files / 18 classes / 347 public methods | 1 file / 1 class / 117 public methods | SQLite partial; exact method-by-method parity open |
+| Query Builder | 17 files / 18 classes / 347 public methods | 1 file / 1 class / 149 public methods | SQLite partial; exact method-by-method parity open |
 | Eloquent | 108 files / 190 classes / 1,067 public methods | 11 files / 12 classes / 236 public methods | Broad partial implementation |
 | Schema | 23 files / 25 classes / 391 public methods | 2 files / 5 classes / 60 public methods | SQLite partial; dialect surface missing |
 | Migrations | 6 files / 10 classes / 59 public methods | Application-side Alembic commands | Laravel repository/batch semantics partial |
@@ -526,7 +526,8 @@ task count because Laravel traits/inheritance and Python naming differ.
 #### SQLite remaining work
 
 - Complete remaining `where*` variants, nested relationship/subquery behavior,
-  full-text predicates, expression objects, and binding bucket semantics.
+  full-text predicates, expression objects, and remaining binding bucket
+  semantics; basic binding bucket APIs are now present.
 - Complete JSON object/complex-array predicates and `toRawSql` substitution.
 - Keep JSON overlaps blocked until the pinned SQLite Laravel grammar exposes
   `compileJsonOverlaps`; do not invent a replacement.
