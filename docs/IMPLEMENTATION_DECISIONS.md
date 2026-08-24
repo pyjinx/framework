@@ -258,8 +258,9 @@
   callbacks with nested parent relationships. `DatabaseTransactionsManager`
   tracks pending/committed records, stages commits, rolls back records, and
   exposes callback applicability and record accessors.
-- **Boundary:** The manager is currently a Laravel-shaped contract slice and
-  is not yet wired into `DatabaseManager`'s existing ContextVar transaction
-  state. No non-SQLite transaction behavior is added.
-- **Evidence:** transaction-manager contract tests passed (2);
-  warning-as-error full starter suite passed (209 tests).
+- **Boundary:** The manager is integrated with DatabaseManager's transaction
+  context for root/nested begin, commit, and rollback record transitions. It
+  remains limited to SQLite/Python transaction resources; no non-SQLite
+  behavior is invented.
+- **Evidence:** transaction-manager contract and integration tests passed (3);
+  warning-as-error full starter suite passed (210 tests).
