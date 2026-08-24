@@ -351,17 +351,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Source mapping: Laravel `DatabaseTransactionsManager::begin`, `commit`,
     `stageTransactions`, `rollback`, `addCallback`, `addCallbackForRollback`,
     and `DatabaseTransactionRecord` callback accessors.
-  - Evidence: transaction-manager contract and integration tests — 3 passed;
-    warning-as-error full starter suite — 210 passed.
+  - Evidence: transaction-manager contract/integration, query-duration,
+    application-event, and manager regression tests — 4 focused manager tests;
+    warning-as-error full starter suite — 212 passed.
   - Integrated slice: `DatabaseTransactionsManager` now records root/nested
     transaction begin, commit, and rollback transitions from DatabaseManager.
+    Application `QueryExecuted` listeners, adapter before-executing callbacks,
+    and cumulative query-duration threshold handlers are wired.
   - Residual parity gaps: transaction lifecycle events and query-grammar
     savepoint compilation remain incomplete. Query event dispatch still lacks
-    Laravel's application event dispatcher integration, read/write/direct
-    classification, raw SQL substitution, threshold handlers, and complete
+    read/write/direct classification, raw SQL substitution, and complete
     connection API. The available DBAPI exception surface cannot faithfully
     normalize every Laravel concurrency or lost-connection case, and nested
-    concurrency errors are re-raised rather than translated to `DeadlockException`.
+    concurrency errors are re-raised rather than translated to
+    `DeadlockException`.
 - [ ] Complete raw query builder parity: insert/update/delete, where variants, joins, aggregates, grouping, ordering, pagination, chunking, cursor reads, upserts, locks, raw bindings, and SQL generation.
   - Partial slice (2026-08-22): `QueryBuilder.upsert` now maps Laravel's SQLite conflict-target behavior for one or many mappings, default/exact update-column lists, and associative static update values; empty values return `0`, while an empty update list uses a plain insert. `lock`, `lock_for_update`, and `shared_lock` retain Laravel's lock state and use SQLAlchemy's equivalent boolean `with_for_update` modes. `to_sql` and `get_bindings` expose the compiled parameterized SELECT and flattened positional bindings without execution.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`

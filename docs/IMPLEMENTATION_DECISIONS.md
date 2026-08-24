@@ -259,8 +259,11 @@
   tracks pending/committed records, stages commits, rolls back records, and
   exposes callback applicability and record accessors.
 - **Boundary:** The manager is integrated with DatabaseManager's transaction
-  context for root/nested begin, commit, and rollback record transitions. It
+  context for root/nested begin, commit, and rollback record transitions. The
+  application event dispatcher receives `QueryExecuted`; adapters support
+  before-executing callbacks and cumulative query-duration thresholds. It
   remains limited to SQLite/Python transaction resources; no non-SQLite
   behavior is invented.
-- **Evidence:** transaction-manager contract and integration tests passed (3);
-  warning-as-error full starter suite passed (210 tests).
+- **Evidence:** transaction-manager, query-duration, application-event, and
+  manager integration tests passed (4 focused manager tests); warning-as-error
+  full starter suite passed (212 tests).
