@@ -58,6 +58,30 @@ class Builder:
     def or_having_raw(self, expression, bindings=None):
         return self.having_raw(expression, bindings, "or")
 
+    def having(self, column, operator="=", value=None):
+        self.query.having(column, operator, value)
+        return self
+
+    def or_having(self, column, operator="=", value=None):
+        self.query.or_having(column, operator, value)
+        return self
+
+    def having_between(self, column, values):
+        self.query.having_between(column, values)
+        return self
+
+    def having_not_between(self, column, values):
+        self.query.having_not_between(column, values)
+        return self
+
+    def or_having_between(self, column, values):
+        self.query.or_having_between(column, values)
+        return self
+
+    def or_having_not_between(self, column, values):
+        self.query.or_having_not_between(column, values)
+        return self
+
     def where_null_safe_equals(self, column, value, boolean="and"):
         self.query.where_null_safe_equals(column, value, boolean)
         return self
@@ -192,7 +216,49 @@ class Builder:
     def left_join(self, table, first, operator="=", second=None):
         self.query.left_join(table, first, operator, second)
         return self
+    def join_where(self, table, first, operator="=", second=None):
+        self.query.join_where(table, first, operator, second)
+        return self
 
+    def left_join_where(self, table, first, operator="=", second=None):
+        self.query.left_join_where(table, first, operator, second)
+        return self
+
+    def join_sub(self, query_or_callback, alias, first, operator="=", second=None):
+        self.query.join_sub(query_or_callback, alias, first, operator, second)
+        return self
+
+    def left_join_sub(self, query_or_callback, alias, first, operator="=", second=None):
+        self.query.left_join_sub(query_or_callback, alias, first, operator, second)
+        return self
+
+    def cross_join(self, table):
+        self.query.cross_join(table)
+        return self
+
+    def cross_join_sub(self, query_or_callback, alias):
+        self.query.cross_join_sub(query_or_callback, alias)
+        return self
+
+    def or_where_not_between(self, column, values):
+        self.query.or_where_not_between(column, values)
+        return self
+
+    def where_value_between(self, value, columns):
+        self.query.where_value_between(value, columns)
+        return self
+
+    def or_where_value_between(self, value, columns):
+        self.query.or_where_value_between(value, columns)
+        return self
+
+    def where_value_not_between(self, value, columns):
+        self.query.where_value_not_between(value, columns)
+        return self
+
+    def or_where_value_not_between(self, value, columns):
+        self.query.or_where_value_not_between(value, columns)
+        return self
     def where_in(self, column, values):
         self.query.where_in(column, values)
         return self
@@ -253,6 +319,21 @@ class Builder:
 
     def for_page(self, page, per_page=15):
         self.query.for_page(page, per_page)
+        return self
+    def for_page_before_id(self, per_page=15, last_id=0, column="id"):
+        self.query.for_page_before_id(per_page, last_id, column)
+        return self
+
+    def for_page_after_id(self, per_page=15, last_id=0, column="id"):
+        self.query.for_page_after_id(per_page, last_id, column)
+        return self
+
+    def reorder(self, column=None, direction="asc"):
+        self.query.reorder(column, direction)
+        return self
+
+    def reorder_desc(self, column):
+        self.query.reorder_desc(column)
         return self
 
     def _relation_for(self, model, name):
@@ -412,6 +493,35 @@ class Builder:
 
     def doesnt_exist(self):
         return self.query.doesnt_exist()
+    def raw_value(self, expression, bindings=None):
+        return self.query.raw_value(expression, bindings)
+
+    def implode(self, column, glue=""):
+        return self.query.implode(column, glue)
+
+    def get_columns(self):
+        return self.query.get_columns()
+
+    def get_limit(self):
+        return self.query.get_limit()
+
+    def get_offset(self):
+        return self.query.get_offset()
+
+    def get_raw_bindings(self):
+        return self.query.get_raw_bindings()
+
+    def set_bindings(self, bindings, binding_type="where"):
+        self.query.set_bindings(bindings, binding_type)
+        return self
+
+    def add_binding(self, value, binding_type="where"):
+        self.query.add_binding(value, binding_type)
+        return self
+
+    def merge_bindings(self, query):
+        self.query.merge_bindings(query.query if isinstance(query, Builder) else query)
+        return self
 
     # ---- Aggregates ----
 

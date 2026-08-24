@@ -383,8 +383,11 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-24): `for_page_before_id`, `for_page_after_id`,
     `reorder`, and `reorder_desc` implement SQLite keyset pagination and
     order reset contracts.
-  - Evidence: `tests/test_query_builder.py` focused suite — 67 passed;
-    warning-as-error full starter suite — 217 passed.
+  - Partial slice (2026-08-24): Eloquent `Builder` forwards the join,
+    where/having, projection/binding, and keyset pagination batch methods
+    while preserving model hydration and fluent return values.
+  - Evidence: `tests/test_eloquent_soft_deletes.py` forwarding contract —
+    23 Eloquent tests passed; warning-as-error full starter suite — 218 passed.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,
