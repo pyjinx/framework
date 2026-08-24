@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 from Illuminate.Database.ConfigurationUrlParser import ConfigurationUrlParser
 from Illuminate.Database.Connection import Connection as DatabaseConnection
+from Illuminate.Database.DatabaseTransactionsManager import DatabaseTransactionsManager
 from Illuminate.Database.Events.QueryExecuted import QueryExecuted
 from Illuminate.Database.QueryException import QueryException
 from Illuminate.Database.UniqueConstraintViolationException import (
@@ -69,6 +70,7 @@ class DatabaseManager:
         self._manual_transaction_contexts: ContextVar[
             dict[str, tuple[object, ...]] | None
         ] = ContextVar("database_manager_manual_transaction_contexts", default=None)
+        self._transactions_manager = DatabaseTransactionsManager()
         self._query_listeners: list[Callable[[QueryExecuted], object]] = []
         self._reconnector: Callable[[DatabaseConnection], object] | None = None
 
@@ -548,6 +550,7 @@ class DatabaseManager:
         transaction_callbacks = _TransactionCallbacks()
         callback_stacks[name] = (*callbacks, transaction_callbacks)
         callback_token = self._transaction_callbacks.set(callback_stacks)
+        transaction_record = self._transactions_manager.begin(name, len(sessions))
 
         body_error = None
         body_raised = False
@@ -564,6 +567,11 @@ class DatabaseManager:
             except BaseException as error:
                 rollback_failed = body_error is not None and error is not body_error
                 body_error = error
+
+            if body_error is None:
+                self._transactions_manager.commit(name, transaction_record.level, len(sessions))
+            else:
+                self._transactions_manager.rollback(name, len(sessions))
 
             if body_error is None and callbacks:
                 callbacks[-1].committed_children.append(transaction_callbacks)
@@ -618,6 +626,8 @@ class DatabaseManager:
             callbacks[-1].after_commit.append(callback)
         else:
             callback()
+    def get_transactions_manager(self) -> DatabaseTransactionsManager:
+        return self._transactions_manager
 
     def after_rollback(self, callback, name: str | None = None) -> None:
         name = name or self.get_default_connection()
