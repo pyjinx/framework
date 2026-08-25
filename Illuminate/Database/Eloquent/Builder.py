@@ -58,6 +58,16 @@ class Builder:
     def or_having_raw(self, expression, bindings=None):
         return self.having_raw(expression, bindings, "or")
 
+    def add_nested_having_query(self, query, boolean="and"):
+        self.query.add_nested_having_query(query, boolean)
+        return self
+
+    def having_nested(self, callback, boolean="and"):
+        self.query.having_nested(callback, boolean)
+        return self
+
+    def or_having_nested(self, callback):
+        return self.having_nested(callback, "or")
     def having(self, column, operator="=", value=None):
         self.query.having(column, operator, value)
         return self
@@ -121,6 +131,23 @@ class Builder:
 
     def or_where_not_exists(self, callback_or_query):
         return self.where_exists(callback_or_query, "or", True)
+    def add_where_exists_query(self, query, boolean="and", not_exists=False):
+        self.query.add_where_exists_query(query, boolean, not_exists)
+        return self
+
+    def for_nested_where(self):
+        return self.query.for_nested_where()
+
+    def add_nested_where_query(self, query, boolean="and"):
+        self.query.add_nested_where_query(query, boolean)
+        return self
+
+    def where_nested(self, callback, boolean="and"):
+        self.query.where_nested(callback, boolean)
+        return self
+
+    def or_where_nested(self, callback):
+        return self.where_nested(callback, "or")
 
     def where_like(
         self, column, value, case_sensitive=False, boolean="and", not_like=False

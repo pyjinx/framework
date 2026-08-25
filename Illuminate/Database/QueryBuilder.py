@@ -10,6 +10,7 @@ from sqlalchemy import (
     exists,
     func,
     insert,
+    literal,
     or_,
     select,
     text,
@@ -288,6 +289,34 @@ class QueryBuilder:
 
     def or_where_not_exists(self, callback_or_query):
         return self.where_exists(callback_or_query, "or", True)
+    def add_where_exists_query(self, query, boolean: str = "and", not_exists=False):
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("An exists subquery requires a QueryBuilder.")
+        self._where_clauses.append(("exists", boolean, query, not_exists))
+        return self
+
+    def for_nested_where(self):
+        return QueryBuilder(
+            self.manager, self.table_name, self.connection_name
+        ).from_(self.table_name)
+
+    def add_nested_where_query(self, query, boolean: str = "and"):
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("A nested where requires a QueryBuilder.")
+        if not query._where_clauses and not query._conditions:
+            return self
+        self._where_clauses.append(("nested", boolean, query, None))
+        return self
+
+    def where_nested(self, callback, boolean: str = "and"):
+        nested = self.for_nested_where()
+        result = callback(nested) if callable(callback) else nested
+        if isinstance(result, QueryBuilder):
+            nested = result
+        return self.add_nested_where_query(nested, boolean)
+
+    def or_where_nested(self, callback):
+        return self.where_nested(callback, "or")
 
     def where_all(self, columns, operator="=", value=None):
         if value is None:
@@ -524,6 +553,8 @@ class QueryBuilder:
 
     @staticmethod
     def _validate_flat_in_values(values):
+        if isinstance(values, QueryBuilder):
+            return values
         values = list(values)
         if any(isinstance(value, (list, tuple, set, frozenset)) for value in values):
             raise ValueError("Nested arrays may not be passed to whereIn method.")
@@ -676,6 +707,23 @@ class QueryBuilder:
 
     def or_having(self, column, operator="=", value=None):
         return self.having(column, operator, value, "or")
+    def add_nested_having_query(self, query, boolean: str = "and"):
+        if not isinstance(query, QueryBuilder):
+            raise TypeError("A nested having requires a QueryBuilder.")
+        if not query._havings and not query._raw_havings:
+            return self
+        self._havings.append(("nested", boolean, query, None))
+        return self
+
+    def having_nested(self, callback, boolean: str = "and"):
+        nested = self.for_nested_where()
+        result = callback(nested) if callable(callback) else nested
+        if isinstance(result, QueryBuilder):
+            nested = result
+        return self.add_nested_having_query(nested, boolean)
+
+    def or_having_nested(self, callback):
+        return self.having_nested(callback, "or")
 
     def having_between(self, column, values, boolean="and", not_between=False):
         low, high = values
@@ -1201,6 +1249,14 @@ class QueryBuilder:
                 else:
                     and_clauses.append(expr)
                 continue
+            if kind == "nested":
+                expr = self._nested_where_expression(column, table)
+
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
             if kind == "multi":
                 mode, operator, value, negate = val
                 expressions = [
@@ -1278,9 +1334,15 @@ class QueryBuilder:
                     tuple(values),
                 )
             elif kind == "in":
-                expr = col.in_(val)
+                if isinstance(val, QueryBuilder):
+                    expr = col.in_(val._build_select())
+                else:
+                    expr = col.in_(val)
             elif kind == "not_in":
-                expr = col.notin_(val)
+                if isinstance(val, QueryBuilder):
+                    expr = col.notin_(val._build_select())
+                else:
+                    expr = col.notin_(val)
             elif kind == "null":
                 expr = col.is_(None)
             elif kind == "not_null":
@@ -1304,17 +1366,194 @@ class QueryBuilder:
                 or_clauses.append(expr)
             else:
                 and_clauses.append(expr)
-
         if and_clauses and or_clauses:
-            combined = or_(and_(*and_clauses), *or_clauses)
-            statement = statement.where(combined)
-        elif and_clauses:
+            return statement.where(or_(and_(*and_clauses), *or_clauses))
+        if and_clauses:
             for clause in and_clauses:
                 statement = statement.where(clause)
-        elif or_clauses:
-            statement = statement.where(or_(*or_clauses))
-
+            return statement
+        if or_clauses:
+            return statement.where(or_(*or_clauses))
         return statement
+
+    def _nested_where_expression(self, nested, table):
+        """Compile a nested QueryBuilder's wheres into a single SQLAlchemy predicate."""
+        synthetic = select(literal(1))
+        applied = self._apply_nested_wheres(nested, table, synthetic)
+        where_clause = applied.whereclause
+        if where_clause is None:
+            return literal(True)
+        return where_clause
+
+    def _apply_nested_wheres(self, nested, table, statement):
+        and_clauses = []
+        or_clauses = []
+        for boolean, column, operator, value in nested._conditions:
+            expr = self._comparison(
+                getattr(table.c, column) if isinstance(column, str) else column,
+                operator,
+                value,
+            )
+            if boolean == "or":
+                or_clauses.append(expr)
+            else:
+                and_clauses.append(expr)
+        for kind, boolean, column, val in nested._where_clauses:
+            if kind == "exists":
+                expr = exists(column._build_select())
+                if val:
+                    expr = ~expr
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
+            if kind == "nested":
+                expr = self._nested_where_expression(column, table)
+                if boolean == "or":
+                    or_clauses.append(expr)
+                else:
+                    and_clauses.append(expr)
+                continue
+            if kind == "raw":
+                expr = self._raw_expression(column, val)
+            else:
+                expr = self._resolve_nested_column(table, kind, column, val)
+                if expr is None:
+                    continue
+            if boolean == "or":
+                or_clauses.append(expr)
+            else:
+                and_clauses.append(expr)
+        if and_clauses and or_clauses:
+            return statement.where(or_(and_(*and_clauses), *or_clauses))
+        if and_clauses:
+            for clause in and_clauses:
+                statement = statement.where(clause)
+            return statement
+        if or_clauses:
+            return statement.where(or_(*or_clauses))
+        return statement
+
+    def _resolve_nested_column(self, table, kind, column, val):
+        if isinstance(column, QueryBuilder):
+            return None
+        if "." in (column or ""):
+            table_name, column_name = column.split(".", 1)
+            target_table = getattr(table, "table", table)
+            try:
+                return getattr(target_table.c, column_name)
+            except AttributeError:
+                pass
+        if kind in {"like", "not_like"}:
+            col = getattr(table.c, column)
+            value, case_sensitive, negate = val
+            if case_sensitive:
+                value = (
+                    str(value)
+                    .replace("*", "[*]")
+                    .replace("?", "[?]")
+                    .replace("%", "*")
+                    .replace("_", "?")
+                )
+                expr = col.op("GLOB")(value)
+            else:
+                expr = col.like(value)
+            return ~expr if negate else expr
+        if kind == "in" and isinstance(val, QueryBuilder):
+            return getattr(table.c, column).in_(val._build_select())
+        if kind == "not_in" and isinstance(val, QueryBuilder):
+            return getattr(table.c, column).notin_(val._build_select())
+        col = getattr(table.c, column)
+        if kind == "between":
+            return col.between(val[0], val[1])
+        if kind == "not_between":
+            return ~col.between(val[0], val[1])
+        if kind == "value_between":
+            (low, high), (value, not_between) = column, val
+            expr = and_(
+                self._comparison(getattr(table.c, low), "<=", value),
+                self._comparison(getattr(table.c, high), ">=", value),
+            )
+            return ~expr if not_between else expr
+        if kind in {"column", "between_columns"}:
+            if kind == "column":
+                operator, right_column = val
+                return self._comparison(
+                    col, operator, getattr(table.c, right_column)
+                )
+            low, high, not_between = val
+            expr = col.between(getattr(table.c, low), getattr(table.c, high))
+            return ~expr if not_between else expr
+        if kind == "not_basic":
+            operator, value = val
+            return ~self._comparison(col, operator, value)
+        if kind == "null_safe_equals":
+            return col.is_(val)
+        if kind == "integer_raw":
+            values, not_in = val
+            return col.notin_(values) if not_in else col.in_(values)
+        if kind == "multi":
+            mode, operator, value, negate = val
+            expressions = [
+                self._comparison(getattr(table.c, item), operator, value)
+                for item in column
+            ]
+            if not expressions:
+                return None
+            expr = and_(*expressions) if mode == "all" else or_(*expressions)
+            return ~expr if negate else expr
+        if kind in {"date", "time", "day", "month", "year"}:
+            extractor = {
+                "date": func.date,
+                "time": func.time,
+                "day": lambda c: func.strftime("%d", c),
+                "month": lambda c: func.strftime("%m", c),
+                "year": lambda c: func.strftime("%Y", c),
+            }[kind]
+            operator, value = val
+            return self._comparison(extractor(col), operator, value)
+        if kind == "null":
+            return col.is_(None)
+        if kind == "not_null":
+            return col.isnot(None)
+        return None
+
+    def _nested_having_expression(self, nested):
+        synthetic = select(literal(1))
+        statement = self._apply_nested_havings(nested, synthetic)
+        where_clause = statement.whereclause
+        if where_clause is None:
+            return literal(True)
+        return where_clause
+
+    def _apply_nested_havings(self, nested, statement):
+        and_clauses = []
+        or_clauses = []
+        for having in nested._havings:
+            if len(having) == 3:
+                column, operator, value = having
+                boolean = "and"
+            else:
+                column, operator, value, boolean = having
+            column_expr = nested._resolve_column(column)
+            if operator == "between":
+                low, high, not_between = value
+                expression = column_expr.between(low, high)
+                if not_between:
+                    expression = ~expression
+            else:
+                expression = self._comparison(column_expr, operator, value)
+            (or_clauses if boolean == "or" else and_clauses).append(expression)
+        for expression, boolean in nested._raw_havings:
+            (or_clauses if boolean == "or" else and_clauses).append(expression)
+        if not and_clauses and not or_clauses:
+            return statement
+        if and_clauses and or_clauses:
+            return statement.having(or_(and_(*and_clauses), *or_clauses))
+        if and_clauses:
+            return statement.having(and_(*and_clauses))
+        return statement.having(or_(*or_clauses))
 
     def _build_select(self) -> Select:
         """Build a complete SELECT statement."""
@@ -1355,6 +1594,11 @@ class QueryBuilder:
         and_havings = []
         or_havings = []
         for having in self._havings:
+            if len(having) == 4 and having[0] == "nested":
+                _, boolean, query, _ = having
+                expression = self._nested_having_expression(query)
+                (or_havings if boolean == "or" else and_havings).append(expression)
+                continue
             if len(having) == 3:
                 column, operator, value = having
                 boolean = "and"

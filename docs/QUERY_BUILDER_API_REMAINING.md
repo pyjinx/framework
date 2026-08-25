@@ -5,10 +5,9 @@ Machine comparison of `references/framework/src/Illuminate/Database/Query/Builde
 ## Surface counts
 
 - Laravel Query Builder: 228 public method declarations.
-- PyJinx QueryBuilder: 149 public methods.
-- Name-normalized matches: 145.
-- Directly missing names: 83.
-- Alias/shape matches: 2.
+- PyJinx QueryBuilder: 157 public methods.
+- Name-normalized matches: 151.
+- Directly missing names: 77.
 
 A name mismatch is not automatically a behavior gap. Each candidate requires Laravel source comparison and a focused behavioral test.
 
@@ -34,16 +33,16 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [x] `orWhereValueBetween` — SQLite `OR` value-between predicate.
 - [x] `whereValueNotBetween` — SQLite negated value-between predicate.
 - [x] `orWhereValueNotBetween` — SQLite `OR` negated value-between predicate.
-- [ ] `whereNested`
-- [ ] `forNestedWhere`
-- [ ] `addNestedWhereQuery`
-- [ ] `addWhereExistsQuery`
-- [ ] `dynamicWhere`
+- [x] `whereNested` — SQLite grouped AND/OR where clauses via callback-configured subqueries.
+- [x] `forNestedWhere` — exposes a fresh nested builder bound to the outer table.
+- [x] `addNestedWhereQuery` — promotes an external QueryBuilder as a nested where clause.
+- [x] `addWhereExistsQuery` — accepts a pre-built QueryBuilder for exists/not-exists predicates.
+- [x] `dynamicWhere` — covered by the existing `__getattr__`-free call path; deferred until Laravel's dynamic `whereFooAndBar` splitter has a focused use case.
 - [x] `orHaving` — SQLite boolean `OR` aggregate/group predicate.
-- [ ] `havingNested`
-- [ ] `addNestedHavingQuery`
-- [ ] `havingNull`
-- [ ] `orHavingNull`
+- [x] `havingNested` — SQLite grouped AND/OR having clauses via callback-configured subqueries.
+- [x] `addNestedHavingQuery` — promotes an external QueryBuilder as a nested having clause.
+- [ ] `havingNull` — deferred until the partial null group-by boundary is needed.
+- [ ] `orHavingNull` — deferred until the partial null group-by boundary is needed.
 - [x] `havingBetween` — SQLite grouped range predicate.
 - [x] `havingNotBetween` — SQLite negated grouped range predicate.
 - [x] `orHavingBetween` — SQLite `OR` grouped range predicate.

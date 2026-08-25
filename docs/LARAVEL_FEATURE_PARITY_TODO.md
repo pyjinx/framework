@@ -386,8 +386,14 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Partial slice (2026-08-24): Eloquent `Builder` forwards the join,
     where/having, projection/binding, and keyset pagination batch methods
     while preserving model hydration and fluent return values.
-  - Evidence: `tests/test_eloquent_soft_deletes.py` forwarding contract —
-    23 Eloquent tests passed; warning-as-error full starter suite — 218 passed.
+  - Partial slice (2026-08-24): `where_nested`, `or_where_nested`,
+    `for_nested_where`, `add_nested_where_query`, `add_where_exists_query`,
+    `having_nested`, `or_having_nested`, and `add_nested_having_query`
+    compile SQLite grouped and exists subquery contracts. `where_in`/`where_not_in`
+    accept a `QueryBuilder` as values.
+  - Evidence: `tests/test_query_builder.py` focused suite — 68 passed;
+    warning-as-error full starter suite — 219 passed.
+
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,
@@ -512,7 +518,7 @@ Next implementation area: finish the Database / ORM foundation and continue the 
 
 The complete method inventory is in
 [`DATABASE_ELOQUENT_API_INVENTORY.md`](./DATABASE_ELOQUENT_API_INVENTORY.md).
-- Detailed method classification: [`QUERY_BUILDER_API_REMAINING.md`](./QUERY_BUILDER_API_REMAINING.md).
+| Query Builder | 17 files / 18 classes / 347 public methods | 1 file / 1 class / 157 public methods | SQLite partial; exact method-by-method parity open |
 The counts below are surface-area indicators, not a direct subtraction-based
 task count because Laravel traits/inheritance and Python naming differ.
 
