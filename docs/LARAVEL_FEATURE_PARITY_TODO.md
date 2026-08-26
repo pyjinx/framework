@@ -469,13 +469,23 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Evidence: `tests/test_query_builder.py` insert-using and aggregate
     tests — 9 passed; full starter suite: 258 passed; warning-as-error
     full starter suite: 258 passed, 0 warnings.
-    `where_row_values` and `or_where_row_values` compare tuples of columns
-    against bound tuples and reject mismatched column/value lengths.
-  - Partial slice (2026-08-22): `where_all`, `where_any`, and `where_none`
-    group equality/comparison predicates across multiple columns, with
-    `or_where_*` variants preserving the outer boolean. Raw and Eloquent
-    builders expose the same snake-case API.
-  - Partial slice (2026-08-22): ordered `chunk` pagination delivers pages
+  - Partial slice (2026-08-26): `merge_wheres(wheres, bindings)`
+    appends an external list of where clauses and bindings to the
+    current builder. `get_count_for_pagination(columns)` clones the
+    builder with orders/limit/offset cleared and returns the
+    `COUNT(*)` scalar. `paginate(per_page, columns, page_name, page,
+    total)` returns a `dict` with `data`, `total`, `per_page`,
+    `current_page`, `last_page`, `page_name`; `simple_paginate` fetches
+    `per_page + 1` rows and reports `has_more`; `cursor_paginate`
+    encodes the last row's ordering column value as a base64 JSON
+    cursor and applies a `>` predicate for the next page. `get` now
+    accepts an optional `columns` selection to mirror Laravel.
+  - Source mapping: Laravel `Query\Builder::mergeWheres` (911–920),
+    `getCountForPagination` (3709–3723), `paginate` (3614–3628),
+    `simplePaginate` (3641–3651), and `cursorPaginate` (3664–3667).
+  - Evidence: `tests/test_query_builder.py` pagination and merge-wheres
+    tests — 9 passed; full starter suite: 267 passed; warning-as-error
+    full starter suite: 267 passed, 0 warnings.
     with Laravel's boolean callback/early-stop behavior, `each` applies an
     item callback through chunking, and `cursor` returns a lazy Python
     generator over ordered result mappings. Missing order clauses and invalid

@@ -867,6 +867,144 @@ class QueryBuilder:
     def reorder_desc(self, column):
         return self.reorder(column, "desc")
 
+    def merge_wheres(self, wheres, bindings):
+        """Append an external list of where clauses and bindings.
+
+        Mirrors Laravel ``Query\\Builder::mergeWheres`` by extending
+        the existing ``_where_clauses`` list and the ``where`` binding
+        bucket. The list-shape is the internal 4-tuple used by the
+        PyJinx where-clause compiler.
+        """
+        self._where_clauses.extend(list(wheres))
+        self._bindings["where"].extend(list(bindings))
+        return self
+
+    def get_count_for_pagination(self, columns=None):
+        """Return the total count of matching rows.
+
+        Mirrors Laravel ``Query\\Builder::getCountForPagination`` by
+        composing a ``COUNT(*)`` query from a shallow copy of the
+        current builder with ``orders``/``limit``/``offset`` cleared.
+        """
+        cloned = self._clone_for_pagination_count()
+        result = cloned.aggregate("count", columns or ["*"])
+        return int(result or 0)
+
+    def _clone_for_pagination_count(self):
+        """Return a shallow copy with pagination-only state cleared."""
+        from copy import copy
+        clone = copy(self)
+        clone._orders = []
+        clone._raw_orders = []
+        clone._limit = None
+        clone._offset = None
+        clone._in_order_of = []
+        clone._bindings["order"] = []
+        return clone
+
+    def paginate(self, per_page=15, columns=None, page_name="page", page=None, total=None):
+        """Run a length-aware paginator and return a ``dict`` shape.
+
+        Mirrors Laravel ``Query\\Builder::paginate`` for the SQLite
+        backend: the total is computed once through
+        ``getCountForPagination``; rows are fetched through
+        ``for_page``; the result is returned as a plain ``dict`` so
+        callers do not need a Paginator class.
+        """
+        if page is None:
+            page = 1
+        total = self.get_count_for_pagination(columns)
+        if callable(total):
+            total = total()
+        per_page = self._resolve_per_page(per_page, total)
+        results = self.for_page(page, per_page).get(columns or ["*"])
+        last_page = max(int((total + per_page - 1) // per_page), 1) if total else 1
+        return {
+            "data": results,
+            "total": int(total),
+            "per_page": per_page,
+            "current_page": page,
+            "last_page": last_page,
+            "page_name": page_name,
+        }
+
+    def simple_paginate(self, per_page=15, columns=None, page_name="page", page=None):
+        """Run a simple next/previous paginator.
+
+        Mirrors Laravel ``Query\\Builder::simplePaginate`` by fetching
+        ``per_page + 1`` rows so ``has_more`` can be derived without a
+        separate count query.
+        """
+        if page is None:
+            page = 1
+        self.offset((page - 1) * per_page).limit(per_page + 1)
+        results = self.get(columns or ["*"])
+        has_more = len(results) > per_page
+        if has_more:
+            results = results[:per_page]
+        return {
+            "data": results,
+            "per_page": per_page,
+            "current_page": page,
+            "has_more": has_more,
+            "page_name": page_name,
+        }
+
+    def cursor_paginate(self, per_page=15, columns=None, cursor_name="cursor", cursor=None):
+        """Run a cursor-based paginator.
+
+        Mirrors Laravel ``Query\\Builder::cursorPaginate`` for the
+        SQLite backend. The cursor encodes the last row's ordering
+        column value as a base64-encoded JSON payload; the next page
+        is selected with a ``>`` predicate on the first ordering
+        column.
+        """
+        if not self._orders:
+            self.order_by("id", "asc")
+        decoded_cursor = self._decode_cursor(cursor) if cursor else None
+        if decoded_cursor is not None:
+            self.where(self._orders[0][0], ">", decoded_cursor)
+        self.limit(per_page + 1)
+        results = self.get(columns or ["*"])
+        has_more = len(results) > per_page
+        if has_more:
+            results = results[:per_page]
+        last_row = results[-1] if results else None
+        next_cursor = self._encode_cursor(last_row) if (has_more and last_row) else None
+        return {
+            "data": results,
+            "per_page": per_page,
+            "next_cursor": next_cursor,
+            "prev_cursor": cursor,
+            "cursor_name": cursor_name,
+        }
+
+    @staticmethod
+    def _resolve_per_page(per_page, total):
+        if callable(per_page):
+            return int(per_page(total))
+        return int(per_page)
+
+    @staticmethod
+    def _encode_cursor(row):
+        if row is None:
+            return None
+        import base64
+        import json
+        first_value = next(iter(row.values()))
+        payload = json.dumps({"v": first_value})
+        return base64.urlsafe_b64encode(payload.encode("utf-8")).decode("ascii")
+
+    @staticmethod
+    def _decode_cursor(cursor):
+        import base64
+        import json
+        try:
+            decoded = base64.urlsafe_b64decode(cursor.encode("ascii")).decode("utf-8")
+            return json.loads(decoded).get("v")
+        except (ValueError, KeyError):
+            return None
+
     def chunk(self, count: int, callback):
         if count < 1:
             raise ValueError("The chunk size should be at least 1.")
@@ -990,8 +1128,8 @@ class QueryBuilder:
         """Insert rows from a subquery.
 
         Mirrors Laravel ``Query\\Builder::insertUsing`` by composing
-        ``INSERT INTO ... (cols) <subquery>`` SQL and executing it
-        through the manager's write connection. The subquery SQL is
+        ``INSERT INTO ... (cols) SELECT ...`` SQL and executing it
+        through the connection's write boundary. The subquery SQL is
         rendered with its bindings through ``Connection::statement``
         so positional placeholders align with the driver binding
         pipeline.
@@ -1126,16 +1264,28 @@ class QueryBuilder:
         """Acquire a shared lock on matching rows."""
         return self.lock(False)
 
-    def get(self):
-        """Return the hydrated result set as a list of dicts."""
-        statement = self._build_select()
-        execution_options = self._execution_options()
-        with self.manager._query_connection(self.connection_name) as connection:
-            if execution_options:
-                statement = statement.execution_options(**execution_options)
-            rows = connection.execute(statement).mappings().all()
-        rows = [dict(row) for row in rows]
-        return self._apply_after_query_callbacks(rows)
+    def get(self, columns=None):
+        """Return the hydrated result set as a list of dicts.
+
+        Mirrors Laravel ``Query\\Builder::get`` by accepting an
+        optional ``columns`` selection; the original projection is
+        restored after the row is fetched.
+        """
+        if columns is None:
+            statement = self._build_select()
+            execution_options = self._execution_options()
+            with self.manager._query_connection(self.connection_name) as connection:
+                if execution_options:
+                    statement = statement.execution_options(**execution_options)
+                rows = connection.execute(statement).mappings().all()
+            rows = [dict(row) for row in rows]
+            return self._apply_after_query_callbacks(rows)
+        original_columns = self._columns
+        try:
+            self.select(*self._normalize_columns(columns))
+            return self.get()
+        finally:
+            self._columns = original_columns
 
     def first(self, columns=None):
         """Return the first row or ``None``."""

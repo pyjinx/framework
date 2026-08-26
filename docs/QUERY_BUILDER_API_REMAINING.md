@@ -96,18 +96,23 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
   the scalar result. ``None`` is returned for an empty result set.
 - [x] `numericAggregate` — coerces aggregate results to ``int`` or
   ``float`` and returns ``0`` for an empty result set, matching
-  Laravel's int/float fallback contract.
 - [x] `setAggregate` — stores the aggregate specification without
   running the query and clears order clauses when no group-by is
   present, matching Laravel's eager ordering reset.
-- [ ] `decrementEach`
-- [x] `getColumns` — SQLite selected-column metadata.
-- [x] `getLimit` — SQLite limit metadata.
-- [x] `getOffset` — SQLite offset metadata.
-- [x] `getRawBindings` — Laravel-shaped binding buckets.
-- [x] `setBindings` — validates and replaces a binding bucket.
-- [x] `addBinding` — appends scalar or sequence bindings.
-- [x] `castBinding` — identity cast for Python-native values.
+- [x] `mergeWheres` — appends an external list of where clauses and
+  bindings to the current builder, matching Laravel's
+  ``mergeWheres`` shape.
+- [x] `getCountForPagination` — clones the builder with
+  ``orders``/``limit``/``offset`` cleared and returns the
+  ``COUNT(*)`` scalar for the remaining set.
+- [x] `paginate` — returns a ``dict`` with ``data``, ``total``,
+  ``per_page``, ``current_page``, ``last_page`` and ``page_name``
+  by composing ``getCountForPagination`` and ``for_page``.
+- [x] `simplePaginate` — fetches ``per_page + 1`` rows and reports
+  ``has_more`` instead of running a separate count query.
+- [x] `cursorPaginate` — encodes the last row's primary ordering
+  column value as a base64 JSON cursor and applies a ``>`` predicate
+  for the next page.
 - [x] `mergeBindings` — merges Laravel-shaped binding buckets.
 - [x] `cleanBindings` — filters SQL expression objects.
 - [ ] `useWritePdo`
