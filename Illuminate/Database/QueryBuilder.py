@@ -60,9 +60,11 @@ class QueryBuilder:
             )
         }
         self._lock = None
+        self._timeout = None
+        self._before_query_callbacks = []
+        self._after_query_callbacks = []
 
     # ---- Select ----
-
     def select(self, *columns):
         self._columns = columns or ("*",)
         return self
@@ -974,14 +976,16 @@ class QueryBuilder:
 
     def get(self):
         statement = self._build_select()
+        execution_options = self._execution_options()
         with self.manager._query_connection(self.connection_name) as connection:
+            statement = statement.execution_options(**execution_options) if execution_options else statement
             rows = connection.execute(statement).mappings().all()
-        return [dict(row) for row in rows]
+        rows = [dict(row) for row in rows]
+        return self._apply_after_query_callbacks(rows)
 
     def first(self):
         rows = self.limit(1).get()
         return rows[0] if rows else None
-
     def value(self, column):
         """Get a single column's value from the first result."""
         row = self.first()
@@ -1014,8 +1018,79 @@ class QueryBuilder:
 
     def get_offset(self):
         return self._offset
+
+    def timeout(self, seconds):
+        """Set a per-statement execution timeout in seconds.
+
+        Mirrors Laravel ``Query\\Builder::timeout`` by rejecting
+        non-positive values and clearing the timeout when ``None`` is
+        supplied.
+        """
+        if seconds is not None and (
+            not isinstance(seconds, int) or isinstance(seconds, bool) or seconds <= 0
+        ):
+            raise ValueError("Timeout must be greater than zero.")
+        self._timeout = seconds
+        return self
+
+    def before_query(self, callback):
+        """Register a callback to be invoked before query execution.
+
+        Mirrors Laravel ``Query\\Builder::beforeQuery``. The callback
+        receives this builder as its only argument and is invoked once
+        by ``_apply_before_query_callbacks`` during SQL compilation or
+        statement execution.
+        """
+        self._before_query_callbacks.append(callback)
+        return self
+
+    def _apply_before_query_callbacks(self) -> None:
+        """Invoke registered before-query callbacks once and clear them.
+
+        Mirrors Laravel ``Query\\Builder::applyBeforeQueryCallbacks``.
+        The callback list is cleared before iteration so a callback
+        that re-enters ``to_sql`` cannot re-trigger the same hooks.
+        """
+        callbacks = self._before_query_callbacks
+        self._before_query_callbacks = []
+        for callback in callbacks:
+            callback(self)
+
+    def after_query(self, callback):
+        """Register a callback to be invoked after query execution.
+
+        Mirrors Laravel ``Query\\Builder::afterQuery``. Each callback
+        receives the result list and may return a replacement value;
+        a falsy return keeps the prior result.
+        """
+        self._after_query_callbacks.append(callback)
+        return self
+
+    def _apply_after_query_callbacks(self, result):
+        """Invoke registered after-query callbacks in registration order.
+
+        Mirrors Laravel ``Query\\Builder::applyAfterQueryCallbacks``.
+        A callback returning a falsy value preserves the prior result.
+        """
+        for callback in list(self._after_query_callbacks):
+            new_result = callback(result)
+            if new_result:
+                result = new_result
+        return result
+
+    def _execution_options(self) -> dict:
+        """Return SQLAlchemy execution options for the current builder.
+
+        Currently translates ``_timeout`` into a per-statement
+        ``statement_timeout`` hint through SQLAlchemy's
+        ``execution_options`` so SQLite/MySQL backends can honour a
+        ``Query\\Builder::timeout`` value.
+        """
+        if self._timeout is None:
+            return {}
+        return {"statement_timeout": self._timeout}
+
     def pluck(self, column, key=None):
-        """Get a list of column values, optionally keyed by another column."""
         if key is not None:
             original_columns = self._columns
             self._columns = (key, column)
@@ -1080,14 +1155,77 @@ class QueryBuilder:
     # ---- SQL inspection ----
 
     def to_sql(self) -> str:
-        """Return the compiled parameterized SELECT statement."""
+        """Return the compiled parameterized SELECT statement.
+
+        Mirrors Laravel ``Query\\Builder::toSql`` by running registered
+        ``before_query`` callbacks before compiling.
+        """
+        self._apply_before_query_callbacks()
         return str(self._compile_select())
+
+    def to_raw_sql(self) -> str:
+        """Return the SQL with bindings embedded as quoted literals.
+
+        Mirrors Laravel ``Query\\Builder::toRawSql`` by compiling the
+        parameterized statement and substituting each ``?`` placeholder
+        with its escaped value. ``?`` placeholders inside string literals
+        are preserved.
+        """
+        sql = self.to_sql()
+        bindings = self.get_bindings()
+        if not bindings:
+            return sql
+        connection = self.manager.connection(self.connection_name)
+        prepared = connection.prepare_bindings(bindings)
+        return self._substitute_bindings(sql, prepared, connection)
+
+    def _substitute_bindings(self, sql, bindings, connection) -> str:
+        """Replace ``?`` placeholders outside string literals with escaped values.
+
+        Mirrors ``Grammar::substituteBindingsIntoRawSql``: a single
+        quote toggles a string-literal region, and doubled ``''`` or
+        escaped ``\\'`` are passed through unchanged.
+        """
+        rendered = []
+        binding_index = 0
+        in_string = False
+        i = 0
+        sql_length = len(sql)
+        while i < sql_length:
+            char = sql[i]
+            if in_string:
+                rendered.append(char)
+                if char == "'" and i + 1 < sql_length and sql[i + 1] == "'":
+                    rendered.append("'")
+                    i += 2
+                    continue
+                if char == "'":
+                    in_string = False
+                i += 1
+                continue
+            if char == "'":
+                rendered.append(char)
+                in_string = True
+                i += 1
+                continue
+            if char == "?":
+                if binding_index < len(bindings):
+                    rendered.append(connection.escape(bindings[binding_index]))
+                    binding_index += 1
+                else:
+                    rendered.append("?")
+                i += 1
+                continue
+            rendered.append(char)
+            i += 1
+        return "".join(rendered)
 
     def get_bindings(self) -> list:
         """Return the compiled SELECT bindings in placeholder order."""
         compiled = self._compile_select()
         parameter_names = compiled.positiontup or tuple(compiled.params)
         return self._flatten_bindings(compiled.params[name] for name in parameter_names)
+
     def get_raw_bindings(self):
         return {binding_type: list(values) for binding_type, values in self._bindings.items()}
 

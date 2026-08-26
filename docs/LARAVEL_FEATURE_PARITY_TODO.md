@@ -391,9 +391,31 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `having_nested`, `or_having_nested`, and `add_nested_having_query`
     compile SQLite grouped and exists subquery contracts. `where_in`/`where_not_in`
     accept a `QueryBuilder` as values.
-  - Evidence: `tests/test_query_builder.py` focused suite — 68 passed;
-    warning-as-error full starter suite — 219 passed.
-
+  - Partial slice (2026-08-25): `to_raw_sql` substitutes `?` placeholders
+    outside string literals with `Connection.escape`-quoted values; the
+    underlying substitution mirrors Laravel's
+    `Grammar::substituteBindingsIntoRawSql` for single-quote and doubled
+    apostrophe handling. `timeout` rejects non-positive seconds and clears
+    on `None`; per-statement execution is routed through SQLAlchemy's
+    `execution_options(statement_timeout=...)`. `before_query` and
+    `after_query` register fluent callbacks invoked in registration
+    order during SQL compilation and result hydration respectively;
+    `to_sql` runs and clears `before_query` callbacks before compiling,
+    and `get`/`first` apply `after_query` callbacks with a falsy-return
+    fallback that preserves the prior result. `Connection.escape` and
+    `Connection.prepare_bindings` provide the Laravel-shaped SQL
+    embedding boundary for the SQLite backend.
+  - Source mapping: Laravel `Query\Builder::toRawSql` (3459–3464),
+    `Grammar::substituteBindingsIntoRawSql` (1621–1651),
+    `Connection::escape` (1168–1191), `Connection::prepareBindings` (771),
+    `Query\Builder::timeout` (3378–3387),
+    `Query\Builder::beforeQuery` (3394–3399),
+    `applyBeforeQueryCallbacks` (3406–3413),
+    `Query\Builder::afterQuery` (3420–3425), and
+    `applyAfterQueryCallbacks` (3433–3440).
+  - Evidence: `tests/test_query_builder.py` execution-time surface
+    tests — 11 passed; full starter suite: 230 passed; warning-as-error
+    full starter suite: 230 passed, 0 warnings.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,

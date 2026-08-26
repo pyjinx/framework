@@ -202,6 +202,82 @@ class Connection:
     def get_database_name(self):
         return self.get_config("database")
 
+    def prepare_bindings(self, bindings) -> list:
+        """Normalize bindings for safe SQL embedding.
+
+        Mirrors Laravel ``Connection::prepareBindings`` by leaving scalar
+        bindings unchanged. Expression-like objects are flattened through
+        ``getValue`` when present; binary values are returned as-is.
+        """
+        prepared = []
+        for value in bindings:
+            if value is None:
+                prepared.append(None)
+                continue
+            get_value = getattr(value, "getValue", None)
+            if callable(get_value):
+                try:
+                    prepared.append(get_value(self))
+                    continue
+                except TypeError:
+                    prepared.append(value)
+                    continue
+            prepared.append(value)
+        return prepared
+
+    def escape(self, value, binary: bool = False) -> str:
+        """Escape ``value`` for safe SQL embedding.
+
+        Mirrors Laravel ``Connection::escape`` for the SQLite backend:
+        integers, floats, booleans, and ``None`` are returned as their SQL
+        literal form; strings are quoted and escaped by the underlying
+        DBAPI ``Connection.quote`` (Python ``sqlite3``).
+        """
+        if value is None:
+            return "null"
+        if binary:
+            raise RuntimeError(
+                "The database connection does not support escaping binary values."
+            )
+        if isinstance(value, bool):
+            return "1" if value else "0"
+        if isinstance(value, int) or isinstance(value, float):
+            return str(value)
+        if isinstance(value, (bytes, bytearray, memoryview)):
+            raise RuntimeError(
+                "The database connection does not support escaping binary values."
+            )
+        if isinstance(value, (list, tuple, dict, set)):
+            raise RuntimeError(
+                "The database connection does not support escaping arrays."
+            )
+        text_value = str(value)
+        if "\x00" in text_value:
+            raise RuntimeError(
+                "Strings with null bytes cannot be escaped. Use the binary escape option."
+            )
+        try:
+            text_value.encode("utf-8")
+        except UnicodeEncodeError as error:
+            raise RuntimeError(
+                "Strings with invalid UTF-8 byte sequences cannot be escaped."
+            ) from error
+        raw = self.engine.raw_connection()
+        try:
+            quote = getattr(raw, "quote", None)
+            if quote is None:
+                # Fallback: double any embedded single quotes and wrap.
+                return "'" + text_value.replace("'", "''") + "'"
+            result = quote(text_value)
+        finally:
+            try:
+                raw.close()
+            except Exception:
+                pass
+        if isinstance(result, bytes):
+            result = result.decode("utf-8")
+        return str(result)
+
     def get_table_prefix(self) -> str:
         return str(self.get_config("prefix") or "")
 
@@ -209,10 +285,10 @@ class Connection:
         self._config["prefix"] = prefix
         return self
 
+
     def set_reconnector(self, reconnector: Callable[[Connection], object]) -> Connection:
         self.reconnector = reconnector
         return self
-
     def reconnect(self):
         if self.reconnector is None:
             raise RuntimeError("Lost connection and no reconnector available.")

@@ -54,16 +54,22 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [x] `forPageAfterId` — SQLite ID-keyset page after a boundary.
 - [x] `reorder` — clears existing order clauses and optionally adds one.
 - [x] `reorderDesc` — descending `reorder` convenience.
-- [ ] `timeout`
-- [ ] `beforeQuery`
-- [ ] `applyBeforeQueryCallbacks`
-- [ ] `afterQuery`
-- [ ] `applyAfterQueryCallbacks`
-- [ ] `toRawSql`
-- [ ] `find`
-- [ ] `findOr`
-- [x] `rawValue` — SQLite raw expression scalar retrieval; `tests/test_query_builder.py::test_projection_and_binding_contracts`.
-- [ ] `soleValue`
+- [x] `timeout` — non-positive seconds raise; per-statement execution is
+  routed through SQLAlchemy's `execution_options(statement_timeout=...)`.
+- [x] `beforeQuery` — registers a callback invoked during `to_sql` and
+  cleared after the first run; re-entrant `to_sql` calls inside a
+  callback are safe.
+- [x] `applyBeforeQueryCallbacks` — clears the callback list before
+  iteration so re-entrant calls cannot double-invoke hooks.
+- [x] `afterQuery` — registers a result-list callback invoked by
+  `_apply_after_query_callbacks` from `get`/`first` in registration
+  order, with a falsy-return fallback that preserves the prior result.
+- [x] `applyAfterQueryCallbacks` — runs registered callbacks in
+  registration order and folds each non-falsy return into the next
+  callback's input.
+- [x] `toRawSql` — `Connection.escape`-quoted substitution of `?`
+  placeholders outside string literals; doubled `''` and escaped
+  apostrophes inside literals are preserved.
 - [ ] `paginate`
 - [ ] `simplePaginate`
 - [ ] `cursorPaginate`
