@@ -430,14 +430,25 @@ Next implementation area: finish the Database / ORM foundation and continue the 
   - Evidence: `tests/test_query_builder.py` single-result and
     existence tests — 12 passed; full starter suite: 242 passed;
     warning-as-error full starter suite: 242 passed, 0 warnings.
-  - Partial slice (2026-08-22): `where_column` and `or_where_column`
-    compare two qualified columns without creating value bindings, preserving
-    Laravel's column-condition operator semantics. `where_between_columns`,
-    `or_where_between_columns`, `where_not_between_columns`, and
-    `or_where_not_between_columns` compare a column against two column
-    boundaries without value bindings. SQLite `where_date`,
-    `or_where_date`, `where_time`, and `or_where_time` extract date/time
-    portions. `where_day`, `or_where_day`, `where_month`, `or_where_month`,
+  - Partial slice (2026-08-26): `in_random_order` emits a SQLite
+    ``RANDOM()`` ordering clause. `in_order_of(column, values)` emits
+    a `CASE column WHEN ? THEN ? ELSE ? END` ordering expression with
+    positional values; ``None`` values become a trailing catch-all
+    and empty values are a no-op. `union(query, all=False)` composes
+    the outer SELECT with one or more subquery builders through
+    SQLAlchemy's `union` primitive; each side is wrapped in a
+    subquery so SQLite accepts an outer `ORDER BY`. `union_all` is
+    sugar for `union(query, all=True)`. A trailing `all=True` entry
+    promotes the whole compound to `UNION ALL` semantics. Subquery
+    bindings are merged into the outer SELECT through the
+    `union` binding bucket.
+  - Source mapping: Laravel `Query\Builder::inRandomOrder` (3077–3080),
+    `inOrderOf` (3089–3110), `union` (3309–3320),
+    `unionAll` (3328–3331), `Grammar::compileUnions` (1155–1176), and
+    `compileUnion` (1184–1189).
+  - Evidence: `tests/test_query_builder.py` ordering and union tests
+    — 8 passed; full starter suite: 250 passed; warning-as-error full
+    starter suite: 250 passed, 0 warnings.
     `where_year`, and `or_where_year` extract zero-padded calendar parts with
     Laravel's two-argument equality shorthand and comparison operators.
     `where_json_contains`, `or_where_json_contains`,

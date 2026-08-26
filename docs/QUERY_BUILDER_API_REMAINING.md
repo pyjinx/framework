@@ -79,9 +79,14 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
   invokes the supplied callback.
 - [x] `doesntExistOr` — returns ``True`` when no rows exist, otherwise
   invokes the supplied callback.
-- [ ] `numericAggregate`
-- [ ] `insertOrIgnore`
-- [ ] `insertOrIgnoreReturning`
+- [x] `inRandomOrder` — emits a SQLite ``RANDOM()`` ordering clause.
+- [x] `inOrderOf` — emits a ``CASE`` ordering clause with positional
+  values; ``None`` values act as a trailing catch-all. Empty values
+  are a no-op.
+- [x] `union` — composes the outer SELECT with one or more subquery
+  ``Select`` objects through SQLAlchemy's ``union`` primitive. Each
+  side is wrapped in a subquery so SQLite accepts ``ORDER BY``.
+- [x] `unionAll` — promotes the compound to ``UNION ALL`` semantics.
 - [ ] `insertUsing`
 - [ ] `insertOrIgnoreUsing`
 - [ ] `updateFrom`

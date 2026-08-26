@@ -6,6 +6,7 @@ from sqlalchemy import (
     Table,
     and_,
     bindparam,
+    case,
     delete,
     exists,
     func,
@@ -63,12 +64,17 @@ class QueryBuilder:
         self._timeout = None
         self._before_query_callbacks = []
         self._after_query_callbacks = []
+        self._in_order_of = []
+        self._unions = []
+        self._union_orders = []
+        self._union_limit = None
+        self._union_offset = None
 
     # ---- Select ----
+
     def select(self, *columns):
         self._columns = columns or ("*",)
         return self
-
     def select_raw(self, expression: str, bindings=None):
         self._raw_selects.append(
             self._raw_expression(expression, [] if bindings is None else bindings)
@@ -687,6 +693,69 @@ class QueryBuilder:
 
     def oldest(self, column="created_at"):
         return self.order_by(column, "asc")
+
+    def in_random_order(self, seed=""):
+        """Add a SQLite ``RANDOM()`` ordering clause.
+
+        Mirrors Laravel ``Query\\Builder::inRandomOrder`` by emitting a
+        raw ``orderByRaw("RANDOM()")`` clause; an optional ``seed`` is
+        accepted to match the Laravel signature but does not alter the
+        compiled clause because SQLite ``RANDOM()`` is non-deterministic.
+        """
+        return self.order_by_raw("RANDOM()", [])
+
+    def in_order_of(self, column, values):
+        """Order rows by a custom sequence of values.
+
+        Mirrors Laravel ``Query\\Builder::inOrderOf`` by emitting a
+        ``CASE WHEN`` ordering clause; ``values`` may be a list, tuple,
+        or any iterable of scalars, and ``None`` is preserved as a
+        trailing default branch. Empty values are a no-op.
+        """
+        if values is None:
+            return self
+        try:
+            values_list = list(values)
+        except TypeError:
+            values_list = [values]
+        if not values_list:
+            return self
+        self._in_order_of.append((column, values_list))
+        return self
+
+    def union(self, query, all=False):
+        """Compose a UNION with another query.
+
+        Mirrors Laravel ``Query\\Builder::union`` by accepting either a
+        ``QueryBuilder`` instance or a closure that configures a fresh
+        sub-builder. Subquery bindings are merged into the current
+        ``union`` binding bucket.
+        """
+        if callable(query):
+            sub = self._new_subquery()
+            query(sub)
+            query = sub
+        if not isinstance(query, QueryBuilder):
+            raise TypeError(
+                "union() requires a QueryBuilder or a callable that "
+                "configures a fresh subquery builder."
+            )
+        self._unions.append({"query": query, "all": bool(all)})
+        self.add_binding(query.get_bindings(), "union")
+        return self
+
+    def union_all(self, query):
+        """Compose a UNION ALL with another query.
+
+        Mirrors Laravel ``Query\\Builder::unionAll``.
+        """
+        return self.union(query, all=True)
+
+    def _new_subquery(self):
+        """Create a fresh QueryBuilder sharing the current connection."""
+        return QueryBuilder(
+            self.manager, self.table_name, self.connection_name
+        )
 
     # ---- Grouping ----
 
@@ -1828,6 +1897,8 @@ class QueryBuilder:
             )
         for expression in self._raw_orders:
             statement = statement.order_by(expression)
+        for column, values in self._in_order_of:
+            statement = statement.order_by(self._in_order_of_expression(column, values))
 
         if self._lock is True:
             statement = statement.with_for_update()
@@ -1839,7 +1910,68 @@ class QueryBuilder:
         if self._offset is not None:
             statement = statement.offset(self._offset)
 
-        return statement
+        if not self._unions:
+            return statement
+        return self._compose_union_statement(statement)
+
+
+    def _compose_union_statement(self, statement):
+        """Wrap ``statement`` with UNION/UNION ALL subquery SQL.
+
+        Each registered sub-builder is composed into the outer
+        ``Select`` through SQLAlchemy's ``union``/``union_all``
+        primitives so parameter binding and dialect compilation remain
+        handled by SQLAlchemy. A trailing ``all=True`` entry promotes
+        the entire compound to ``UNION ALL`` semantics, matching
+        Laravel's behavior where the last ``union($q, true)`` call
+        wins.
+        """
+        from sqlalchemy import union, union_all
+        compounds = []
+        all_mode = False
+        for entry in self._unions:
+            sub_query = entry["query"]
+            compounds.append(sub_query._build_select())
+            if entry["all"]:
+                all_mode = True
+        if not compounds:
+            return statement
+        # SQLite rejects ``ORDER BY`` directly inside a UNION operand,
+        # so wrap any side that carries one in a subquery. The outer
+        # statement is also wrapped when it carries a clause SQLite
+        # would reject inside a compound SELECT.
+        def _wrap_for_compound(select_stmt):
+            inner = select_stmt.subquery()
+            return select(inner)
+        wrapped = _wrap_for_compound(statement)
+        compounds = [_wrap_for_compound(c) for c in compounds]
+        if all_mode:
+            return union_all(wrapped, *compounds)
+        return union(wrapped, *compounds)
+
+    def _in_order_of_expression(self, column, values):
+        """Build a SQLAlchemy ``CASE`` expression for ``in_order_of`` ordering.
+
+        ``None`` values become a trailing ``ELSE`` branch, mirroring
+        Laravel's last-position ``is null`` ordering.
+        """
+        column_expr = self._resolve_column(column)
+        whens = {}
+        position = 1
+        for value in values:
+            if value is None:
+                # The catch-all branch: SQLAlchemy's case(value=...) cannot
+                # bind ``None`` directly, so we add a separate ``else_``
+                # through ``case(whens=..., else_=...)`` below.
+                continue
+            whens[value] = position
+            position += 1
+        if not whens:
+            return column_expr.asc()
+        # When None is not in the values, NULL rows still need a high
+        # position so they sort to the end of the result set.
+        else_value = position if any(v is None for v in values) else position
+        return case(whens, value=column_expr, else_=else_value)
 
     def _selected_columns(self, table):
         if self._raw_selects:
