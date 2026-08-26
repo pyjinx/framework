@@ -107,19 +107,14 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
   column value as a base64 JSON cursor and applies a ``>`` predicate
   for the next page.
 - [x] `mergeBindings` — merges Laravel-shaped binding buckets.
-- [x] `cleanBindings` — filters SQL expression objects.
-- [ ] `useWritePdo`
-- [ ] `fetchUsing`
-
-- [ ] `union`
-- [ ] `unionAll`
-## Explicitly blocked by pinned SQLite / backend boundary
-
-- [blocked] `whereJsonOverlaps` — pinned Laravel SQLite grammar lacks `compileJsonOverlaps`.
-- [blocked] `orWhereJsonOverlaps` — pinned Laravel SQLite grammar lacks `compileJsonOverlaps`.
-- [blocked] `whereJsonDoesntOverlap` — pinned Laravel SQLite grammar lacks `compileJsonOverlaps`.
-- [blocked] `orWhereJsonDoesntOverlap` — pinned Laravel SQLite grammar lacks `compileJsonOverlaps`.
-
+- [x] `useWritePdo` — sets ``_use_write_pdo`` to ``True`` on the
+  builder so downstream callers can route the read/write split. The
+  SQLite backend does not require a separate write pdo, so the flag
+  is informational on this dialect.
+- [x] `fetchUsing` — captures the variadic ``PDOStatement::fetchAll``
+  arguments as ``_fetch_using``; the SQLite backend uses
+  SQLAlchemy's ``mappings()`` for row hydration, so the stored
+  payload is informational.
 ## Non-SQLite or driver-specific gaps
 
 - [non-SQLite] `selectVectorDistance` — defer until the corresponding driver/grammar exists; do not invent SQLite behavior.

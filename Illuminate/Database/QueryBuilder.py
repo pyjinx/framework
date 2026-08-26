@@ -869,6 +869,29 @@ class QueryBuilder:
     def take(self, value: int):
         return self.limit(value)
 
+    def use_write_pdo(self):
+        """Mark the query as requiring the write PDO connection.
+
+        Mirrors Laravel ``Query\\Builder::useWritePdo`` by setting
+        ``_use_write_pdo`` to ``True``. The state is preserved for
+        downstream callers; the SQLite backend does not require a
+        separate write pdo, so the flag is informational on this
+        dialect.
+        """
+        self._use_write_pdo = True
+        return self
+
+    def fetch_using(self, *args):
+        """Capture the ``PDOStatement::fetchAll`` arguments to apply.
+
+        Mirrors Laravel ``Query\\Builder::fetchUsing`` by storing the
+        variadic ``$fetchUsing`` payload as a tuple. SQLAlchemy's
+        ``mappings()`` is used for row hydration on the SQLite
+        backend, so the stored payload is informational.
+        """
+        self._fetch_using = tuple(args)
+        return self
+
     def for_page(self, page: int, per_page: int = 15):
         return self.offset((page - 1) * per_page).limit(per_page)
     def for_page_before_id(self, per_page=15, last_id=0, column="id"):

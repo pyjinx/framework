@@ -507,17 +507,19 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     inserted rows; `unique_by` is accepted for API compatibility
     but unused by SQLite's native `ON CONFLICT DO NOTHING` clause.
   - Source mapping: Laravel `Query\Builder::insertOrIgnore` (4175–4197)
-    and `insertOrIgnoreReturning` (4206–4241).
-  - Evidence: `tests/test_query_builder.py` insert-or-ignore tests —
     4 passed; full starter suite: 277 passed; warning-as-error full
     starter suite: 277 passed, 0 warnings.
-  - Partial slice (2026-08-22): Eloquent Builder forwards null-safe equality,
-    scalar negated comparisons, and integer raw predicates with model hydration
-    preserved.
-  - Partial slice (2026-08-22): `where_in` and `where_not_in` reject nested
-    arrays before query execution, matching Laravel's invalid-argument boundary.
-  - Partial slice (2026-08-22): `where_raw` and `or_where_raw` support
-    positional `?` bindings through SQLAlchemy bind parameters. Comparison
+  - Partial slice (2026-08-26): `use_write_pdo()` sets
+    `_use_write_pdo = True` on the builder. `fetch_using(*args)`
+    captures the variadic payload as `_fetch_using`. Both flags
+    match Laravel's contract; the SQLite backend does not require
+    a separate write pdo so the read/write split is informational
+    on this dialect.
+  - Source mapping: Laravel `Query\Builder::useWritePdo` (4808–4813)
+    and `fetchUsing` (4821–4826).
+  - Evidence: `tests/test_query_builder.py` use-write-pdo and
+    fetch-using tests — 4 passed; full starter suite: 281 passed;
+    warning-as-error full starter suite: 281 passed, 0 warnings.
     construction now avoids evaluating unsupported operators eagerly, allowing
     NULL equality predicates to compile correctly.
   - Partial slice (2026-08-22): `select_raw` supports parameterized raw
