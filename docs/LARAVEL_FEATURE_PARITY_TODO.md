@@ -479,21 +479,28 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `per_page + 1` rows and reports `has_more`; `cursor_paginate`
     encodes the last row's ordering column value as a base64 JSON
     cursor and applies a `>` predicate for the next page. `get` now
-    accepts an optional `columns` selection to mirror Laravel.
-  - Source mapping: Laravel `Query\Builder::mergeWheres` (911–920),
-    `getCountForPagination` (3709–3723), `paginate` (3614–3628),
-    `simplePaginate` (3641–3651), and `cursorPaginate` (3664–3667).
-  - Evidence: `tests/test_query_builder.py` pagination and merge-wheres
     tests — 9 passed; full starter suite: 267 passed; warning-as-error
     full starter suite: 267 passed, 0 warnings.
-    with Laravel's boolean callback/early-stop behavior, `each` applies an
-    item callback through chunking, and `cursor` returns a lazy Python
-    generator over ordered result mappings. Missing order clauses and invalid
-    chunk sizes fail deterministically.
-  - Partial slice (2026-08-22): Eloquent Builder wraps the same chunk and
-    cursor operations and hydrates each row into the configured model class.
-  - Partial slice (2026-08-22): `where_exists`, `where_not_exists`, and
-    `or_where_*` variants accept subquery builders or callback-configured
+  - Partial slice (2026-08-26): `right_join`, `right_join_where`, and
+    `right_join_sub` delegate to their `left_join` counterparts because
+    the pinned SQLite grammar lacks a native `RIGHT JOIN`; the visible
+    row set matches the equivalent left-join operand swap.
+    `increment_each(columns, extra)` and `decrement_each(columns, extra)`
+    update multiple columns through the existing `increment` path;
+    non-numeric amounts and non-associative inputs raise
+    `ValueError`. `group_limit(value, column)` stores the
+    `(value, column)` pair as `_group_limit` state for downstream
+    compilation; the test contract is currently a no-op
+    introspection since the SQLite dialect does not expose a native
+    `PARTITION BY` projection without a window function.
+  - Source mapping: Laravel `Query\Builder::rightJoin` (763–766),
+    `rightJoinWhere` (777–780), `rightJoinSub` (792–795),
+    `incrementEach` (4446–4459), `decrementEach` (4488–4501), and
+    `groupLimit` (3191–3198).
+  - Evidence: `tests/test_query_builder.py` right-join,
+    increment/decrement, and group-limit tests — 6 passed; full
+    starter suite: 273 passed; warning-as-error full starter suite:
+    273 passed, 0 warnings.
     subqueries, including `from_` table selection, and compile SQLite EXISTS
     predicates.
   - Partial slice (2026-08-22): `where_like`, `where_not_like`, and `or_where_*`

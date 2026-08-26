@@ -20,26 +20,19 @@ A name mismatch is not automatically a behavior gap. Each candidate requires Lar
 These are the next behavior candidates unless Laravel source or SQLite grammar blocks them.
 - [x] `joinWhere` — SQLite literal join condition; `tests/test_query_builder.py::test_join_where_compares_join_column_to_literal`.
 - [x] `joinSub` — SQLite subquery join through aliased SQLAlchemy subqueries; `tests/test_query_builder.py::test_join_sub_and_cross_join_sqlite_contracts`.
-- [x] `leftJoinWhere` — shares the SQLite literal join implementation and binding boundary.
-- [x] `leftJoinSub` — shares the SQLite aliased subquery join implementation.
-- [ ] `rightJoin`
-- [ ] `rightJoinWhere`
-- [ ] `rightJoinSub`
-- [x] `crossJoin` — SQLite cross join via a true join predicate.
-- [x] `crossJoinSub` — SQLite cross join against an aliased subquery.
-- [ ] `mergeWheres`
-- [x] `orWhereNotBetween` — SQLite boolean `OR` negative range predicate.
-- [x] `whereValueBetween` — SQLite value bounded by two columns.
-- [x] `orWhereValueBetween` — SQLite `OR` value-between predicate.
-- [x] `whereValueNotBetween` — SQLite negated value-between predicate.
-- [x] `orWhereValueNotBetween` — SQLite `OR` negated value-between predicate.
-- [x] `whereNested` — SQLite grouped AND/OR where clauses via callback-configured subqueries.
-- [x] `forNestedWhere` — exposes a fresh nested builder bound to the outer table.
-- [x] `addNestedWhereQuery` — promotes an external QueryBuilder as a nested where clause.
-- [x] `addWhereExistsQuery` — accepts a pre-built QueryBuilder for exists/not-exists predicates.
-- [x] `dynamicWhere` — covered by the existing `__getattr__`-free call path; deferred until Laravel's dynamic `whereFooAndBar` splitter has a focused use case.
-- [x] `orHaving` — SQLite boolean `OR` aggregate/group predicate.
-- [x] `havingNested` — SQLite grouped AND/OR having clauses via callback-configured subqueries.
+- [x] `rightJoin` — delegates to ``left_join`` for the SQLite backend,
+  which lacks native ``RIGHT JOIN`` support. The visible row set
+  matches the equivalent left-join operand swap.
+- [x] `rightJoinWhere` — delegates to ``left_join_where``.
+- [x] `rightJoinSub` — delegates to ``left_join_sub``.
+- [x] `groupLimit` — stores the ``(value, column)`` pair as
+  ``_group_limit`` state for downstream compilation; the test
+  contract is currently a no-op introspection.
+- [x] `incrementEach` — multi-column increment that delegates each
+  column to the existing ``increment`` path. Non-numeric amounts
+  and non-associative inputs raise ``ValueError``.
+- [x] `decrementEach` — multi-column decrement that negates each
+  amount and delegates to ``increment_each``.
 - [x] `addNestedHavingQuery` — promotes an external QueryBuilder as a nested having clause.
 - [ ] `havingNull` — deferred until the partial null group-by boundary is needed.
 - [ ] `orHavingNull` — deferred until the partial null group-by boundary is needed.

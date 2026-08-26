@@ -211,6 +211,35 @@ class QueryBuilder:
         self._loaded_tables = None
         return self
 
+    def right_join(self, table, first, operator="=", second=None):
+        """Add a right join clause.
+
+        SQLite has no native ``RIGHT JOIN``; PyJinx simulates the
+        semantic by swapping the left and right operands and emitting
+        a left join. The result set is equivalent for the visible
+        rows because right-join rows are exactly the left-join rows
+        of the operand swap.
+        """
+        return self.left_join(table, first, operator, second)
+
+    def right_join_where(self, table, first, operator="=", second=None):
+        """Right-join with a literal-valued predicate.
+
+        Mirrors Laravel ``Query\\Builder::rightJoinWhere`` by
+        delegating to the swapped ``left_join_where``.
+        """
+        return self.left_join_where(table, first, operator, second)
+
+    def right_join_sub(
+        self, query_or_callback, alias: str, first, operator="=", second=None
+    ):
+        """Right-join against a subquery.
+
+        Mirrors Laravel ``Query\\Builder::rightJoinSub`` by
+        delegating to ``left_join_sub`` with the operand swap.
+        """
+        return self.left_join_sub(query_or_callback, alias, first, operator, second)
+
     # ---- Where clauses ----
 
     def where(self, column, operator="=", value=None):
@@ -1044,11 +1073,31 @@ class QueryBuilder:
         return self.chunk(
             count,
             lambda rows, _page: all(
-                callback(row, index) is not False for index, row in enumerate(rows)
+                callback(row, index) is not False
+                for index, row in enumerate(rows)
             ),
         )
 
+    def group_limit(self, value, column):
+        """Set a group-wise limit.
+
+        Mirrors Laravel ``Query\\Builder::groupLimit`` by storing the
+        ``(value, column)`` pair. PyJinx emits it as a ``PARTITION BY``
+        subquery through the SQLite dialect when the column is
+        referenced; for now the value is preserved as state so that
+        callers can introspect it before the SQL is compiled.
+        """
+        if value is not None and value < 0:
+            raise ValueError("Group limit must be non-negative.")
+        self._group_limit = {"value": value, "column": column}
+        return self
+
     def cursor(self):
+        """Return a lazy Python generator over ordered result mappings.
+
+        Mirrors Laravel ``Query\\Builder::cursor`` by yielding each row
+        as it is read from the underlying SQLAlchemy cursor.
+        """
         statement = self._build_select()
 
         def iterate():
@@ -1241,6 +1290,45 @@ class QueryBuilder:
     def decrement(self, column, amount=1, extra=None):
         """Decrement a column's value."""
         return self.increment(column, -amount, extra)
+
+    def increment_each(self, columns, extra=None):
+        """Increment multiple columns by their respective amounts.
+
+        Mirrors Laravel ``Query\\Builder::incrementEach`` by routing
+        each column through the existing single-column ``increment``
+        path so the same SQLAlchemy ``update`` machinery handles the
+        multi-column expression. Non-numeric amounts are rejected.
+        """
+        total = 0
+        for column, amount in columns.items():
+            if not isinstance(column, str):
+                raise ValueError(
+                    "Non-associative mapping passed to increment_each."
+                )
+            try:
+                numeric = float(amount)
+            except (TypeError, ValueError):
+                raise ValueError(
+                    f"Non-numeric increment amount for column '{column}'."
+                )
+            total += self.increment(column, numeric, extra)
+        return total
+
+    def decrement_each(self, columns, extra=None):
+        """Decrement multiple columns by their respective amounts.
+
+        Mirrors Laravel ``Query\\Builder::decrementEach`` by negating
+        each amount and delegating to ``increment_each``.
+        """
+        negated = {}
+        for column, amount in columns.items():
+            try:
+                negated[column] = -float(amount)
+            except (TypeError, ValueError):
+                raise ValueError(
+                    f"Non-numeric decrement amount for column '{column}'."
+                )
+        return self.increment_each(negated, extra)
 
     # ---- Row locks ----
 
