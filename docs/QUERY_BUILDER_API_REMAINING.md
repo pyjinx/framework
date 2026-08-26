@@ -77,19 +77,19 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
   values; ``None`` values act as a trailing catch-all. Empty values
   are a no-op.
 - [x] `union` — composes the outer SELECT with one or more subquery
-  ``Select`` objects through SQLAlchemy's ``union`` primitive. Each
-  side is wrapped in a subquery so SQLite accepts ``ORDER BY``.
-- [x] `unionAll` — promotes the compound to ``UNION ALL`` semantics.
 - [x] `insertUsing` — composes ``INSERT INTO ... SELECT ...`` SQL and
   executes it through the connection's write boundary. The subquery
   SQL is rendered with its bindings through ``Connection::statement``.
 - [x] `insertOrIgnoreUsing` — emits SQLite ``INSERT OR IGNORE INTO``
-  for the SQLite backend; duplicate unique-key rows are skipped.
-- [x] `aggregate` — runs an arbitrary aggregate function and returns
-  the scalar result. ``None`` is returned for an empty result set.
-- [x] `numericAggregate` — coerces aggregate results to ``int`` or
-  ``float`` and returns ``0`` for an empty result set, matching
-- [x] `setAggregate` — stores the aggregate specification without
+  for the SQLite backend; duplicate unique-key rows are silently
+  skipped.
+- [x] `insertOrIgnore` — composes ``INSERT OR IGNORE INTO ...`` SQL
+  through SQLAlchemy's ``sqlite_insert`` with ``on_conflict_do_nothing``
+  and returns the rowcount. Accepts a single dict or a list of dicts.
+- [x] `insertOrIgnoreReturning` — emits ``INSERT OR IGNORE INTO ...
+  RETURNING ...`` and returns the inserted rows. ``unique_by`` is
+  accepted for API compatibility but unused by SQLite's
+  ``ON CONFLICT DO NOTHING`` clause.
   running the query and clears order clauses when no group-by is
   present, matching Laravel's eager ordering reset.
 - [x] `mergeWheres` — appends an external list of where clauses and

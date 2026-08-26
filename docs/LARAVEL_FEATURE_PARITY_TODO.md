@@ -497,17 +497,20 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `rightJoinWhere` (777–780), `rightJoinSub` (792–795),
     `incrementEach` (4446–4459), `decrementEach` (4488–4501), and
     `groupLimit` (3191–3198).
-  - Evidence: `tests/test_query_builder.py` right-join,
-    increment/decrement, and group-limit tests — 6 passed; full
     starter suite: 273 passed; warning-as-error full starter suite:
     273 passed, 0 warnings.
-    subqueries, including `from_` table selection, and compile SQLite EXISTS
-    predicates.
-  - Partial slice (2026-08-22): `where_like`, `where_not_like`, and `or_where_*`
-    variants support case-insensitive SQLite LIKE and Laravel-compatible
-    case-sensitive GLOB pattern conversion.
-  - Partial slice (2026-08-22): Eloquent Builder forwards exists and like
-    predicates while preserving model hydration and fluent chaining.
+  - Partial slice (2026-08-26): `insert_or_ignore(values)` composes
+    `INSERT OR IGNORE INTO ...` SQL through SQLAlchemy's
+    `sqlite_insert` with `on_conflict_do_nothing` and returns the
+    rowcount. `insert_or_ignore_returning(values, returning, unique_by)`
+    emits `INSERT OR IGNORE INTO ... RETURNING ...` and returns the
+    inserted rows; `unique_by` is accepted for API compatibility
+    but unused by SQLite's native `ON CONFLICT DO NOTHING` clause.
+  - Source mapping: Laravel `Query\Builder::insertOrIgnore` (4175–4197)
+    and `insertOrIgnoreReturning` (4206–4241).
+  - Evidence: `tests/test_query_builder.py` insert-or-ignore tests —
+    4 passed; full starter suite: 277 passed; warning-as-error full
+    starter suite: 277 passed, 0 warnings.
   - Partial slice (2026-08-22): Eloquent Builder forwards null-safe equality,
     scalar negated comparisons, and integer raw predicates with model hydration
     preserved.

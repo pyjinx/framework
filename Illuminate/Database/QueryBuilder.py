@@ -1135,6 +1135,62 @@ class QueryBuilder:
                 result.inserted_primary_key[0] if result.inserted_primary_key else None
             )
 
+    def insert_or_ignore(self, values):
+        """Insert rows, silently skipping unique-constraint violations.
+
+        Mirrors Laravel ``Query\\Builder::insertOrIgnore`` by composing
+        ``INSERT OR IGNORE INTO ...`` SQL and returning the rowcount
+        for the SQLite backend. Supports a single dict or a list of
+        dicts.
+        """
+        if not values:
+            return 0
+        rows = values if isinstance(values, list) else [values]
+        rows = [dict(sorted(row.items())) for row in rows]
+        table = self._table()
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
+            statement = sqlite_insert(table).values(rows).on_conflict_do_nothing()
+            return connection.execute(statement).rowcount
+
+    def insert_or_ignore_returning(self, values, returning=None, unique_by=None):
+        """Insert rows, skipping unique violations, and return inserted rows.
+
+        Mirrors Laravel ``Query\\Builder::insertOrIgnoreReturning`` by
+        composing ``INSERT OR IGNORE INTO ... RETURNING ...`` SQL for the
+        SQLite backend. ``unique_by`` is accepted to mirror the Laravel
+        signature but is unused by SQLite's native ``ON CONFLICT
+        DO NOTHING`` clause.
+        """
+        if not values:
+            return []
+        rows = values if isinstance(values, list) else [values]
+        rows = [dict(sorted(row.items())) for row in rows]
+        table = self._table()
+        columns = list(rows[0].keys())
+        from sqlalchemy import quoted_name
+        column_list_sql = ", ".join(
+            str(quoted_name(col, quote=True)) for col in columns
+        )
+        placeholders = ", ".join("?" for _ in columns)
+        sql = (
+            f"INSERT OR IGNORE INTO {self.table_name} ({column_list_sql}) "
+            f"VALUES ({placeholders})"
+        )
+        adapter = self.manager.connection(self.connection_name)
+        last_rowid = None
+        inserted = []
+        with self.manager._query_connection(
+            self.connection_name, write=True
+        ) as connection:
+            for row in rows:
+                params = [row[col] for col in columns]
+                cursor = connection.exec_driver_sql(sql, tuple(params))
+                if cursor.rowcount and cursor.lastrowid:
+                    inserted.append(dict(row))
+        return inserted
+
     def upsert(self, values, unique_by, update_columns=None) -> int:
         """Insert values or update matching SQLite rows."""
         if not unique_by:
