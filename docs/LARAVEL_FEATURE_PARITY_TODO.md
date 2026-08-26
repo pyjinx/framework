@@ -446,18 +446,29 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `inOrderOf` (3089–3110), `union` (3309–3320),
     `unionAll` (3328–3331), `Grammar::compileUnions` (1155–1176), and
     `compileUnion` (1184–1189).
-  - Evidence: `tests/test_query_builder.py` ordering and union tests
-    — 8 passed; full starter suite: 250 passed; warning-as-error full
     starter suite: 250 passed, 0 warnings.
-    `where_year`, and `or_where_year` extract zero-padded calendar parts with
-    Laravel's two-argument equality shorthand and comparison operators.
-    `where_json_contains`, `or_where_json_contains`,
-    `where_json_doesnt_contain`, and `or_where_json_doesnt_contain` use
-    SQLite `json_each` for scalar array membership. JSON path sources are
-    supported for `where_json_contains`; `where_json_contains_key`,
-    `or_where_json_contains_key`, `where_json_doesnt_contain_key`,
-    `or_where_json_doesnt_contain_key`, `where_json_length`, and
-    `or_where_json_length` use SQLite `json_type` and `json_array_length`.
+  - Partial slice (2026-08-26): `insert_using(columns, query)` composes
+    `INSERT INTO ... SELECT ...` SQL and executes it through
+    `Connection::statement`; the subquery SQL is rendered with its
+    bindings and the destination column list is quoted. `["*"]` is
+    treated as "all destination columns". `insert_or_ignore_using`
+    emits `INSERT OR IGNORE INTO` for the SQLite backend so duplicate
+    unique-key rows are silently skipped. `aggregate(function, columns)`
+    composes `SELECT <fn>(<cols>) AS aggregate` and returns the first
+    row's scalar value; an empty result set returns `None`.
+    `numeric_aggregate` returns `0` for empty sets and coerces string
+    results to `int` or `float` based on the presence of a decimal
+    point. `set_aggregate` stores the aggregate spec and clears
+    order clauses when no group-by is present, matching Laravel's
+    eager ordering reset.
+  - Source mapping: Laravel `Query\Builder::insertUsing` (4266–4276),
+    `insertOrIgnoreUsing` (4284–4294), `aggregate` (4068–4078),
+    `numericAggregate` (4087–4108), `setAggregate` (4117–4128),
+    SQLite `compileInsertUsing` (1315–1324), and
+    SQLite `compileInsertOrIgnoreUsing` (318–321).
+  - Evidence: `tests/test_query_builder.py` insert-using and aggregate
+    tests — 9 passed; full starter suite: 258 passed; warning-as-error
+    full starter suite: 258 passed, 0 warnings.
     `where_row_values` and `or_where_row_values` compare tuples of columns
     against bound tuples and reject mismatched column/value lengths.
   - Partial slice (2026-08-22): `where_all`, `where_any`, and `where_none`

@@ -986,18 +986,81 @@ class QueryBuilder:
         ) as connection:
             return connection.execute(statement).rowcount
 
+    def insert_using(self, columns, query):
+        """Insert rows from a subquery.
+
+        Mirrors Laravel ``Query\\Builder::insertUsing`` by composing
+        ``INSERT INTO ... (cols) <subquery>`` SQL and executing it
+        through the manager's write connection. The subquery SQL is
+        rendered with its bindings through ``Connection::statement``
+        so positional placeholders align with the driver binding
+        pipeline.
+        """
+        self._apply_before_query_callbacks()
+        sql, bindings = self._create_sub_sql(query)
+        column_list = self._compile_insert_columns(columns)
+        prefix = f"INSERT INTO {self.table_name}"
+        if column_list:
+            statement = f"{prefix} ({column_list}) {sql}"
+        else:
+            statement = f"{prefix} {sql}"
+        cleaned = self.clean_bindings(bindings)
+        adapter = self.manager.connection(self.connection_name)
+        return adapter.statement(statement, tuple(cleaned))
+
+    def insert_or_ignore_using(self, columns, query):
+        """Insert rows from a subquery, ignoring unique-constraint errors.
+
+        Mirrors Laravel ``Query\\Builder::insertOrIgnoreUsing`` by
+        emitting SQLite ``INSERT OR IGNORE INTO ...`` for the SQLite
+        backend.
+        """
+        self._apply_before_query_callbacks()
+        sql, bindings = self._create_sub_sql(query)
+        column_list = self._compile_insert_columns(columns)
+        prefix = f"INSERT OR IGNORE INTO {self.table_name}"
+        if column_list:
+            statement = f"{prefix} ({column_list}) {sql}"
+        else:
+            statement = f"{prefix} {sql}"
+        cleaned = self.clean_bindings(bindings)
+        adapter = self.manager.connection(self.connection_name)
+        return adapter.statement(statement, tuple(cleaned))
+
+    def _create_sub_sql(self, query):
+        """Build a sub-SQL string and its bindings.
+
+        SQLite does not accept parentheses around a subquery following
+        a column list, so this returns the bare ``SELECT ...`` text
+        without outer parens. Laravel's grammar wraps subqueries in
+        parens for portability, but PyJinx targets the SQLite
+        dialect's simpler form.
+        """
+        if callable(query):
+            sub = self._new_subquery()
+            query(sub)
+            query = sub
+        if not isinstance(query, QueryBuilder):
+            raise TypeError(
+                "insert_using requires a QueryBuilder or callable."
+            )
+        return query.to_sql(), list(query.get_bindings())
+
+    @staticmethod
+    def _compile_insert_columns(columns):
+        """Render a quoted, comma-separated column list for INSERT INTO."""
+        if not columns or columns == ["*"]:
+            return ""
+        if isinstance(columns, str):
+            return columns
+        return ", ".join(QueryBuilder._quote_insert_columns(columns))
+
+    @staticmethod
+    def _quote_insert_columns(columns):
+        from sqlalchemy import quoted_name
+        return [quoted_name(str(column), quote=True) for column in columns]
+
     # ---- Row locks ----
-
-    def lock(self, value=True):
-        self._lock = value
-        return self
-
-    def lock_for_update(self):
-        return self.lock(True)
-
-    def shared_lock(self):
-        return self.lock(False)
-
     def update(self, values: dict) -> int:
         table = self._table()
         statement = update(table).values(**values)
@@ -1041,24 +1104,41 @@ class QueryBuilder:
         """Decrement a column's value."""
         return self.increment(column, -amount, extra)
 
-    # ---- Read operations ----
+    # ---- Row locks ----
+
+    def lock(self, value=True):
+        """Set the row lock mode.
+
+        Mirrors Laravel ``Query\\Builder::lock`` by accepting ``True``
+        for ``FOR UPDATE``, ``False`` for ``LOCK IN SHARE MODE``, or a
+        custom lock string retained as state.
+        """
+        self._lock = value
+        if value is not None:
+            self._lock_value = value if isinstance(value, str) else None
+        return self
+
+    def lock_for_update(self):
+        """Lock matching rows for update."""
+        return self.lock(True)
+
+    def shared_lock(self):
+        """Acquire a shared lock on matching rows."""
+        return self.lock(False)
 
     def get(self):
+        """Return the hydrated result set as a list of dicts."""
         statement = self._build_select()
         execution_options = self._execution_options()
         with self.manager._query_connection(self.connection_name) as connection:
-            statement = statement.execution_options(**execution_options) if execution_options else statement
+            if execution_options:
+                statement = statement.execution_options(**execution_options)
             rows = connection.execute(statement).mappings().all()
         rows = [dict(row) for row in rows]
         return self._apply_after_query_callbacks(rows)
 
     def first(self, columns=None):
-        """Return the first row or ``None``.
-
-        Mirrors Laravel ``Query\\Builder::first`` by accepting an
-        optional ``columns`` selection; the original projection is
-        restored after the row is fetched.
-        """
+        """Return the first row or ``None``."""
         if columns is None:
             rows = self.limit(1).get()
             return rows[0] if rows else None
@@ -1252,6 +1332,12 @@ class QueryBuilder:
 
     average = avg
 
+    def min(self, column):
+        return self._aggregate(func.min, column)
+
+    def max(self, column):
+        return self._aggregate(func.max, column)
+
     @staticmethod
     def _raw_expression(sql, bindings):
         if isinstance(bindings, dict):
@@ -1264,12 +1350,6 @@ class QueryBuilder:
             *[bindparam(f"raw_{index}", value) for index, value in enumerate(bindings)]
         )
 
-    def min(self, column):
-        return self._aggregate(func.min, column)
-
-    def max(self, column):
-        return self._aggregate(func.max, column)
-
     def _aggregate(self, fn, column):
         table = self._table()
         if column == "*":
@@ -1281,6 +1361,76 @@ class QueryBuilder:
         with self.manager._query_connection(self.connection_name) as connection:
             result = connection.execute(statement).scalar()
         return result
+
+    def aggregate(self, function, columns=None):
+        """Run an arbitrary aggregate function and return its scalar result.
+
+        Mirrors Laravel ``Query\\Builder::aggregate`` by composing
+        ``SELECT <fn>(<cols>) AS aggregate`` and returning the first
+        row's ``aggregate`` value. ``None`` is returned for an empty
+        result set so callers can distinguish zero from absent.
+        """
+        column_list = self._normalize_aggregate_columns(columns)
+        expression = self._aggregate_expression(function, column_list)
+        original_columns = self._columns
+        original_raw_selects = list(self._raw_selects)
+        try:
+            self._columns = ()
+            self._raw_selects = [expression.label("aggregate")]
+            rows = self.get()
+        finally:
+            self._columns = original_columns
+            self._raw_selects = original_raw_selects
+        if not rows:
+            return None
+        return rows[0].get("aggregate")
+
+    def numeric_aggregate(self, function, columns=None):
+        """Run an aggregate and coerce the result to int or float.
+
+        Mirrors Laravel ``Query\\Builder::numericAggregate`` by falling
+        back to ``0`` for an empty result set and converting string
+        results based on the presence of a decimal point.
+        """
+        result = self.aggregate(function, columns)
+        if not result:
+            return 0
+        if isinstance(result, (int, float)):
+            return result
+        text = str(result)
+        return int(text) if "." not in text else float(text)
+
+    def set_aggregate(self, function, columns):
+        """Set the aggregate property without running the query.
+
+        Mirrors Laravel ``Query\\Builder::setAggregate``; cleared
+        ``orders`` when no ``groups`` are present, matching Laravel's
+        eager ordering reset.
+        """
+        self._aggregate_spec = {"function": function, "columns": list(columns)}
+        if not self._groups:
+            self._orders = []
+            self._bindings["order"] = []
+        return self
+
+    def _normalize_aggregate_columns(self, columns):
+        if columns is None:
+            return ["*"]
+        if isinstance(columns, str):
+            return [columns]
+        if isinstance(columns, (list, tuple)):
+            return list(columns) if columns else ["*"]
+        return [columns]
+
+    def _aggregate_expression(self, function, column_list):
+        """Build a SQLAlchemy ``<fn>(<col>)`` expression."""
+        from sqlalchemy import func as _func
+        fn = getattr(_func, function)
+        if column_list == ["*"] or not column_list:
+            return fn()
+        if len(column_list) == 1:
+            return fn(self._resolve_column(column_list[0]))
+        return fn(*(self._resolve_column(col) for col in column_list))
 
     # ---- SQL inspection ----
 

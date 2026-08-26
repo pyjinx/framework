@@ -87,11 +87,19 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
   ``Select`` objects through SQLAlchemy's ``union`` primitive. Each
   side is wrapped in a subquery so SQLite accepts ``ORDER BY``.
 - [x] `unionAll` — promotes the compound to ``UNION ALL`` semantics.
-- [ ] `insertUsing`
-- [ ] `insertOrIgnoreUsing`
-- [ ] `updateFrom`
-- [ ] `updateOrInsert`
-- [ ] `incrementEach`
+- [x] `insertUsing` — composes ``INSERT INTO ... SELECT ...`` SQL and
+  executes it through the connection's write boundary. The subquery
+  SQL is rendered with its bindings through ``Connection::statement``.
+- [x] `insertOrIgnoreUsing` — emits SQLite ``INSERT OR IGNORE INTO``
+  for the SQLite backend; duplicate unique-key rows are skipped.
+- [x] `aggregate` — runs an arbitrary aggregate function and returns
+  the scalar result. ``None`` is returned for an empty result set.
+- [x] `numericAggregate` — coerces aggregate results to ``int`` or
+  ``float`` and returns ``0`` for an empty result set, matching
+  Laravel's int/float fallback contract.
+- [x] `setAggregate` — stores the aggregate specification without
+  running the query and clears order clauses when no group-by is
+  present, matching Laravel's eager ordering reset.
 - [ ] `decrementEach`
 - [x] `getColumns` — SQLite selected-column metadata.
 - [x] `getLimit` — SQLite limit metadata.
