@@ -75,9 +75,10 @@ These are the next behavior candidates unless Laravel source or SQLite grammar b
 - [ ] `cursorPaginate`
 - [ ] `getCountForPagination`
 - [x] `implode` — SQLite column concatenation over the selected result window.
-- [ ] `existsOr`
-- [ ] `doesntExistOr`
-- [ ] `aggregate`
+- [x] `existsOr` — returns ``True`` when rows exist, otherwise
+  invokes the supplied callback.
+- [x] `doesntExistOr` — returns ``True`` when no rows exist, otherwise
+  invokes the supplied callback.
 - [ ] `numericAggregate`
 - [ ] `insertOrIgnore`
 - [ ] `insertOrIgnoreReturning`

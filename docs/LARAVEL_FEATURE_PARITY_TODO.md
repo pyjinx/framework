@@ -411,11 +411,25 @@ Next implementation area: finish the Database / ORM foundation and continue the 
     `Query\Builder::timeout` (3378–3387),
     `Query\Builder::beforeQuery` (3394–3399),
     `applyBeforeQueryCallbacks` (3406–3413),
-    `Query\Builder::afterQuery` (3420–3425), and
     `applyAfterQueryCallbacks` (3433–3440).
   - Evidence: `tests/test_query_builder.py` execution-time surface
     tests — 11 passed; full starter suite: 230 passed; warning-as-error
     full starter suite: 230 passed, 0 warnings.
+  - Partial slice (2026-08-26): `first(columns)` accepts a string,
+    list, or tuple projection and restores the original column
+    selection after the row is fetched. `find(id, columns?)` resolves
+    the primary key through a `where('id', '=', id)` predicate and
+    delegates to `first`. `find_or(id, columns_or_callback, callback)`
+    treats a callable `columns` as the callback and returns the row
+    when present. `exists_or(callback)` and `doesnt_exist_or(callback)`
+    return `True` when the matching presence matches the prefix and
+    invoke the callback otherwise.
+  - Source mapping: Laravel `Query\Builder::find` (3473–3476),
+    `findOr` (3488–3501), `existsOr` (3978–3981), and
+    `doesntExistOr` (3988–3991).
+  - Evidence: `tests/test_query_builder.py` single-result and
+    existence tests — 12 passed; full starter suite: 242 passed;
+    warning-as-error full starter suite: 242 passed, 0 warnings.
   - Partial slice (2026-08-22): `where_column` and `or_where_column`
     compare two qualified columns without creating value bindings, preserving
     Laravel's column-condition operator semantics. `where_between_columns`,

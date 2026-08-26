@@ -983,9 +983,70 @@ class QueryBuilder:
         rows = [dict(row) for row in rows]
         return self._apply_after_query_callbacks(rows)
 
-    def first(self):
-        rows = self.limit(1).get()
-        return rows[0] if rows else None
+    def first(self, columns=None):
+        """Return the first row or ``None``.
+
+        Mirrors Laravel ``Query\\Builder::first`` by accepting an
+        optional ``columns`` selection; the original projection is
+        restored after the row is fetched.
+        """
+        if columns is None:
+            rows = self.limit(1).get()
+            return rows[0] if rows else None
+        original_columns = self._columns
+        try:
+            self.select(*self._normalize_columns(columns))
+            rows = self.limit(1).get()
+            return rows[0] if rows else None
+        finally:
+            self._columns = original_columns
+
+    @staticmethod
+    def _normalize_columns(columns):
+        if isinstance(columns, str):
+            return [columns]
+        if isinstance(columns, (list, tuple)):
+            return list(columns)
+        return [columns]
+
+    def find(self, id, columns=None):
+        """Return the first row whose primary key matches ``id``.
+
+        Mirrors Laravel ``Query\\Builder::find`` by composing a
+        primary-key predicate and reusing ``first`` for hydration.
+        """
+        query = self.where("id", "=", id)
+        return query.first(columns) if columns is not None else query.first()
+
+    def find_or(self, id, columns=None, callback=None):
+        """Return the matching row or invoke ``callback`` when absent.
+
+        Mirrors Laravel ``Query\\Builder::findOr``: when ``columns`` is
+        callable, it is treated as the callback and the default column
+        projection is used.
+        """
+        if callable(columns) and callback is None:
+            callback = columns
+            columns = None
+        row = self.find(id, columns)
+        if row is not None:
+            return row
+        return callback() if callback is not None else None
+
+    def exists_or(self, callback):
+        """Return ``True`` when rows exist, otherwise invoke ``callback``.
+
+        Mirrors Laravel ``Query\\Builder::existsOr``.
+        """
+        return True if self.exists() else callback()
+
+    def doesnt_exist_or(self, callback):
+        """Return ``True`` when no rows exist, otherwise invoke ``callback``.
+
+        Mirrors Laravel ``Query\\Builder::doesntExistOr``.
+        """
+        return True if self.doesnt_exist() else callback()
+
     def value(self, column):
         """Get a single column's value from the first result."""
         row = self.first()
@@ -1005,9 +1066,9 @@ class QueryBuilder:
             self._columns = original_columns
             self._raw_selects = original_raw_selects
             self._limit = original_limit
+
     def implode(self, column, glue=""):
         return glue.join(str(value) for value in self.pluck(column))
-
     def get_columns(self):
         if self._columns is None:
             return []
